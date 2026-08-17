@@ -2,6 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import type { Research } from "@/types/database";
+import { ResearchPdfUpload } from "./ResearchPdfUpload";
 
 type Action = (prevState: { error?: string } | undefined, formData: FormData) => Promise<{ error?: string } | undefined>;
 
@@ -18,9 +19,14 @@ export function ResearchForm({ action, initial, initialTags = "" }: { action: Ac
       </div>
       <Field label="Summary" name="summary" defaultValue={initial?.summary ?? undefined} textarea />
       <Field label="Body" name="body" defaultValue={initial?.body ?? undefined} textarea rows={10} />
+      <ResearchPdfUpload
+  initialPath={initial?.pdf_storage_path}
+  initialFilename={initial?.pdf_filename}
+  initialSize={initial?.pdf_size_bytes}
+/>
       <Field label="Tags" name="tags" defaultValue={initialTags} hint="comma-separated, e.g. AI Safety, LLM, Security" />
       <div className="grid grid-cols-2 gap-4">
-        <SelectField label="Status" name="status" defaultValue={initial?.status} options={["draft", "researching", "review", "published", "archived"]} />
+        <SelectField label="Status" name="status" defaultValue={initial?.status} options={["draft", "researching", "review", "preprint", "submitted", "under_review", "accepted", "published", "rejected", "archived"]} />
         <SelectField label="Visibility" name="visibility" defaultValue={initial?.visibility ?? "private"} options={["private", "unlisted", "public"]} />
       </div>
 

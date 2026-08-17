@@ -17,8 +17,12 @@ export const researchInputSchema = z.object({
   summary: z.string().max(500).optional().nullable(),
   body: z.string().max(20000).optional().nullable(),
   read_time_minutes: z.number().int().min(1).max(180).optional().nullable(),
-  status: z.enum(["draft", "researching", "review", "published", "archived"]),
+  status: z.enum(["draft", "researching", "review", "preprint", "submitted", "under_review", "accepted", "published", "rejected", "archived"]),
   visibility: visibilitySchema,
+  pdf_storage_path: z.string().max(500).optional().nullable(),
+  pdf_filename: z.string().max(255).optional().nullable(),
+  pdf_size_bytes: z.number().int().positive().max(20 * 1024 * 1024).optional().nullable(),
+  pdf_mime_type: z.literal("application/pdf").optional().nullable(),
 });
 export type ResearchInput = z.infer<typeof researchInputSchema>;
 

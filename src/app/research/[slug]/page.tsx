@@ -56,6 +56,29 @@ export default async function ResearchDetailPage({ params }: { params: Promise<{
       })
     )
   ).filter((r): r is NonNullable<typeof r> => r !== null);
+return (
+  <div className="flex flex-col gap-6">
+    <ContentDetail item={item} tags={tags} related={related} />
 
-  return <ContentDetail item={item} tags={tags} related={related} />;
+    {item.pdf_storage_path && (
+      <div className="flex gap-3">
+        <a
+          href={`/api/v1/research/pdf?id=${item.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-lavender text-on-lavender text-[13px] font-medium px-4 py-2.5 rounded-btn"
+        >
+          View PDF
+        </a>
+
+        <a
+          href={`/api/v1/research/pdf?id=${item.id}&download=true`}
+          className="border border-border text-text-1 text-[13px] font-medium px-4 py-2.5 rounded-btn"
+        >
+          Download PDF
+        </a>
+      </div>
+    )}
+  </div>
+);
 }

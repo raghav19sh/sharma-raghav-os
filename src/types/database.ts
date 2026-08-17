@@ -6,7 +6,7 @@
 
 export type Visibility = "public" | "unlisted" | "private";
 
-export type ResearchStatus = "draft" | "researching" | "review" | "published" | "archived";
+export type ResearchStatus = "draft" | "researching" | "review" | "preprint" | "submitted" | "under_review" | "accepted" | "published" | "rejected" | "archived";
 export type ProjectStatus = "idea" | "active" | "paused" | "completed" | "archived";
 export type ArticleStatus = "draft" | "published" | "archived";
 export type BookStatus = "queue" | "reading" | "completed" | "abandoned";
@@ -37,6 +37,10 @@ export interface Research {
   summary: string | null;
   body: string | null;
   read_time_minutes: number | null;
+  pdf_storage_path: string | null;
+  pdf_filename: string | null;
+  pdf_size_bytes: number | null;
+  pdf_mime_type: string | null;
   status: ResearchStatus;
   visibility: Visibility;
   published_at: string | null;
