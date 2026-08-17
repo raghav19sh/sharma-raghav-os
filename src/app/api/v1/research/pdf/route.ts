@@ -12,7 +12,8 @@ const PUBLIC_RESEARCH_STATUSES = [
 
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
-  const download = request.nextUrl.searchParams.get("download") === "true";
+  const download =
+    request.nextUrl.searchParams.get("download") === "true";
 
   if (!id) {
     return NextResponse.json(
@@ -21,10 +22,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  /*
-   * Use the normal server client for the research lookup.
-   * This keeps the normal application's RLS/session behavior intact.
-   */
+  // Normal server client: respects the user's session and RLS.
   const supabase = await createServerSupabaseClient();
 
   const { data: research, error } = await supabase
@@ -49,13 +47,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  /*
-   * A PDF is publicly accessible only when the research itself
-   * is public and has reached a public research status.
-   *
-   * Draft/researching/review/rejected/archived remain inaccessible
-   * through the public PDF endpoint.
-   */
+  // Only publicly released research can expose its PDF.
   const isPublic =
     research.visibility === "public" &&
     PUBLIC_RESEARCH_STATUSES.includes(research.status);
@@ -68,39 +60,41 @@ export async function GET(request: NextRequest) {
   }
 
   /*
-   * Storage is private.
+   * The Storage bucket is private.
    *
-   * The normal anon client can find the research record, but Storage
-   * signed-URL generation is failing because of Storage RLS.
-   *
-   * Use the service-role client ONLY for this trusted server-side
-   * operation. The service-role key never reaches the browser.
+   * The service-role client is used ONLY on the server to generate
+   * a temporary signed URL. The service-role key is never exposed
+   * to the browser.
    */
   const storageAdmin = createServiceRoleClient();
 
-  const { data, error: signedUrlError } = await storageAdmin.storage
-    .from("research-pdfs")
-    .createSignedUrl(
-      research.pdf_storage_path,
-      300,
+  const { data, error: signedUrlError } =
+    await storageAdmin.storage
+      .from("research-pdfs")
+      .createSignedUrl(
+        research.pdf_storage_path,
+        300,
+        {
+          download: download
+            ? research.pdf_filename ?? true
+            : false,
+        }
+      );
+
+  if (signedUrlError || !data?.signedUrl) {
+    // Detailed information stays in server/Vercel logs only.
+    console.error(
+      "Research PDF signed URL generation failed:",
       {
-        download: download
-          ? research.pdf_filename ?? true
-          : false,
+        researchId: research.id,
+        path: research.pdf_storage_path,
+        error:
+          signedUrlError?.message ??
+          "No signed URL returned",
       }
     );
 
-  if (signedUrlError || !data?.signedUrl) {
-    /*
-     * Do NOT expose Supabase's internal error, bucket name,
-     * storage path, or other implementation details to visitors.
-     */
-    console.error("Research PDF signed URL generation failed:", {
-      researchId: research.id,
-      path: research.pdf_storage_path,
-      error: signedUrlError?.message,
-    });
-
+    // Never expose internal Storage details to visitors.
     return NextResponse.json(
       { error: "Unable to open PDF" },
       { status: 500 }

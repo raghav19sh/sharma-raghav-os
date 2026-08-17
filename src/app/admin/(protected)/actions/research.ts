@@ -56,6 +56,43 @@ function parseTags(formData: FormData): string[] {
     .filter(Boolean);
 }
 
+async function moveResearchPdf(
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  researchId: string,
+  storagePath: string,
+  filename: string | null
+) {
+  /*
+   * Already in permanent storage — nothing to move.
+   */
+  if (storagePath.startsWith(`research/${researchId}/`)) {
+    return storagePath;
+  }
+
+  const safeFilename =
+    (filename || storagePath.split("/").pop() || "manuscript.pdf")
+      .replace(/[^a-zA-Z0-9._-]/g, "-")
+      .replace(/-+/g, "-");
+
+  const permanentPath =
+    `research/${researchId}/${safeFilename}`;
+
+  /*
+   * Move the object inside the same Supabase Storage bucket.
+   */
+  const { error: moveError } = await supabase.storage
+    .from("research-pdfs")
+    .move(storagePath, permanentPath);
+
+  if (moveError) {
+    throw new Error(
+      `Unable to move research PDF: ${moveError.message}`
+    );
+  }
+
+  return permanentPath;
+}
+
 export async function createResearchAction(
   _prevState: { error?: string } | undefined,
   formData: FormData
@@ -76,6 +113,9 @@ export async function createResearchAction(
 
   const supabase = await createServerSupabaseClient();
 
+  /*
+   * First create the research record.
+   */
   const { data, error } = await supabase
     .from("research")
     .insert(parsed.data)
@@ -87,36 +127,37 @@ export async function createResearchAction(
   }
 
   /*
-   * Move the temporary uploaded PDF into its permanent
-   * research-specific storage location.
+   * Then move the temporary PDF into its permanent
+   * research-specific location.
    */
   if (parsed.data.pdf_storage_path) {
-    const filename =
-      parsed.data.pdf_filename ?? "manuscript.pdf";
-
-    const permanentPath =
-      `research/${data.id}/${filename}`;
-
-    const { error: moveError } = await supabase.storage
-      .from("research-pdfs")
-      .move(
+    try {
+      const permanentPath = await moveResearchPdf(
+        supabase,
+        data.id,
         parsed.data.pdf_storage_path,
-        permanentPath
+        parsed.data.pdf_filename
       );
 
-    if (moveError) {
-      return { error: moveError.message };
-    }
+      const { error: pdfUpdateError } = await supabase
+        .from("research")
+        .update({
+          pdf_storage_path: permanentPath,
+        })
+        .eq("id", data.id);
 
-    const { error: pdfUpdateError } = await supabase
-      .from("research")
-      .update({
-        pdf_storage_path: permanentPath,
-      })
-      .eq("id", data.id);
-
-    if (pdfUpdateError) {
-      return { error: pdfUpdateError.message };
+      if (pdfUpdateError) {
+        return {
+          error: pdfUpdateError.message,
+        };
+      }
+    } catch (err) {
+      return {
+        error:
+          err instanceof Error
+            ? err.message
+            : "Unable to finalize research PDF.",
+      };
     }
   }
 
@@ -175,9 +216,38 @@ export async function updateResearchAction(
 
   const supabase = await createServerSupabaseClient();
 
+  /*
+   * If a new temporary PDF was uploaded while editing,
+   * move it into the permanent research directory.
+   */
+  let updateData = { ...parsed.data };
+
+  if (parsed.data.pdf_storage_path) {
+    try {
+      const permanentPath = await moveResearchPdf(
+        supabase,
+        id,
+        parsed.data.pdf_storage_path,
+        parsed.data.pdf_filename
+      );
+
+      updateData = {
+        ...parsed.data,
+        pdf_storage_path: permanentPath,
+      };
+    } catch (err) {
+      return {
+        error:
+          err instanceof Error
+            ? err.message
+            : "Unable to finalize research PDF.",
+      };
+    }
+  }
+
   const { error } = await supabase
     .from("research")
-    .update(parsed.data)
+    .update(updateData)
     .eq("id", id);
 
   if (error) {
