@@ -136,7 +136,7 @@ export async function createResearchAction(
         supabase,
         data.id,
         parsed.data.pdf_storage_path,
-        parsed.data.pdf_filename
+        parsed.data.pdf_filename ?? null 
       );
 
       const { error: pdfUpdateError } = await supabase
@@ -228,7 +228,7 @@ export async function updateResearchAction(
         supabase,
         id,
         parsed.data.pdf_storage_path,
-        parsed.data.pdf_filename
+        parsed.data.pdf_filename ?? null 
       );
 
       updateData = {
