@@ -32,7 +32,7 @@ export function MusicPlayer() {
   const [songIndex, setSongIndex] = useState(0);
 
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
