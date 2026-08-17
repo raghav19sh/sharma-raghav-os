@@ -16,22 +16,40 @@ function parseFormData(formData: FormData) {
     kind: formData.get("kind"),
     summary: formData.get("summary") || null,
     body: formData.get("body") || null,
-    read_time_minutes: formData.get("read_time_minutes")
-      ? Number(formData.get("read_time_minutes"))
-      : null,
+
+    read_time_minutes: (() => {
+      const value = formData.get("read_time_minutes");
+
+      console.log("READ TIME RECEIVED:", value);
+
+      if (value === null || value === "") {
+        return null;
+      }
+
+      return Number(value);
+    })(),
+
     status: formData.get("status"),
     visibility: formData.get("visibility"),
-    pdf_storage_path: String(formData.get("pdf_storage_path") ?? "") || null,
-    pdf_filename: String(formData.get("pdf_filename") ?? "") || null,
+
+    pdf_storage_path:
+      String(formData.get("pdf_storage_path") ?? "") || null,
+
+    pdf_filename:
+      String(formData.get("pdf_filename") ?? "") || null,
+
     pdf_size_bytes: formData.get("pdf_size_bytes")
       ? Number(formData.get("pdf_size_bytes"))
       : null,
-    pdf_mime_type: String(formData.get("pdf_mime_type") ?? "") || null,
+
+    pdf_mime_type:
+      String(formData.get("pdf_mime_type") ?? "") || null,
   };
 }
 
 function parseTags(formData: FormData): string[] {
   const raw = String(formData.get("tags") ?? "");
+
   return raw
     .split(",")
     .map((t) => t.trim())
@@ -44,11 +62,15 @@ export async function createResearchAction(
 ) {
   const user = await requireAdmin();
 
-  const parsed = researchInputSchema.safeParse(parseFormData(formData));
+  const parsed = researchInputSchema.safeParse(
+    parseFormData(formData)
+  );
 
   if (!parsed.success) {
     return {
-      error: parsed.error.issues.map((i) => i.message).join(", "),
+      error: parsed.error.issues
+        .map((i) => i.message)
+        .join(", "),
     };
   }
 
@@ -64,13 +86,23 @@ export async function createResearchAction(
     return { error: error.message };
   }
 
+  /*
+   * Move the temporary uploaded PDF into its permanent
+   * research-specific storage location.
+   */
   if (parsed.data.pdf_storage_path) {
-    const filename = parsed.data.pdf_filename ?? "manuscript.pdf";
-    const permanentPath = `research/${data.id}/${filename}`;
+    const filename =
+      parsed.data.pdf_filename ?? "manuscript.pdf";
+
+    const permanentPath =
+      `research/${data.id}/${filename}`;
 
     const { error: moveError } = await supabase.storage
       .from("research-pdfs")
-      .move(parsed.data.pdf_storage_path, permanentPath);
+      .move(
+        parsed.data.pdf_storage_path,
+        permanentPath
+      );
 
     if (moveError) {
       return { error: moveError.message };
@@ -108,7 +140,11 @@ export async function createResearchAction(
   ) {
     await writeActivityEvent(
       supabase,
-      describeActivity("research", "created", data.title)
+      describeActivity(
+        "research",
+        "created",
+        data.title
+      )
     );
   }
 
@@ -125,11 +161,15 @@ export async function updateResearchAction(
 ) {
   const user = await requireAdmin();
 
-  const parsed = researchInputSchema.safeParse(parseFormData(formData));
+  const parsed = researchInputSchema.safeParse(
+    parseFormData(formData)
+  );
 
   if (!parsed.success) {
     return {
-      error: parsed.error.issues.map((i) => i.message).join(", "),
+      error: parsed.error.issues
+        .map((i) => i.message)
+        .join(", "),
     };
   }
 
@@ -164,7 +204,11 @@ export async function updateResearchAction(
   ) {
     await writeActivityEvent(
       supabase,
-      describeActivity("research", "updated", parsed.data.title)
+      describeActivity(
+        "research",
+        "updated",
+        parsed.data.title
+      )
     );
   }
 
@@ -174,10 +218,13 @@ export async function updateResearchAction(
   redirect("/admin/research");
 }
 
-export async function deleteResearchAction(id: string) {
+export async function deleteResearchAction(
+  id: string
+) {
   const user = await requireAdmin();
 
-  const supabase = await createServerSupabaseClient();
+  const supabase =
+    await createServerSupabaseClient();
 
   const { error } = await supabase
     .from("research")
