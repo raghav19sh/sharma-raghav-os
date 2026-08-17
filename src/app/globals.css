@@ -230,7 +230,7 @@ body {
 
 
 /* =========================================================
-   MAIN ORBIT — CONSTANT ROTATION
+   MAIN ORBIT — FASTER CONSTANT ROTATION
    ========================================================= */
 
 @keyframes heroGlobeOrbit {
@@ -248,7 +248,7 @@ body {
   transform-box: fill-box;
 
   animation-name: heroGlobeOrbit;
-  animation-duration: 30s;
+  animation-duration: 15s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-direction: normal;
@@ -270,7 +270,7 @@ body {
   transform-box: fill-box;
 
   animation-name: heroGlobeOrbit;
-  animation-duration: 22s;
+  animation-duration: 10s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-direction: normal;
@@ -284,7 +284,7 @@ body {
 
 
 /* =========================================================
-   REVERSE ORBIT
+   REVERSE / SLOW ORBIT
    ========================================================= */
 
 @keyframes heroGlobeOrbitReverse {
@@ -302,7 +302,7 @@ body {
   transform-box: fill-box;
 
   animation-name: heroGlobeOrbitReverse;
-  animation-duration: 38s;
+  animation-duration: 20s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-direction: normal;
