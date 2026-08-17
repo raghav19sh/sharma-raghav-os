@@ -330,7 +330,7 @@ export function Minesweeper() {
         onPointerDown={handleMiniPointerDown}
         onPointerMove={handleMiniPointerMove}
         onPointerUp={handleMiniPointerUp}
-        onDoubleClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(true)}
         aria-label="Open Minesweeper"
         className="
           fixed

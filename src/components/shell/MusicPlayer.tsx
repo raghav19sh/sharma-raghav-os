@@ -394,7 +394,7 @@ export function MusicPlayer() {
           onPointerDown={handleMiniPointerDown}
           onPointerMove={handleMiniPointerMove}
           onPointerUp={handleMiniPointerUp}
-          onDoubleClick={() => setIsOpen(true)}
+          onClick={() => setIsOpen(true)}
           aria-label="Music player"
           className="
             fixed
