@@ -2,59 +2,547 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens — ported 1:1 from the prototype's App.jsx `CSS` string.
-   Values already passed a WCAG AA contrast audit (see PLAN.md). Do not
-   change a value here without re-checking contrast against both bg and
-   surface in both themes — see the contrast_check scripts referenced in
-   PLAN.md if you rebuild that tooling. */
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
 
 :root {
-  --bg: #F4EFE6; --surface: #FBF7F0;
-  --text-1: #241D1A; --text-2: #6E655F;
-  --border: #E3D9CC; --border-strong: #D3C5B7;
-  --lavender: #72263A; --lavender-hover: #5F1F30; --lavender-tint: #F1E2E6; --lavender-text: #6A2034;
-  --burgundy: #72263A; --burgundy-accent: #72263A;
-  --on-lavender: #FBF7F0; --on-accent: #FBF7F0;
-  --green: #22C55E; --green-tint: #E9F9EF; --green-text: #16803D;
-  --amber: #F59E0B; --amber-tint: #FFF6E5; --amber-text: #9F6707;
-  --red: #DC2626; --red-tint: #FDEDEC; --red-text: #C62222;
-  --blue-tint: #E3F1FF; --blue-text: #2563EB;
-  --globe-lit: #F1E2E6; --globe-mid: #D9BCC5; --globe-dark: #72263A; --globe-dot: #5F1F30;
-  --shadow-sm: 0 1px 2px rgba(20,20,30,0.05);
-  --shadow-md: 0 6px 20px rgba(20,20,30,0.07), 0 1px 2px rgba(20,20,30,0.05);
-  --shadow-lg: 0 16px 40px rgba(20,20,30,0.12), 0 2px 6px rgba(20,20,30,0.06);
+  --bg: #F4EFE6;
+  --surface: #FBF7F0;
+
+  --text-1: #241D1A;
+  --text-2: #6E655F;
+
+  --border: #E3D9CC;
+  --border-strong: #D3C5B7;
+
+  --lavender: #72263A;
+  --lavender-hover: #5F1F30;
+  --lavender-tint: #F1E2E6;
+  --lavender-text: #6A2034;
+
+  --burgundy: #72263A;
+  --burgundy-accent: #72263A;
+
+  --on-lavender: #FBF7F0;
+  --on-accent: #FBF7F0;
+
+  --green: #22C55E;
+  --green-tint: #E9F9EF;
+  --green-text: #16803D;
+
+  --amber: #F59E0B;
+  --amber-tint: #FFF6E5;
+  --amber-text: #9F6707;
+
+  --red: #DC2626;
+  --red-tint: #FDEDEC;
+  --red-text: #C62222;
+
+  --blue-tint: #E3F1FF;
+  --blue-text: #2563EB;
+
+  /* =======================================================
+     HERO GLOBE — BURGUNDY
+     ======================================================= */
+
+  --globe-lit: #DFA0B4;
+  --globe-mid: #9A4D67;
+  --globe-dark: #72263A; 
+  --globe-dot: #9A3F5A;
+
+  /* =======================================================
+     SHADOWS
+     ======================================================= */
+
+  --shadow-sm:
+    0 1px 2px rgba(20, 20, 30, 0.05);
+
+  --shadow-md:
+    0 6px 20px rgba(20, 20, 30, 0.07),
+    0 1px 2px rgba(20, 20, 30, 0.05);
+
+  --shadow-lg:
+    0 16px 40px rgba(20, 20, 30, 0.12),
+    0 2px 6px rgba(20, 20, 30, 0.06);
 }
+
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
 
 [data-theme="dark"] {
-  --bg: #171412; --surface: #201B18;
-  --text-1: #EDE4DA; --text-2: #B7AAA0;
-  --border: rgba(237,228,218,0.10); --border-strong: rgba(237,228,218,0.16);
-  --lavender: #9A4D67; --lavender-hover: #B45B78; --lavender-tint: #351F28; --lavender-text: #E0A7B8;
-  --burgundy: #9A4D67; --burgundy-accent: #E0A7B8;
-  --on-lavender: #F8EEE4; --on-accent: #F8EEE4;
-  --green-tint: #123423; --green-text: #38CB6E;
-  --amber-tint: #3A2A10; --amber-text: #F6A823;
-  --red-tint: #3A1518; --red-text: #E87070;
-  --blue-tint: #1E2E42; --blue-text: #7CB0FF;
-  --globe-lit: #3A252D; --globe-mid: #2A1D22; --globe-dark: #171412; --globe-dot: #DFA0B4;
-  --shadow-sm: none; --shadow-md: 0 6px 20px rgba(0,0,0,0.4); --shadow-lg: 0 16px 40px rgba(0,0,0,0.5);
+  --bg: #171412;
+  --surface: #201B18;
+
+  --text-1: #EDE4DA;
+  --text-2: #B7AAA0;
+
+  --border: rgba(237, 228, 218, 0.10);
+  --border-strong: rgba(237, 228, 218, 0.16);
+
+  --lavender: #9A4D67;
+  --lavender-hover: #B45B78;
+  --lavender-tint: #351F28;
+  --lavender-text: #E0A7B8;
+
+  --burgundy: #9A4D67;
+  --burgundy-accent: #E0A7B8;
+
+  --on-lavender: #F8EEE4;
+  --on-accent: #F8EEE4;
+
+  --green-tint: #123423;
+  --green-text: #38CB6E;
+
+  --amber-tint: #3A2A10;
+  --amber-text: #F6A823;
+
+  --red-tint: #3A1518;
+  --red-text: #E87070;
+
+  --blue-tint: #1E2E42;
+  --blue-text: #7CB0FF;
+
+  /* =======================================================
+     HERO GLOBE — DARK BURGUNDY
+     ======================================================= */
+
+  --globe-lit: #D8CEC4;
+  --globe-mid: #756A62;
+  --globe-dark: #24201D;
+  --globe-dot: #C7B9AD;
+
+  /* =======================================================
+     DARK SHADOWS
+     ======================================================= */
+
+  --shadow-sm: none;
+
+  --shadow-md:
+    0 6px 20px rgba(0, 0, 0, 0.4);
+
+  --shadow-lg:
+    0 16px 40px rgba(0, 0, 0, 0.5);
 }
 
-* { box-sizing: border-box; }
-body { background: var(--bg); color: var(--text-1); font-family: 'Inter', -apple-system, 'SF Pro Display', system-ui, sans-serif; }
 
-:focus-visible { outline: 2px solid var(--lavender); outline-offset: 2px; border-radius: 4px; }
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family:
+    'Inter',
+    -apple-system,
+    'SF Pro Display',
+    system-ui,
+    sans-serif;
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--lavender);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+
+/* =========================================================
+   SKIP LINK
+   ========================================================= */
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  z-index: 300;
+
+  background: var(--lavender);
+  color: var(--on-lavender);
+
+  padding: 10px 16px;
+
+  border-radius: 0 0 8px 0;
+
+  font-size: 14px;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+
+/* =========================================================
+   HERO GLOBE
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   Globe rotation
+   --------------------------------------------------------- */
+
+@keyframes heroGlobeRotate {
+  from {
+    transform: rotateY(0deg);
+  }
+
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.hero-globe-sphere {
+  transform-origin: center;
+  transform-box: fill-box;
+
+  animation:
+    heroGlobeRotate
+    45s
+    linear
+    infinite;
+}
+
+
+/* ---------------------------------------------------------
+   Main orbital system
+   --------------------------------------------------------- */
+
+@keyframes heroGlobeOrbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-globe-orbits {
+  transform-origin: center;
+  transform-box: fill-box;
+
+  animation:
+    heroGlobeOrbit
+    30s
+    linear
+    infinite;
+}
+
+
+/* ---------------------------------------------------------
+   Faster orbit
+   --------------------------------------------------------- */
+
+.hero-globe-orbit-fast {
+  transform-origin: center;
+  transform-box: fill-box;
+
+  animation:
+    heroGlobeOrbit
+    22s
+    linear
+    infinite;
+}
+
+
+/* ---------------------------------------------------------
+   Reverse / slower orbit
+   --------------------------------------------------------- */
+
+@keyframes heroGlobeOrbitReverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.hero-globe-orbit-slow {
+  transform-origin: center;
+  transform-box: fill-box;
+
+  animation:
+    heroGlobeOrbitReverse
+    38s
+    linear
+    infinite;
+}
+
+
+/* ---------------------------------------------------------
+   Globe pulse
+   --------------------------------------------------------- */
+
+@keyframes heroGlobePulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.hero-globe-pulse {
+  animation:
+    heroGlobePulse
+    4s
+    ease-in-out
+    infinite;
+}
+
+
+/* ---------------------------------------------------------
+   Globe atmosphere
+   --------------------------------------------------------- */
+
+@keyframes heroGlobeAtmosphere {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.hero-globe-atmosphere {
+  animation:
+    heroGlobeAtmosphere
+    5s
+    ease-in-out
+    infinite;
+}
+
+
+/* ---------------------------------------------------------
+   Orbit particles
+   --------------------------------------------------------- */
+
+@keyframes heroGlobeParticle {
+  0%,
+  100% {
+    opacity: 0.35;
+
+    filter:
+      drop-shadow(
+        0 0 2px var(--globe-dot)
+      );
+  }
+
+  50% {
+    opacity: 1;
+
+    filter:
+      drop-shadow(
+        0 0 8px var(--globe-dot)
+      );
+  }
+}
+
+.hero-globe-particle {
+  animation:
+    heroGlobeParticle
+    2.5s
+    ease-in-out
+    infinite;
+}
+
+
+/* ---------------------------------------------------------
+   Particle timing variation
+   --------------------------------------------------------- */
+
+.hero-globe-particle:nth-child(2n) {
+  animation-delay: -0.8s;
+}
+
+.hero-globe-particle:nth-child(3n) {
+  animation-delay: -1.6s;
+}
+
+.hero-globe-particle:nth-child(4n) {
+  animation-delay: -2.1s;
+}
+
+
+/* ---------------------------------------------------------
+   Country geometry
+   --------------------------------------------------------- */
+
+.hero-globe-country {
+  transition:
+    fill 300ms ease,
+    stroke 300ms ease,
+    opacity 300ms ease;
+}
+
+.hero-globe-country:hover {
+  opacity: 1;
+}
+
+
+/* ---------------------------------------------------------
+   Geographic grid
+   --------------------------------------------------------- */
+
+.hero-globe-grid {
+  fill: none;
+
+  stroke: var(--globe-mid);
+
+  stroke-width: 0.6;
+
+  opacity: 0.35;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* ---------------------------------------------------------
+   Country borders
+   --------------------------------------------------------- */
+
+.hero-globe-borders {
+  fill: none;
+
+  stroke: var(--globe-lit);
+
+  stroke-width: 0.8;
+
+  opacity: 0.75;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* ---------------------------------------------------------
+   Orbit rings
+   --------------------------------------------------------- */
+
+.hero-globe-ring {
+  fill: none;
+
+  stroke: var(--globe-mid);
+
+  stroke-width: 1;
+
+  opacity: 0.65;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* ---------------------------------------------------------
+   Bright orbit rings
+   --------------------------------------------------------- */
+
+.hero-globe-ring-bright {
+  fill: none;
+
+  stroke: var(--globe-lit);
+
+  stroke-width: 1.2;
+
+  opacity: 0.8;
+
+  vector-effect: non-scaling-stroke;
+
+  filter:
+    drop-shadow(
+      0 0 4px var(--globe-mid)
+    );
+}
+
+
+/* ---------------------------------------------------------
+   Outer globe glow
+   --------------------------------------------------------- */
+
+.hero-globe-glow {
+  fill: none;
+
+  stroke: var(--globe-lit);
+
+  stroke-width: 1.5;
+
+  opacity: 0.25;
+
+  filter:
+    drop-shadow(
+      0 0 8px var(--globe-mid)
+    )
+    drop-shadow(
+      0 0 18px var(--globe-dark)
+    );
+}
+
+
+/* ---------------------------------------------------------
+   System status dot
+   --------------------------------------------------------- */
+
+@keyframes heroGlobeStatusPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hero-globe-status-dot {
+  transform-origin: center;
+
+  animation:
+    heroGlobeStatusPulse
+    2s
+    ease-in-out
+    infinite;
+}
+
+
+/* =========================================================
+   ACCESSIBILITY — REDUCED MOTION
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
-}
 
-.skip-link {
-  position: absolute; left: -999px; top: 0; z-index: 300;
-  background: var(--lavender); color: var(--on-lavender); padding: 10px 16px; border-radius: 0 0 8px 0; font-size: 14px;
+  .hero-globe-sphere,
+  .hero-globe-orbits,
+  .hero-globe-orbit-fast,
+  .hero-globe-orbit-slow,
+  .hero-globe-pulse,
+  .hero-globe-atmosphere,
+  .hero-globe-particle,
+  .hero-globe-status-dot {
+    animation: none !important;
+  }
 }
-.skip-link:focus { left: 0; }
