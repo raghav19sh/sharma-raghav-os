@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { logoutAction } from "../login/actions";
+export const dynamic = "force-dynamic";
 
 /**
  * middleware.ts already redirects unauthenticated requests before this
