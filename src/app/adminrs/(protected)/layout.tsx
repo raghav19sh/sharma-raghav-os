@@ -33,11 +33,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <span className="text-[14px] font-semibold text-text-1">Admin OS</span>
         </div>
         <nav className="flex items-center gap-4 text-[13px] text-text-2">
-          <Link href="/admin" className="hover:text-text-1">Dashboard</Link>
-          <Link href="/admin/research" className="hover:text-text-1">Research</Link>
-          <Link href="/admin/projects" className="hover:text-text-1">Projects</Link>
-          <Link href="/admin/articles" className="hover:text-text-1">Articles</Link>
-          <Link href="/admin/journal" className="hover:text-text-1">Journal</Link>
+          <Link href="/adminrs" className="hover:text-text-1">Dashboard</Link>
+          <Link href="/adminrs/research" className="hover:text-text-1">Research</Link>
+          <Link href="/adminrs/projects" className="hover:text-text-1">Projects</Link>
+          <Link href="/adminrs/articles" className="hover:text-text-1">Articles</Link>
+          <Link href="/adminrs/journal" className="hover:text-text-1">Journal</Link>
           <Link href="/" className="hover:text-text-1">View public site</Link>
           <form action={logoutAction}>
             <button className="text-status-red-text">Log out</button>

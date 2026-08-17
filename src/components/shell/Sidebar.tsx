@@ -30,7 +30,7 @@ const ICONS: Record<string, typeof Home> = {
   "/now": CalendarDays,
   "/changelog": FileText,
   "/docs": BookOpen,
-  "/admin": Lock,
+ // "/admin": Lock,
 };
 
 const SECTIONS: Array<{ group: PageGroup; label: string }> = [
@@ -42,13 +42,13 @@ const SECTIONS: Array<{ group: PageGroup; label: string }> = [
   { group: "system", label: "System" },
 ];
 
-const QUICK_ACTIONS = [
+ /*const QUICK_ACTIONS = [
   { icon: Plus, label: "New Research" },
   { icon: Plus, label: "New Project" },
   { icon: Plus, label: "Journal Entry" },
   { icon: Upload, label: "Upload Media" },
   { icon: Download, label: "Download Report" },
-];
+]; */
 
 export function Sidebar({ open, onNavigate }: { open: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
@@ -68,7 +68,7 @@ export function Sidebar({ open, onNavigate }: { open: boolean; onNavigate?: () =
         );
       })}
 
-      <div className="h-px bg-border my-3 mx-1.5" />
+{/*      <div className="h-px bg-border my-3 mx-1.5" />
       <div className="text-[11px] font-semibold tracking-wide uppercase text-text-2 px-2.5 pb-1.5">Quick Actions</div>
       {QUICK_ACTIONS.map((q) => (
         <Link key={q.label} href="/admin" onClick={onNavigate} title="Requires Admin OS" className="flex items-center gap-2.5 px-2.5 py-2 rounded-[10px] text-[13.5px] text-text-2 hover:text-text-1 hover:bg-surface">
@@ -76,8 +76,8 @@ export function Sidebar({ open, onNavigate }: { open: boolean; onNavigate?: () =
           <span className="flex-1">{q.label}</span>
           <Lock size={11} className="opacity-70" />
         </Link>
-      ))}
-
+      ))} 
+*/}
       <div className="h-px bg-border my-3 mx-1.5" />
       {PAGES.filter((p) => p.group === "bottom").map((p) => (
         <NavItem key={p.href} href={p.href} label={p.label} Icon={ICONS[p.href] ?? Home} active={isActive(p.href)} onNavigate={onNavigate} locked={p.locked} />

@@ -21,6 +21,7 @@ function makeNonce() {
 
 function applySecurityHeaders(request: NextRequest) {
   const nonce = makeNonce();
+
   const csp = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}'`,
@@ -38,30 +39,56 @@ function applySecurityHeaders(request: NextRequest) {
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  response.headers.set(
+    "Referrer-Policy",
+    "strict-origin-when-cross-origin"
+  );
+  response.headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=()"
+  );
   response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  response.headers.set(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains; preload"
+  );
   response.headers.set("X-DNS-Prefetch-Control", "off");
+
   return { response, nonce };
 }
 
 export async function middleware(request: NextRequest) {
   const { response } = applySecurityHeaders(request);
-  const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID();
+
+  const requestId =
+    request.headers.get("x-request-id") ?? crypto.randomUUID();
+
   response.headers.set("X-Request-ID", requestId);
 
   const pathname = request.nextUrl.pathname;
-  const isAdminRoute = pathname.startsWith("/admin");
-  const isAdminApiRoute = pathname.startsWith("/api/v1/admin");
-  const isLoginRoute = pathname === "/admin/login";
 
-  // Public pages only need the security headers. Avoid doing an auth lookup
-  // for every visitor request.
-  if (!isAdminRoute && !isAdminApiRoute) return response;
+  // Public Admin OS route
+  const isAdminRoute = pathname.startsWith("/adminrs");
+
+  // Keep the Admin API route unchanged.
+  const isAdminApiRoute = pathname.startsWith("/api/v1/admin");
+
+  // New Admin OS login route
+  const isLoginRoute = pathname === "/adminrs/login";
+
+  // Public pages only need the security headers.
+  // Avoid doing an auth lookup for every visitor request.
+  if (!isAdminRoute && !isAdminApiRoute) {
+    return response;
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -71,11 +98,21 @@ export async function middleware(request: NextRequest) {
         get(name: string) {
           return request.cookies.get(name)?.value;
         },
+
         set(name: string, value: string, options: CookieOptions) {
-          response.cookies.set({ name, value, ...options });
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
         },
+
         remove(name: string, options: CookieOptions) {
-          response.cookies.set({ name, value: "", ...options });
+          response.cookies.set({
+            name,
+            value: "",
+            ...options,
+          });
         },
       },
     }
@@ -86,19 +123,51 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const allowedEmail = process.env.ADMIN_ALLOWED_EMAIL;
-  const isAuthorized = !!user && !!allowedEmail && user.email === allowedEmail;
 
-  if ((isAdminRoute || isAdminApiRoute) && !isLoginRoute && !isAuthorized) {
+  const isAuthorized =
+    !!user &&
+    !!allowedEmail &&
+    user.email === allowedEmail;
+
+  // Protect Admin OS and Admin API.
+  if (
+    (isAdminRoute || isAdminApiRoute) &&
+    !isLoginRoute &&
+    !isAuthorized
+  ) {
+    // API requests receive JSON instead of a login redirect.
     if (isAdminApiRoute) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: response.headers });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        {
+          status: 401,
+          headers: response.headers,
+        }
+      );
     }
-    const redirectUrl = new URL("/admin/login", request.url);
+
+    // Unauthenticated Admin OS visitors go to /adminrs/login.
+    const redirectUrl = new URL(
+      "/adminrs/login",
+      request.url
+    );
+
     redirectUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(redirectUrl, { headers: response.headers });
+
+    return NextResponse.redirect(redirectUrl, {
+      headers: response.headers,
+    });
   }
 
+  // Already-authenticated admin visiting the login page
+  // gets sent directly to the Admin OS dashboard.
   if (isLoginRoute && isAuthorized) {
-    return NextResponse.redirect(new URL("/admin", request.url), { headers: response.headers });
+    return NextResponse.redirect(
+      new URL("/adminrs", request.url),
+      {
+        headers: response.headers,
+      }
+    );
   }
 
   return response;

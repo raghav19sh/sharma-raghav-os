@@ -18,7 +18,7 @@ export default async function AdminJournalListPage() {
       </p>
       <AdminContentList
         items={items.map((j) => ({ id: j.id, title: j.title, status: j.status, visibility: j.visibility }))}
-        basePath="/admin/journal"
+        basePath="/adminrs/journal"
         deleteAction={deleteJournalAction}
         newLabel="New entry"
       />

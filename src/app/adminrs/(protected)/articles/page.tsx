@@ -11,7 +11,7 @@ export default async function AdminArticlesListPage() {
   return (
     <AdminContentList
       items={items.map((a) => ({ id: a.id, title: a.title, status: a.status, visibility: a.visibility }))}
-      basePath="/admin/articles"
+      basePath="/adminrs/articles"
       deleteAction={deleteArticleAction}
       newLabel="New article"
     />

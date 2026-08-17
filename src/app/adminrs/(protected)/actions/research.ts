@@ -190,9 +190,9 @@ export async function createResearchAction(
   }
 
   revalidatePath("/research");
-  revalidatePath("/admin/research");
+  revalidatePath("/adminrs/research");
 
-  redirect("/admin/research");
+  redirect("/adminrs/research");
 }
 
 export async function updateResearchAction(
@@ -283,9 +283,9 @@ export async function updateResearchAction(
   }
 
   revalidatePath("/research");
-  revalidatePath("/admin/research");
+  revalidatePath("/adminrs/research");
 
-  redirect("/admin/research");
+  redirect("/adminrs/research");
 }
 
 export async function deleteResearchAction(
@@ -313,5 +313,5 @@ export async function deleteResearchAction(
   });
 
   revalidatePath("/research");
-  revalidatePath("/admin/research");
+  revalidatePath("/adminrs/research");
 }

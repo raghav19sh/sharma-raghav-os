@@ -3,7 +3,7 @@
 import { createContent, updateContent, deleteContent, type FormState } from "@/lib/admin/contentHelpers";
 import { projectInputSchema } from "@/lib/validation/content";
 
-const OPTIONS = { arrayFields: ["stack"], publicPath: "/engineering", adminPath: "/admin/projects" };
+const OPTIONS = { arrayFields: ["stack"], publicPath: "/engineering", adminPath: "/adminrs/projects" };
 
 export async function createProjectAction(prevState: FormState, formData: FormData) {
   return createContent("projects", projectInputSchema, OPTIONS, formData);

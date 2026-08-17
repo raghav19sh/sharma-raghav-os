@@ -42,7 +42,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="flex gap-3">
-        <Link href="/admin/research" className="text-[13px] text-lavender underline">Manage research →</Link>
+        <Link href="/adminrs/research" className="text-[13px] text-lavender underline">Manage research →</Link>
       </div>
     </div>
   );

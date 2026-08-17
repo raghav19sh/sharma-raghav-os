@@ -30,7 +30,7 @@ export async function loginAction(_prevState: { error?: string } | undefined, fo
   }
 
   await writeAuditLog(supabase, { actorId: data.user.id, action: "login" });
-  redirect("/admin");
+  redirect("/adminrs");
 }
 
 export async function logoutAction() {
@@ -40,5 +40,5 @@ export async function logoutAction() {
     await writeAuditLog(supabase, { actorId: user.id, action: "logout" });
   }
   await supabase.auth.signOut();
-  redirect("/admin/login");
+  redirect("/adminrs/login");
 }

@@ -3,7 +3,7 @@
 import { createContent, updateContent, deleteContent, type FormState } from "@/lib/admin/contentHelpers";
 import { articleInputSchema } from "@/lib/validation/content";
 
-const OPTIONS = { numericFields: ["read_time_minutes"], publicPath: "/knowledge", adminPath: "/admin/articles" };
+const OPTIONS = { numericFields: ["read_time_minutes"], publicPath: "/knowledge", adminPath: "/adminrs/articles" };
 
 export async function createArticleAction(prevState: FormState, formData: FormData) {
   return createContent("articles", articleInputSchema, OPTIONS, formData);

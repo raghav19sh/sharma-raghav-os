@@ -12,7 +12,7 @@ export default async function AdminResearchListPage() {
     <div className="flex flex-col gap-5 max-w-3xl">
       <div className="flex items-center justify-between">
         <h1 className="text-[22px] font-semibold text-text-1">Research</h1>
-        <Link href="/admin/research/new" className="bg-lavender text-on-lavender text-[13.5px] font-medium px-4 py-2 rounded-btn">
+        <Link href="/adminrs/research/new" className="bg-lavender text-on-lavender text-[13.5px] font-medium px-4 py-2 rounded-btn">
           New research item
         </Link>
       </div>

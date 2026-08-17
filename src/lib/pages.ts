@@ -35,5 +35,4 @@ export const PAGES: PageEntry[] = [
   { href: "/changelog", label: "Changelog", group: "system" },
   { href: "/docs", label: "Documentation", group: "system" },
 
-  { href: "/admin", label: "Admin OS", group: "bottom", locked: true },
 ];
