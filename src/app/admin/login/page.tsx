@@ -10,7 +10,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-bg px-4">
       <form action={formAction} className="w-full max-w-sm bg-surface border border-border rounded-card p-7 flex flex-col gap-4">
         <div>
-          <div className="w-9 h-9 rounded-[10px] bg-burgundy text-white font-bold text-sm flex items-center justify-center mb-3">SR</div>
+          <div className="w-9 h-9 rounded-[10px] bg-burgundy text-on-lavender font-bold text-sm flex items-center justify-center mb-3">SR</div>
           <h1 className="text-[18px] font-semibold text-text-1">Admin OS</h1>
           <p className="text-[13px] text-text-2 mt-1">This is not part of the public experience. Sign in with the authorized admin account.</p>
         </div>

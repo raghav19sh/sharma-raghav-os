@@ -22,8 +22,21 @@ export async function GET(request: NextRequest) {
       SEARCHABLE.map(async ({ table, sub, href }) => {
         let query = supabase.from(table).select("title, slug").eq("visibility", "public").limit(6);
         if (table !== "projects") query = query.eq("status", "published");
-        const { data } = await query.textSearch("search_vector", q, { type: "websearch" });
-        return (data ?? []).map((row) => ({ title: row.title, sub, href: href(row.slug) }));
+        const { data, error } = await query.textSearch("search_vector", q, { type: "websearch" });
+        if (!error) {
+          return (data ?? []).map((row) => ({ title: row.title, sub, href: href(row.slug) }));
+        }
+
+        // Graceful fallback for databases where the generated search vector
+        // has not been refreshed yet. Search remains useful instead of turning
+        // the whole command palette into an error state.
+        const fallback = await supabase
+          .from(table)
+          .select("title, slug")
+          .eq("visibility", "public")
+          .ilike("title", `%${q}%`)
+          .limit(6);
+        return (fallback.data ?? []).map((row) => ({ title: row.title, sub, href: href(row.slug) }));
       })
     );
 

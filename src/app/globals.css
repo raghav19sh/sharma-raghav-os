@@ -9,33 +9,34 @@
    PLAN.md if you rebuild that tooling. */
 
 :root {
-  --bg: #FCFCFC; --surface: #FFFFFF;
-  --text-1: #121212; --text-2: #6B7280;
-  --border: #E8E8E8; --border-strong: #D8D8DC;
-  --lavender: #8B7CF6; --lavender-hover: #7A69F2; --lavender-tint: #EFEBFF; --lavender-text: #675CB6;
-  --burgundy: #6D1830; --burgundy-accent: #6D1830;
-  --on-lavender: #121212;
+  --bg: #F4EFE6; --surface: #FBF7F0;
+  --text-1: #241D1A; --text-2: #6E655F;
+  --border: #E3D9CC; --border-strong: #D3C5B7;
+  --lavender: #72263A; --lavender-hover: #5F1F30; --lavender-tint: #F1E2E6; --lavender-text: #6A2034;
+  --burgundy: #72263A; --burgundy-accent: #72263A;
+  --on-lavender: #FBF7F0; --on-accent: #FBF7F0;
   --green: #22C55E; --green-tint: #E9F9EF; --green-text: #16803D;
   --amber: #F59E0B; --amber-tint: #FFF6E5; --amber-text: #9F6707;
   --red: #DC2626; --red-tint: #FDEDEC; --red-text: #C62222;
   --blue-tint: #E3F1FF; --blue-text: #2563EB;
-  --globe-lit: #EDE9FE; --globe-mid: #C9BFF5; --globe-dark: #8B7CF6; --globe-dot: #6D1830;
+  --globe-lit: #F1E2E6; --globe-mid: #D9BCC5; --globe-dark: #72263A; --globe-dot: #5F1F30;
   --shadow-sm: 0 1px 2px rgba(20,20,30,0.05);
   --shadow-md: 0 6px 20px rgba(20,20,30,0.07), 0 1px 2px rgba(20,20,30,0.05);
   --shadow-lg: 0 16px 40px rgba(20,20,30,0.12), 0 2px 6px rgba(20,20,30,0.06);
 }
 
 [data-theme="dark"] {
-  --bg: #0F1115; --surface: #16181D;
-  --text-1: #F2F2F5; --text-2: #9AA1AC;
-  --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14);
-  --lavender-tint: #241F38; --lavender-text: #9789F7;
-  --burgundy-accent: #E2A6B6;
+  --bg: #171412; --surface: #201B18;
+  --text-1: #EDE4DA; --text-2: #B7AAA0;
+  --border: rgba(237,228,218,0.10); --border-strong: rgba(237,228,218,0.16);
+  --lavender: #9A4D67; --lavender-hover: #B45B78; --lavender-tint: #351F28; --lavender-text: #E0A7B8;
+  --burgundy: #9A4D67; --burgundy-accent: #E0A7B8;
+  --on-lavender: #F8EEE4; --on-accent: #F8EEE4;
   --green-tint: #123423; --green-text: #38CB6E;
   --amber-tint: #3A2A10; --amber-text: #F6A823;
   --red-tint: #3A1518; --red-text: #E87070;
   --blue-tint: #1E2E42; --blue-text: #7CB0FF;
-  --globe-lit: #2c2440; --globe-mid: #1c1830; --globe-dark: #0F1115; --globe-dot: #d79cae;
+  --globe-lit: #3A252D; --globe-mid: #2A1D22; --globe-dark: #171412; --globe-dot: #DFA0B4;
   --shadow-sm: none; --shadow-md: 0 6px 20px rgba(0,0,0,0.4); --shadow-lg: 0 16px 40px rgba(0,0,0,0.5);
 }
 
@@ -54,6 +55,6 @@ body { background: var(--bg); color: var(--text-1); font-family: 'Inter', -apple
 
 .skip-link {
   position: absolute; left: -999px; top: 0; z-index: 300;
-  background: var(--lavender); color: #fff; padding: 10px 16px; border-radius: 0 0 8px 0; font-size: 14px;
+  background: var(--lavender); color: var(--on-lavender); padding: 10px 16px; border-radius: 0 0 8px 0; font-size: 14px;
 }
 .skip-link:focus { left: 0; }

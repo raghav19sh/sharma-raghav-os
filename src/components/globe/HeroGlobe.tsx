@@ -79,10 +79,26 @@ export function HeroGlobe({ countries }: { countries?: number }) {
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const handler = () => setReduced(mq.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const apply = () => {
+      const stored = window.localStorage.getItem("sr-os-reduced-motion");
+      setReduced(stored === "true" || mq.matches);
+    };
+
+    apply();
+    const mediaHandler = () => apply();
+    const storageHandler = (event: StorageEvent) => {
+      if (event.key === "sr-os-reduced-motion") apply();
+    };
+    const motionHandler = () => apply();
+
+    mq.addEventListener("change", mediaHandler);
+    window.addEventListener("storage", storageHandler);
+    window.addEventListener("sr-os-motion-change", motionHandler);
+    return () => {
+      mq.removeEventListener("change", mediaHandler);
+      window.removeEventListener("storage", storageHandler);
+      window.removeEventListener("sr-os-motion-change", motionHandler);
+    };
   }, []);
 
   return (

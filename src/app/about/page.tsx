@@ -23,7 +23,7 @@ export default async function AboutPage() {
 
       <div className="grid grid-cols-2 gap-4 max-[1024px]:grid-cols-1">
         <Card>
-          <div className="w-14 h-14 rounded-full bg-lavender text-white font-semibold text-lg flex items-center justify-center mb-2.5">RS</div>
+          <div className="w-14 h-14 rounded-full bg-lavender text-on-lavender font-semibold text-lg flex items-center justify-center mb-2.5">RS</div>
           <h2 className="text-[19px] font-semibold text-text-1">{profile?.display_name ?? "Raghav Sharma"}</h2>
           <p className="text-[13px] text-text-2 mb-3">{profile?.headline ?? "Cybersecurity student — malware analysis, threat detection, SOC fundamentals"}</p>
           <p className="text-[13.5px] text-text-2 leading-relaxed mb-4">

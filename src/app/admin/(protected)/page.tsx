@@ -31,7 +31,7 @@ export default async function AdminDashboardPage() {
         ) : (
           <div className="flex flex-col gap-2">
             {openLoops.map((loop) => (
-              <div key={loop.id} className="flex items-center gap-3 bg-white border border-border rounded-[10px] px-4 py-3">
+              <div key={loop.id} className="flex items-center gap-3 bg-surface border border-border rounded-[10px] px-4 py-3">
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-status-amber-tint text-status-amber-text capitalize">{loop.priority}</span>
                 <span className="text-[13.5px] text-text-1 flex-1">{loop.title}</span>
                 <span className="text-[11px] text-text-2 capitalize">{loop.type}</span>
@@ -50,7 +50,7 @@ export default async function AdminDashboardPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-white border border-border rounded-card p-4">
+    <div className="bg-surface border border-border rounded-card p-4">
       <div className="text-[22px] font-semibold text-text-1">{value}</div>
       <div className="text-[11.5px] text-text-2 mt-0.5">{label}</div>
     </div>

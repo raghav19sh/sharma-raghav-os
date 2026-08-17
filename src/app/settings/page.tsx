@@ -10,20 +10,52 @@ export default function SettingsPage() {
   useEffect(() => {
     const storedTheme = window.localStorage.getItem("sr-os-theme");
     const storedMotion = window.localStorage.getItem("sr-os-reduced-motion");
-    if (storedTheme === "dark" || storedTheme === "light") setTheme(storedTheme);
+    if (storedTheme === "dark" || storedTheme === "light") {
+      setTheme(storedTheme);
+      document.documentElement.setAttribute("data-theme", storedTheme);
+    }
     setReducedMotion(storedMotion === "true");
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "sr-os-theme" && (event.newValue === "dark" || event.newValue === "light")) {
+        setTheme(event.newValue);
+        document.documentElement.setAttribute("data-theme", event.newValue);
+      }
+      if (event.key === "sr-os-reduced-motion") setReducedMotion(event.newValue === "true");
+    };
+    const onThemeChange = (event: Event) => {
+      const value = (event as CustomEvent<string>).detail;
+      if (value === "dark" || value === "light") {
+        setTheme(value);
+        document.documentElement.setAttribute("data-theme", value);
+      }
+    };
+    const onMotionChange = (event: Event) => {
+      setReducedMotion(Boolean((event as CustomEvent<boolean>).detail));
+    };
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("sr-os-theme-change", onThemeChange);
+    window.addEventListener("sr-os-motion-change", onMotionChange);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("sr-os-theme-change", onThemeChange);
+      window.removeEventListener("sr-os-motion-change", onMotionChange);
+    };
   }, []);
 
   function applyTheme(next: "light" | "dark") {
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
     window.localStorage.setItem("sr-os-theme", next);
+    window.dispatchEvent(new CustomEvent("sr-os-theme-change", { detail: next }));
   }
 
   function toggleMotion() {
     const next = !reducedMotion;
     setReducedMotion(next);
     window.localStorage.setItem("sr-os-reduced-motion", String(next));
+    window.dispatchEvent(new CustomEvent("sr-os-motion-change", { detail: next }));
   }
 
   return (
@@ -58,7 +90,7 @@ export default function SettingsPage() {
             aria-label="Reduce motion"
             className={`w-[42px] h-6 rounded-full relative transition-colors duration-fast ${reducedMotion ? "bg-lavender" : "bg-border-strong"}`}
           >
-            <span className={`absolute top-[3px] left-[3px] w-[18px] h-[18px] rounded-full bg-white transition-transform duration-fast ${reducedMotion ? "translate-x-[18px]" : ""}`} />
+            <span className={`absolute top-[3px] left-[3px] w-[18px] h-[18px] rounded-full bg-surface transition-transform duration-fast ${reducedMotion ? "translate-x-[18px]" : ""}`} />
           </button>
         </Row>
       </div>

@@ -41,9 +41,9 @@ function Field({
     <label className="flex flex-col gap-1.5">
       <span className="text-[12.5px] font-medium text-text-1">{label}</span>
       {textarea ? (
-        <textarea name={name} defaultValue={defaultValue as string} rows={rows} className="bg-white border border-border rounded-[10px] px-3 py-2.5 text-[13.5px] text-text-1" />
+        <textarea name={name} defaultValue={defaultValue as string} rows={rows} className="bg-surface border border-border rounded-[10px] px-3 py-2.5 text-[13.5px] text-text-1" />
       ) : (
-        <input name={name} type={type} defaultValue={defaultValue} required={required} className="bg-white border border-border rounded-[10px] px-3 py-2.5 text-[13.5px] text-text-1" />
+        <input name={name} type={type} defaultValue={defaultValue} required={required} className="bg-surface border border-border rounded-[10px] px-3 py-2.5 text-[13.5px] text-text-1" />
       )}
       {hint && <span className="text-[11px] text-text-2">{hint}</span>}
     </label>
@@ -54,7 +54,7 @@ function SelectField({ label, name, defaultValue, options }: { label: string; na
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-[12.5px] font-medium text-text-1">{label}</span>
-      <select name={name} defaultValue={defaultValue} className="bg-white border border-border rounded-[10px] px-3 py-2.5 text-[13.5px] text-text-1">
+      <select name={name} defaultValue={defaultValue} className="bg-surface border border-border rounded-[10px] px-3 py-2.5 text-[13.5px] text-text-1">
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
     </label>

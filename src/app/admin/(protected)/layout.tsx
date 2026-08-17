@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="min-h-screen bg-bg">
       <header className="flex items-center justify-between px-6 h-16 border-b border-border bg-surface">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-burgundy text-white font-bold text-xs flex items-center justify-center">SR</div>
+          <div className="w-8 h-8 rounded-lg bg-burgundy text-on-lavender font-bold text-xs flex items-center justify-center">SR</div>
           <span className="text-[14px] font-semibold text-text-1">Admin OS</span>
         </div>
         <nav className="flex items-center gap-4 text-[13px] text-text-2">

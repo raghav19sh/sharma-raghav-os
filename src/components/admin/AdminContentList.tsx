@@ -32,7 +32,7 @@ export function AdminContentList({
       ) : (
         <div className="flex flex-col gap-2">
           {items.map((item) => (
-            <div key={item.id} className="flex items-center gap-3 bg-white border border-border rounded-[10px] px-4 py-3">
+            <div key={item.id} className="flex items-center gap-3 bg-surface border border-border rounded-[10px] px-4 py-3">
               <span className="flex-1 text-[13.5px] text-text-1">{item.title}</span>
               {item.status && <span className="text-[11px] text-text-2 capitalize">{item.status}</span>}
               <span className="text-[11px] text-text-2 capitalize">{item.visibility}</span>

@@ -90,7 +90,7 @@ export default async function CommandCenterPage() {
             {research.data.map((r) => (
               <Link key={r.id} href={`/research/${r.slug}`} className="bg-surface border border-border rounded-card p-4 hover:border-lavender transition-colors">
                 <div className="text-[14px] font-semibold text-text-1 mb-1">{r.title}</div>
-                <div className="text-[12px] text-text-2">{formatDate(r.published_at)}</div>
+                <div className="text-[12px] text-text-2">{formatDate(r.published_at ?? r.created_at)}</div>
               </Link>
             ))}
           </div>

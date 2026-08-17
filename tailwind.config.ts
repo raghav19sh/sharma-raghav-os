@@ -31,7 +31,7 @@ const config: Config = {
           DEFAULT: "var(--burgundy)",
           accent: "var(--burgundy-accent)",
         },
-        "on-lavender": "var(--on-lavender)",
+        "on-accent": "var(--on-accent)",
         status: {
           green: "var(--green)",
           "green-tint": "var(--green-tint)",

@@ -38,7 +38,7 @@ export function AdminContentForm({
 }
 
 function FieldRenderer({ field }: { field: FieldConfig }) {
-  const base = "bg-white border border-border rounded-[10px] px-3 py-2.5 text-[13.5px] text-text-1";
+  const base = "bg-surface border border-border rounded-[10px] px-3 py-2.5 text-[13.5px] text-text-1";
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-[12.5px] font-medium text-text-1">{field.label}</span>

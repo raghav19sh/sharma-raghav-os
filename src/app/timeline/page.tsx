@@ -30,7 +30,7 @@ export default async function TimelinePage() {
             <li key={e.id} className="flex gap-[18px]">
               <div className="w-14 shrink-0 text-[13px] font-semibold text-text-2 pt-2.5">{e.year_label}</div>
               <div className="flex flex-col items-center shrink-0">
-                <div className={`w-[34px] h-[34px] rounded-full border-[1.5px] flex items-center justify-center text-[12px] font-semibold ${e.is_current ? "bg-lavender border-lavender text-white" : "bg-surface border-border-strong text-text-2"}`}>
+                <div className={`w-[34px] h-[34px] rounded-full border-[1.5px] flex items-center justify-center text-[12px] font-semibold ${e.is_current ? "bg-lavender border-lavender text-on-lavender" : "bg-surface border-border-strong text-text-2"}`}>
                   {i + 1}
                 </div>
                 {i < events.length - 1 && <div className="w-px flex-1 bg-border-strong min-h-[28px]" />}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, CornerDownLeft } from "lucide-react";
+import { PAGES } from "@/lib/pages";
 
 interface SearchResult {
   title: string;
@@ -33,21 +34,38 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
   useEffect(() => {
     if (!q.trim()) {
       setResults([]);
+      setLoading(false);
       return;
     }
+
     setLoading(true);
     const t = setTimeout(async () => {
+      const needle = q.trim().toLowerCase();
+      const pageResults: SearchResult[] = PAGES
+        .filter((page) => `${page.label} ${page.href}`.toLowerCase().includes(needle))
+        .map((page) => ({ title: page.label, sub: page.href, href: page.href }));
+
       try {
-        const res = await fetch(`/api/v1/search?q=${encodeURIComponent(q)}`);
+        const res = await fetch(`/api/v1/search?q=${encodeURIComponent(q)}`, { cache: "no-store" });
         const json = await res.json();
-        setResults(json.data ?? []);
-        setActiveIdx(0);
+        const remote = Array.isArray(json.data) ? json.data : [];
+        const merged = [...pageResults, ...remote];
+        const seen = new Set<string>();
+        setResults(merged.filter((r: SearchResult) => {
+          const key = `${r.title}|${r.href}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        }).slice(0, 20));
       } catch {
-        setResults([]);
+        // The search API is an enhancement. Page navigation remains searchable
+        // even if Supabase/API connectivity is temporarily unavailable.
+        setResults(pageResults.slice(0, 20));
       } finally {
         setLoading(false);
+        setActiveIdx(0);
       }
-    }, 250);
+    }, 180);
     return () => clearTimeout(t);
   }, [q]);
 

@@ -18,11 +18,29 @@ export function Topbar({
   // Visitor UI preference only — localStorage is appropriate here per §40,
   // it never touches the database and doesn't represent writing content.
   useEffect(() => {
-    const stored = window.localStorage.getItem("sr-os-theme");
-    if (stored === "dark" || stored === "light") {
-      setTheme(stored);
-      document.documentElement.setAttribute("data-theme", stored);
-    }
+    const apply = (value: string | null) => {
+      if (value === "dark" || value === "light") {
+        setTheme(value);
+        document.documentElement.setAttribute("data-theme", value);
+      }
+    };
+
+    apply(window.localStorage.getItem("sr-os-theme"));
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "sr-os-theme") apply(event.newValue);
+    };
+    const onThemeChange = (event: Event) => {
+      const value = (event as CustomEvent<string>).detail;
+      apply(value);
+    };
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("sr-os-theme-change", onThemeChange);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("sr-os-theme-change", onThemeChange);
+    };
   }, []);
 
   function toggleTheme() {
@@ -30,6 +48,7 @@ export function Topbar({
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
     window.localStorage.setItem("sr-os-theme", next);
+    window.dispatchEvent(new CustomEvent("sr-os-theme-change", { detail: next }));
   }
 
   return (
@@ -42,7 +61,7 @@ export function Topbar({
         >
           {mobileNavOpen ? <X size={19} /> : <Menu size={19} />}
         </button>
-        <Link href="/" className="w-9 h-9 rounded-[10px] bg-burgundy flex items-center justify-center text-white font-bold text-sm shrink-0">
+        <Link href="/" className="w-9 h-9 rounded-[10px] bg-burgundy flex items-center justify-center text-on-lavender font-bold text-sm shrink-0">
           SR
         </Link>
         <div className="leading-tight">
@@ -53,11 +72,11 @@ export function Topbar({
 
       <button
         onClick={onOpenSearch}
-        className="flex-1 max-w-[440px] mx-auto flex items-center gap-2.5 bg-surface border border-border rounded-btn px-3.5 py-2 text-text-2 max-[980px]:hidden"
+        className="flex-1 max-w-[440px] mx-auto flex items-center gap-2.5 bg-surface border border-border rounded-btn px-3.5 py-2 text-text-2 max-[980px]:max-w-[220px] max-[640px]:max-w-[42px] max-[640px]:px-0 max-[640px]:justify-center"
       >
         <Search size={15} />
-        <span className="flex-1 text-left text-sm text-text-2">Search anything…</span>
-        <span className="text-[11px] font-mono border border-border rounded px-1.5 py-0.5 bg-bg">⌘K</span>
+        <span className="flex-1 text-left text-sm text-text-2 max-[640px]:hidden">Search anything…</span>
+        <span className="text-[11px] font-mono border border-border rounded px-1.5 py-0.5 bg-bg max-[640px]:hidden">⌘K</span>
       </button>
 
       <div className="flex items-center gap-3.5 shrink-0 ml-auto">
@@ -68,7 +87,7 @@ export function Topbar({
         >
           {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
         </button>
-        <Link href="/about" className="w-[34px] h-[34px] rounded-full bg-lavender text-white flex items-center justify-center font-semibold text-[12.5px]" aria-label="About Raghav">
+        <Link href="/about" className="w-[34px] h-[34px] rounded-full bg-lavender text-on-lavender flex items-center justify-center font-semibold text-[12.5px]" aria-label="About Raghav">
           RS
         </Link>
       </div>

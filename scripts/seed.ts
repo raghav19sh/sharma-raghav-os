@@ -8,9 +8,6 @@
  * Usage: npm run seed
  * Requires SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL in .env.local.
  */
-import { loadEnvConfig } from "@next/env";
-
-loadEnvConfig(process.cwd());
 import { createServiceRoleClient } from "../src/lib/supabase/server-admin";
 
 async function main() {
@@ -76,67 +73,14 @@ async function main() {
   console.log("Seeding timeline (education + the one real internship)…");
   const { error: timelineError } = await supabase.from("timeline_events").upsert(
     [
-  {
-    year_label: "2021",
-    title: "Completed 10th grade",
-    body: "Delhi Public School, Hisar, Haryana.",
-    sort_order: 1,
-    visibility: "public",
-    is_current: false,
-  },
-  {
-    year_label: "2023",
-    title: "Completed 12th grade; started B.Tech",
-    body: "Delhi Public School, Hisar. Began B.Tech in Computer Science and Engineering at MIT ADT University.",
-    sort_order: 2,
-    visibility: "public",
-    is_current: false,
-  },
-  {
-    year_label: "2025",
-    title: "Business Analyst Virtual Internship",
-    body: "AICTE-EduSkills (Celonis-supported), Apr–Jun 2025. Data analysis and process mining. Graded O (Outstanding).",
-    event_date: "2025-04-01",
-    sort_order: 3,
-    visibility: "public",
-    is_current: false,
-  },
-  {
-    year_label: "2026",
-    title: "QR Phishing Simulation project",
-    body: "Built a credential-harvesting simulation to study QR-code phishing and email filter bypass.",
-    event_date: "2026-01-01",
-    sort_order: 4,
-    visibility: "public",
-    is_current: false,
-  },
-  {
-    year_label: "2026",
-    title: "Malware Analysis & Clipper Research",
-    body: "Static/dynamic malware analysis and a proof-of-concept clipper sample for research purposes.",
-    event_date: "2026-02-01",
-    sort_order: 5,
-    visibility: "public",
-    is_current: false,
-  },
-  {
-    year_label: "2026",
-    title: "Sharma-Raghav OS goes live",
-    body: "Shipped this platform as a real, database-backed home for research, engineering, and security work.",
-    event_date: "2026-08-13",
-    is_current: true,
-    sort_order: 6,
-    visibility: "public",
-  },
-  {
-    year_label: "2027",
-    title: "Expected graduation",
-    body: "B.Tech, Computer Science and Engineering, MIT ADT University.",
-    sort_order: 7,
-    visibility: "public",
-    is_current: false,
-  },
-],
+      { year_label: "2021", title: "Completed 10th grade", body: "Delhi Public School, Hisar, Haryana.", sort_order: 1, visibility: "public" },
+      { year_label: "2023", title: "Completed 12th grade; started B.Tech", body: "Delhi Public School, Hisar. Began B.Tech in Computer Science and Engineering at MIT ADT University.", sort_order: 2, visibility: "public" },
+      { year_label: "2025", title: "Business Analyst Virtual Internship", body: "AICTE-EduSkills (Celonis-supported), Apr–Jun 2025. Data analysis and process mining. Graded O (Outstanding).", event_date: "2025-04-01", sort_order: 3, visibility: "public" },
+      { year_label: "2026", title: "QR Phishing Simulation project", body: "Built a credential-harvesting simulation to study QR-code phishing and email filter bypass.", event_date: "2026-01-01", sort_order: 4, visibility: "public" },
+      { year_label: "2026", title: "Malware Analysis & Clipper Research", body: "Static/dynamic malware analysis and a proof-of-concept clipper sample for research purposes.", event_date: "2026-02-01", sort_order: 5, visibility: "public" },
+      { year_label: "2026", title: "Sharma-Raghav OS goes live", body: "Shipped this platform as a real, database-backed home for research, engineering, and security work.", event_date: "2026-08-13", is_current: true, sort_order: 6, visibility: "public" },
+      { year_label: "2027", title: "Expected graduation", body: "B.Tech, Computer Science and Engineering, MIT ADT University.", sort_order: 7, visibility: "public" },
+    ],
     { onConflict: "title" }
   );
   if (timelineError) console.error("timeline_events:", timelineError.message);
