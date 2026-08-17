@@ -28,7 +28,7 @@ interface ListOptions {
 // there, so it can't be filtered the same way. This table says what "safe
 // to show publicly" means per table, instead of a broken one-size ternary.
 const PUBLIC_STATUS_FILTER: Record<SlugContentTable, string[] | null> = {
-  research: ["published"],
+  research: ["preprint", "published"],
   articles: ["published"],
   journal_entries: ["published"],
   projects: null, // no status filter — visibility alone gates projects; all non-idea lifecycle states are fine to list
