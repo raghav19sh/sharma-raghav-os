@@ -26,7 +26,7 @@ export default async function AdminResearchListPage() {
               <span className="flex-1 text-[13.5px] text-text-1">{item.title}</span>
               <span className="text-[11px] text-text-2 capitalize">{item.status}</span>
               <span className="text-[11px] text-text-2 capitalize">{item.visibility}</span>
-              <Link href={`/admin/research/${item.id}/edit`} className="text-[12.5px] text-lavender">Edit</Link>
+              <Link href={`/adminrs/research/${item.id}/edit`} className="text-[12.5px] text-lavender">Edit</Link>
               <form
                 action={async () => {
                   "use server";

@@ -21,7 +21,7 @@ export function AdminContentList({
   return (
     <div className="flex flex-col gap-5 max-w-3xl">
       <div className="flex items-center justify-between">
-        <h1 className="text-[22px] font-semibold text-text-1 capitalize">{basePath.replace("/admin/", "").replace("-", " ")}</h1>
+        <h1 className="text-[22px] font-semibold text-text-1 capitalize">{basePath.replace("/adminrs/", "").replace("-", " ")}</h1>
         <Link href={`${basePath}/new`} className="bg-lavender text-on-lavender text-[13.5px] font-medium px-4 py-2 rounded-btn">
           {newLabel}
         </Link>
