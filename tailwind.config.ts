@@ -27,6 +27,7 @@ const config: Config = {
           tint: "var(--lavender-tint)",
           text: "var(--lavender-text)",
         },
+        "on-lavender": "var(--on-lavender)",
         burgundy: {
           DEFAULT: "var(--burgundy)",
           accent: "var(--burgundy-accent)",

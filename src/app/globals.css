@@ -43,13 +43,16 @@
   --blue-text: #2563EB;
 
   /* =======================================================
-     HERO GLOBE — BURGUNDY
+     HERO GLOBE — DARK WINE
      ======================================================= */
 
-  --globe-lit: #DFA0B4;
-  --globe-mid: #9A4D67;
-  --globe-dark: #72263A; 
-  --globe-dot: #9A3F5A;
+  --globe-lit: #B56A7A;
+  --globe-mid: #7A3045;
+  --globe-dark: #4A1728;
+  --globe-dot: #C98292;
+
+  /* Deep black internal geography/grid */
+  --globe-line: #160C10;
 
   /* =======================================================
      SHADOWS
@@ -106,13 +109,16 @@
   --blue-text: #7CB0FF;
 
   /* =======================================================
-     HERO GLOBE — DARK BURGUNDY
+     HERO GLOBE — DARK WINE / DARK MODE
      ======================================================= */
 
-  --globe-lit: #D8CEC4;
-  --globe-mid: #756A62;
-  --globe-dark: #24201D;
-  --globe-dot: #C7B9AD;
+  --globe-lit: #C98292;
+  --globe-mid: #8F4058;
+  --globe-dark: #3A101F;
+  --globe-dot: #D79AAA;
+
+  /* Deep black internal geography/grid */
+  --globe-line: #090608;
 
   /* =======================================================
      DARK SHADOWS
@@ -139,6 +145,7 @@
 body {
   background: var(--bg);
   color: var(--text-1);
+
   font-family:
     'Inter',
     -apple-system,
@@ -189,103 +196,128 @@ body {
    ========================================================= */
 
 
-/* ---------------------------------------------------------
-   Globe rotation
-   --------------------------------------------------------- */
+/* =========================================================
+   GLOBE — CONSTANT ROTATION
+   ========================================================= */
 
 @keyframes heroGlobeRotate {
   from {
-    transform: rotateY(0deg);
+    transform: translateZ(0) rotateY(0deg);
   }
 
   to {
-    transform: rotateY(360deg);
+    transform: translateZ(0) rotateY(360deg);
   }
 }
 
 .hero-globe-sphere {
-  transform-origin: center;
+  transform-origin: center center;
   transform-box: fill-box;
 
-  animation:
-    heroGlobeRotate
-    45s
-    linear
-    infinite;
+  animation-name: heroGlobeRotate;
+  animation-duration: 45s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-fill-mode: both;
+  animation-play-state: running;
+
+  will-change: transform;
+
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 
-/* ---------------------------------------------------------
-   Main orbital system
-   --------------------------------------------------------- */
+/* =========================================================
+   MAIN ORBIT — CONSTANT ROTATION
+   ========================================================= */
 
 @keyframes heroGlobeOrbit {
   from {
-    transform: rotate(0deg);
+    transform: translateZ(0) rotate(0deg);
   }
 
   to {
-    transform: rotate(360deg);
+    transform: translateZ(0) rotate(360deg);
   }
 }
 
 .hero-globe-orbits {
-  transform-origin: center;
+  transform-origin: center center;
   transform-box: fill-box;
 
-  animation:
-    heroGlobeOrbit
-    30s
-    linear
-    infinite;
+  animation-name: heroGlobeOrbit;
+  animation-duration: 30s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-fill-mode: both;
+  animation-play-state: running;
+
+  will-change: transform;
+
+  backface-visibility: hidden;
 }
 
 
-/* ---------------------------------------------------------
-   Faster orbit
-   --------------------------------------------------------- */
+/* =========================================================
+   FAST ORBIT
+   ========================================================= */
 
 .hero-globe-orbit-fast {
-  transform-origin: center;
+  transform-origin: center center;
   transform-box: fill-box;
 
-  animation:
-    heroGlobeOrbit
-    22s
-    linear
-    infinite;
+  animation-name: heroGlobeOrbit;
+  animation-duration: 22s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-fill-mode: both;
+  animation-play-state: running;
+
+  will-change: transform;
+
+  backface-visibility: hidden;
 }
 
 
-/* ---------------------------------------------------------
-   Reverse / slower orbit
-   --------------------------------------------------------- */
+/* =========================================================
+   REVERSE ORBIT
+   ========================================================= */
 
 @keyframes heroGlobeOrbitReverse {
   from {
-    transform: rotate(360deg);
+    transform: translateZ(0) rotate(360deg);
   }
 
   to {
-    transform: rotate(0deg);
+    transform: translateZ(0) rotate(0deg);
   }
 }
 
 .hero-globe-orbit-slow {
-  transform-origin: center;
+  transform-origin: center center;
   transform-box: fill-box;
 
-  animation:
-    heroGlobeOrbitReverse
-    38s
-    linear
-    infinite;
+  animation-name: heroGlobeOrbitReverse;
+  animation-duration: 38s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-fill-mode: both;
+  animation-play-state: running;
+
+  will-change: transform;
+
+  backface-visibility: hidden;
 }
 
 
-/* ---------------------------------------------------------
-   Globe pulse
-   --------------------------------------------------------- */
+/* =========================================================
+   GLOBE PULSE
+   ========================================================= */
 
 @keyframes heroGlobePulse {
   0%,
@@ -299,17 +331,17 @@ body {
 }
 
 .hero-globe-pulse {
-  animation:
-    heroGlobePulse
-    4s
-    ease-in-out
-    infinite;
+  animation-name: heroGlobePulse;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
 }
 
 
-/* ---------------------------------------------------------
-   Globe atmosphere
-   --------------------------------------------------------- */
+/* =========================================================
+   GLOBE ATMOSPHERE
+   ========================================================= */
 
 @keyframes heroGlobeAtmosphere {
   0%,
@@ -323,17 +355,16 @@ body {
 }
 
 .hero-globe-atmosphere {
-  animation:
-    heroGlobeAtmosphere
-    5s
-    ease-in-out
-    infinite;
+  animation-name: heroGlobeAtmosphere;
+  animation-duration: 5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 
-/* ---------------------------------------------------------
-   Orbit particles
-   --------------------------------------------------------- */
+/* =========================================================
+   ORBIT PARTICLES
+   ========================================================= */
 
 @keyframes heroGlobeParticle {
   0%,
@@ -357,17 +388,16 @@ body {
 }
 
 .hero-globe-particle {
-  animation:
-    heroGlobeParticle
-    2.5s
-    ease-in-out
-    infinite;
+  animation-name: heroGlobeParticle;
+  animation-duration: 2.5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 
-/* ---------------------------------------------------------
-   Particle timing variation
-   --------------------------------------------------------- */
+/* =========================================================
+   PARTICLE TIMING VARIATION
+   ========================================================= */
 
 .hero-globe-particle:nth-child(2n) {
   animation-delay: -0.8s;
@@ -382,11 +412,19 @@ body {
 }
 
 
-/* ---------------------------------------------------------
-   Country geometry
-   --------------------------------------------------------- */
+/* =========================================================
+   COUNTRY GEOMETRY
+   ========================================================= */
 
 .hero-globe-country {
+  fill: var(--globe-mid);
+  fill-opacity: 0.28;
+
+  stroke: var(--globe-line);
+  stroke-width: 1;
+
+  opacity: 0.9;
+
   transition:
     fill 300ms ease,
     stroke 300ms ease,
@@ -398,69 +436,65 @@ body {
 }
 
 
-/* ---------------------------------------------------------
-   Geographic grid
-   --------------------------------------------------------- */
+/* =========================================================
+   GEOGRAPHIC GRID
+   ========================================================= */
 
 .hero-globe-grid {
   fill: none;
 
-  stroke: var(--globe-mid);
+  stroke: var(--globe-line);
+  stroke-width: 0.8;
 
-  stroke-width: 0.6;
-
-  opacity: 0.35;
+  opacity: 0.95;
 
   vector-effect: non-scaling-stroke;
 }
 
 
-/* ---------------------------------------------------------
-   Country borders
-   --------------------------------------------------------- */
+/* =========================================================
+   COUNTRY BORDERS
+   ========================================================= */
 
 .hero-globe-borders {
   fill: none;
 
-  stroke: var(--globe-lit);
+  stroke: var(--globe-line);
+  stroke-width: 1;
 
-  stroke-width: 0.8;
-
-  opacity: 0.75;
+  opacity: 0.95;
 
   vector-effect: non-scaling-stroke;
 }
 
 
-/* ---------------------------------------------------------
-   Orbit rings
-   --------------------------------------------------------- */
+/* =========================================================
+   ORBIT RINGS
+   ========================================================= */
 
 .hero-globe-ring {
   fill: none;
 
   stroke: var(--globe-mid);
-
   stroke-width: 1;
 
-  opacity: 0.65;
+  opacity: 0.7;
 
   vector-effect: non-scaling-stroke;
 }
 
 
-/* ---------------------------------------------------------
-   Bright orbit rings
-   --------------------------------------------------------- */
+/* =========================================================
+   BRIGHT ORBIT RINGS
+   ========================================================= */
 
 .hero-globe-ring-bright {
   fill: none;
 
   stroke: var(--globe-lit);
-
   stroke-width: 1.2;
 
-  opacity: 0.8;
+  opacity: 0.85;
 
   vector-effect: non-scaling-stroke;
 
@@ -471,9 +505,9 @@ body {
 }
 
 
-/* ---------------------------------------------------------
-   Outer globe glow
-   --------------------------------------------------------- */
+/* =========================================================
+   OUTER GLOBE GLOW
+   ========================================================= */
 
 .hero-globe-glow {
   fill: none;
@@ -494,9 +528,9 @@ body {
 }
 
 
-/* ---------------------------------------------------------
-   System status dot
-   --------------------------------------------------------- */
+/* =========================================================
+   SYSTEM STATUS DOT
+   ========================================================= */
 
 @keyframes heroGlobeStatusPulse {
   0%,
@@ -514,16 +548,15 @@ body {
 .hero-globe-status-dot {
   transform-origin: center;
 
-  animation:
-    heroGlobeStatusPulse
-    2s
-    ease-in-out
-    infinite;
+  animation-name: heroGlobeStatusPulse;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
 
 /* =========================================================
-   ACCESSIBILITY — REDUCED MOTION
+   REDUCED MOTION
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
