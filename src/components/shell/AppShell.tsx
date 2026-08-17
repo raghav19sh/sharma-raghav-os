@@ -5,7 +5,7 @@ import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { SearchModal } from "@/components/search/SearchModal";
 import { MusicPlayer } from "./MusicPlayer";
-
+import { Minesweeper } from "./Minesweeper";
 export function AppShell({
   children,
 }: {
@@ -97,6 +97,7 @@ export function AppShell({
 
       {/* FLOATING MUSIC PLAYER */}
       <MusicPlayer />
+      <Minesweeper />
     </div>
   );
 }
