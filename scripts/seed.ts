@@ -19,7 +19,7 @@ async function main() {
       id: process.env.SEED_ADMIN_USER_ID ?? "00000000-0000-0000-0000-000000000000",
       display_name: "Raghav Sharma",
       headline: "Cybersecurity student — malware analysis, threat detection, SOC fundamentals",
-      bio: "Third-year B.Tech Computer Science and Engineering student at MIT ADT University, focused on malware analysis, vulnerability assessment, and security operations.",
+      bio: "B.Tech Computer Science and Engineer (MIT ADT University), focused on malware analysis, vulnerability assessment, and security operations.",
       location: "Pune, India",
       email_public: "contact@sharma-raghav.com",
       github_url: null, // resume references "Raghav Sharma - Git" without a resolvable URL — fill in once confirmed, don't guess
