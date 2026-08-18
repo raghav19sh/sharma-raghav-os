@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     default: "Sharma-Raghav OS",
     template: "%s · Sharma-Raghav OS",
   },
+  icons: {
+  icon: "/favicon.svg",
+},
   description:
     "Raghav Sharma's personal operating system for cybersecurity, AI, and systems research — read-only for visitors.",
   openGraph: {

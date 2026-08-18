@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Seeds the database with ONLY what the audit (PLAN.md, Phase 1 / §45)
  * verified against the resume. Deliberately does NOT seed the prototype's
