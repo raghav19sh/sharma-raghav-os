@@ -19,7 +19,7 @@ export const PAGES: PageEntry[] = [
 
   { href: "/engineering", label: "Engineering OS", group: "build" },
  // { href: "/developer-workspace", label: "Developer Workspace", group: "build" },
-  { href: "/ai-terminal", label: "AI Terminal", group: "build" },
+  { href: "/ai-terminal", label: "Rain Terminal", group: "build" },
 
   { href: "/security-lab", label: "Security Lab", group: "security" },
   { href: "/soc", label: "SOC OS", group: "security" },

@@ -37,7 +37,7 @@ function applySecurityHeaders(request: NextRequest) {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: blob: https://*.supabase.co",
-    "connect-src 'self' https://*.supabase.co ws: wss:",
+    "connect-src 'self' https://*.supabase.co ws: wss: blob:",
     "media-src 'self' blob: data:",
     "frame-ancestors 'none'",
     "base-uri 'self'",

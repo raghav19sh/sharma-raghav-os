@@ -15,7 +15,7 @@ interface SearchResult {
 const COMMANDS: SearchResult[] = [
   { title: "Open Command Center", sub: "Command", href: "/", kind: "command" },
   { title: "Open Security Lab", sub: "Command", href: "/security-lab", kind: "command" },
-  { title: "Open AI Terminal", sub: "Command", href: "/ai-terminal", kind: "command" },
+  { title: "Open Rain Terminal", sub: "Command", href: "/ai-terminal", kind: "command" },
   { title: "Open Observatory", sub: "Command", href: "/observatory", kind: "command" },
   { title: "Open Timeline", sub: "Command", href: "/timeline", kind: "command" },
   { title: "Open Settings", sub: "Command", href: "/settings", kind: "command" },

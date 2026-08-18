@@ -1,5 +1,6 @@
 "use client";
 
+import { RainAudio } from "@/components/terminal/RainAudio";
 import { useEffect, useState, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
@@ -98,6 +99,7 @@ export function AppShell({
       {/* FLOATING MUSIC PLAYER */}
       <MusicPlayer />
       <Minesweeper />
+      <RainAudio />
     </div>
   );
 }
