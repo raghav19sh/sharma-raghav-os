@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/shell/AppShell";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getCurrentPublicTheme } from "@/lib/theme";
 export const dynamic = "force-dynamic";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sharma-raghav.com";
@@ -30,9 +32,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createServerSupabaseClient();
+  const publicTheme = await getCurrentPublicTheme(supabase);
+
   return (
-    <html lang="en">
+    <html lang="en" data-theme={publicTheme}>
       <body>
         <a href="#main-content" className="skip-link">Skip to content</a>
         <AppShell>{children}</AppShell>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu, X, Search, Sun, Moon } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 
 export function Topbar({
   mobileNavOpen,
@@ -13,43 +13,6 @@ export function Topbar({
   onToggleMobileNav: () => void;
   onOpenSearch: () => void;
 }) {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-
-  // Visitor UI preference only — localStorage is appropriate here per §40,
-  // it never touches the database and doesn't represent writing content.
-  useEffect(() => {
-    const apply = (value: string | null) => {
-      if (value === "dark" || value === "light") {
-        setTheme(value);
-        document.documentElement.setAttribute("data-theme", value);
-      }
-    };
-
-    apply(window.localStorage.getItem("sr-os-theme"));
-
-    const onStorage = (event: StorageEvent) => {
-      if (event.key === "sr-os-theme") apply(event.newValue);
-    };
-    const onThemeChange = (event: Event) => {
-      const value = (event as CustomEvent<string>).detail;
-      apply(value);
-    };
-
-    window.addEventListener("storage", onStorage);
-    window.addEventListener("sr-os-theme-change", onThemeChange);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener("sr-os-theme-change", onThemeChange);
-    };
-  }, []);
-
-  function toggleTheme() {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-    window.localStorage.setItem("sr-os-theme", next);
-    window.dispatchEvent(new CustomEvent("sr-os-theme-change", { detail: next }));
-  }
 
   return (
     <header className="sticky top-0 z-[100] flex items-center gap-5 h-[68px] px-6 border-b border-border bg-bg/90 backdrop-blur-md">
@@ -80,13 +43,6 @@ export function Topbar({
       </button>
 
       <div className="flex items-center gap-3.5 shrink-0 ml-auto">
-        <button
-          onClick={toggleTheme}
-          className="w-9 h-9 rounded-btn border border-border bg-surface text-text-2 flex items-center justify-center hover:text-text-1"
-          aria-label="Toggle theme"
-        >
-          {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
-        </button>
         <Link href="/about" className="w-[34px] h-[34px] rounded-full bg-lavender text-on-lavender flex items-center justify-center font-semibold text-[12.5px]" aria-label="About Raghav">
           RS
         </Link>

@@ -1,55 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Settings as SettingsIcon, Sun, Moon, Lock } from "lucide-react";
+import { Settings as SettingsIcon, Lock } from "lucide-react";
 
 export default function SettingsPage() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    const storedTheme = window.localStorage.getItem("sr-os-theme");
     const storedMotion = window.localStorage.getItem("sr-os-reduced-motion");
-    if (storedTheme === "dark" || storedTheme === "light") {
-      setTheme(storedTheme);
-      document.documentElement.setAttribute("data-theme", storedTheme);
-    }
     setReducedMotion(storedMotion === "true");
 
-    const onStorage = (event: StorageEvent) => {
-      if (event.key === "sr-os-theme" && (event.newValue === "dark" || event.newValue === "light")) {
-        setTheme(event.newValue);
-        document.documentElement.setAttribute("data-theme", event.newValue);
-      }
-      if (event.key === "sr-os-reduced-motion") setReducedMotion(event.newValue === "true");
-    };
-    const onThemeChange = (event: Event) => {
-      const value = (event as CustomEvent<string>).detail;
-      if (value === "dark" || value === "light") {
-        setTheme(value);
-        document.documentElement.setAttribute("data-theme", value);
-      }
-    };
     const onMotionChange = (event: Event) => {
       setReducedMotion(Boolean((event as CustomEvent<boolean>).detail));
     };
 
-    window.addEventListener("storage", onStorage);
-    window.addEventListener("sr-os-theme-change", onThemeChange);
     window.addEventListener("sr-os-motion-change", onMotionChange);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener("sr-os-theme-change", onThemeChange);
-      window.removeEventListener("sr-os-motion-change", onMotionChange);
-    };
+    return () => window.removeEventListener("sr-os-motion-change", onMotionChange);
   }, []);
-
-  function applyTheme(next: "light" | "dark") {
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-    window.localStorage.setItem("sr-os-theme", next);
-    window.dispatchEvent(new CustomEvent("sr-os-theme-change", { detail: next }));
-  }
 
   function toggleMotion() {
     const next = !reducedMotion;
@@ -65,23 +32,12 @@ export default function SettingsPage() {
         <div>
           <h1 className="text-[24px] font-semibold text-text-1">Settings</h1>
           <p className="text-[14px] text-text-2 mt-0.5">
-            Stored in your browser&apos;s localStorage only (§40). Nothing here reaches the
-            database or changes Raghav&apos;s real settings.
+            Visitor-only preferences are stored in your browser. Public appearance is controlled globally by Admin OS.
           </p>
         </div>
       </div>
 
       <div className="bg-surface border border-border rounded-card p-1">
-        <Row title="Appearance" sub="Choose how the OS looks on your screen.">
-          <div className="flex bg-bg border border-border rounded-[10px] p-0.5 gap-0.5">
-            <button onClick={() => applyTheme("light")} className={`flex items-center gap-1.5 text-[13px] px-3 py-1.5 rounded-lg ${theme === "light" ? "bg-surface text-text-1 shadow-sm" : "text-text-2"}`}>
-              <Sun size={14} /> Light
-            </button>
-            <button onClick={() => applyTheme("dark")} className={`flex items-center gap-1.5 text-[13px] px-3 py-1.5 rounded-lg ${theme === "dark" ? "bg-surface text-text-1 shadow-sm" : "text-text-2"}`}>
-              <Moon size={14} /> Dark
-            </button>
-          </div>
-        </Row>
         <Row title="Reduce motion" sub="Pause the rotating globe and other ambient animation.">
           <button
             onClick={toggleMotion}
@@ -96,7 +52,7 @@ export default function SettingsPage() {
       </div>
 
       <div className="flex items-center gap-2 text-[12px] text-text-2">
-        <Lock size={13} /> Visitor session — read-only. Admin settings live in Admin OS.
+        <Lock size={13} /> Visitor session — read-only. Public theme is controlled by Admin OS.
       </div>
     </div>
   );

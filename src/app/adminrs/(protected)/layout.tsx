@@ -27,7 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="admin-os min-h-screen bg-bg">
       <header className="flex items-center justify-between px-6 h-16 border-b border-border bg-surface">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-burgundy text-on-lavender font-bold text-xs flex items-center justify-center">SR</div>
@@ -39,6 +39,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/adminrs/projects" className="hover:text-text-1">Projects</Link>
           <Link href="/adminrs/articles" className="hover:text-text-1">Articles</Link>
           <Link href="/adminrs/journal" className="hover:text-text-1">Journal</Link>
+          <Link href="/adminrs/appearance" className="hover:text-text-1">Appearance</Link>
           <Link href="/" className="hover:text-text-1">View public site</Link>
           <form action={logoutAction}>
             <button className="text-status-red-text">Log out</button>
