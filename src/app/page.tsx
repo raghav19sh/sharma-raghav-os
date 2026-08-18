@@ -5,24 +5,26 @@ import { getPublishedContent } from "@/lib/data/content";
 import { getPublicTimeline } from "@/lib/data/timeline";
 import { getStatusSnapshot } from "@/lib/data/status";
 import { getRecentActivity } from "@/lib/activity";
-import { HeroGlobe } from "@/components/globe/HeroGlobe";
+import { HeroThemeVisual } from "@/components/globe/HeroThemeVisual";
+import { getCurrentPublicTheme } from "@/lib/theme";
 import { Card, EmptyState, StatusPill } from "@/components/ui/Card";
 import { Terminal } from "@/components/terminal/Terminal";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
 import { formatDate } from "@/lib/utils/format";
 import type { Project, Research } from "@/types/database";
 
-export const revalidate = 60; // real content changes rarely; no need to hit the DB on every request
+export const dynamic = "force-dynamic";
 
 export default async function CommandCenterPage() {
   const supabase = await createServerSupabaseClient();
 
-  const [research, projects, timeline, status, activity] = await Promise.all([
+  const [research, projects, timeline, status, activity, publicTheme] = await Promise.all([
     getPublishedContent<Research>(supabase, "research", { pageSize: 4 }),
     getPublishedContent<Project>(supabase, "projects", { pageSize: 4 }),
     getPublicTimeline(supabase),
     getStatusSnapshot(supabase),
     getRecentActivity(supabase, 6),
+    getCurrentPublicTheme(supabase),
   ]);
 
   return (
@@ -48,7 +50,7 @@ export default async function CommandCenterPage() {
             </div>
           </div>
           <div className="flex-1">
-            <HeroGlobe />
+            <HeroThemeVisual theme={publicTheme} />
           </div>
         </section>
 
