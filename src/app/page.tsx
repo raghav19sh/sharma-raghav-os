@@ -12,6 +12,7 @@ import { Terminal } from "@/components/terminal/Terminal";
 import { ActivityFeed } from "@/components/activity/ActivityFeed";
 import { formatDate } from "@/lib/utils/format";
 import type { Project, Research } from "@/types/database";
+import { BootSequence } from "@/components/intro/BootSequence";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,8 @@ export default async function CommandCenterPage() {
   ]);
 
   return (
+    <>
+    <BootSequence />
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-[2.1fr_1fr] gap-5 items-start max-[1400px]:grid-cols-1">
         <section className="relative bg-surface border border-border rounded-card p-9 flex items-center gap-6 min-h-[420px] max-[640px]:flex-col max-[640px]:p-6">
@@ -142,6 +145,7 @@ export default async function CommandCenterPage() {
         )}
       </Card>
     </div>
+    </>
   );
 }
 
