@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { LowPolyCat3D } from "./LowPolyCat3D";
 
-const INTRO_DURATION = 10000;
+// Safety net only — the intro normally ends when the cat finishes
+// walking across the screen at its constant speed. This just guards
+// against the walk callback never firing for some reason.
+const INTRO_FALLBACK_DURATION = 16000;
 const INTRO_KEY = "rsos-cat-intro-v1";
 const INTRO_INTERVAL_MS = 24 * 60 * 60 * 1000; // once per day
 
 export function LowPolyCatIntro() {
   const [visible, setVisible] = useState(false);
   const [phase, setPhase] = useState<"intro" | "exit">("intro");
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const [ready, setReady] = useState(false);
 
   const finishing = useRef(false);
@@ -76,17 +79,8 @@ export function LowPolyCatIntro() {
 
     const finishTimer = window.setTimeout(
       finish,
-      INTRO_DURATION
+      INTRO_FALLBACK_DURATION
     );
-
-    const handleMouseMove = (event: MouseEvent) => {
-      setMouse({
-        x: event.clientX / window.innerWidth - 0.5,
-        y: event.clientY / window.innerHeight - 0.5,
-      });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
 
     (
       window as Window & {
@@ -97,11 +91,6 @@ export function LowPolyCatIntro() {
     return () => {
       window.clearTimeout(start);
       window.clearTimeout(finishTimer);
-
-      window.removeEventListener(
-        "mousemove",
-        handleMouseMove
-      );
 
       delete (
         window as Window & {
@@ -117,8 +106,13 @@ export function LowPolyCatIntro() {
 
   if (!visible) return null;
 
-  const rotateY = mouse.x * 10;
-  const rotateX = mouse.y * -7;
+  const handleWalkComplete = () => {
+    (
+      window as Window & {
+        __rsosCatIntroFinish?: () => void;
+      }
+    ).__rsosCatIntroFinish?.();
+  };
 
   return (
     <div
@@ -143,97 +137,11 @@ export function LowPolyCatIntro() {
         ))}
       </div>
 
-      {/* Scene */}
+      {/* Scene — real 3D low-poly cat, walking left to right at a
+          constant speed. It renders once `ready` so the intro overlay
+          has faded in first. */}
       <div className="cat-intro__scene">
-        <div
-          className="cat-intro__cat"
-          style={{
-            transform: `
-              translateY(${ready ? "0" : "35px"})
-              rotateX(${rotateX}deg)
-              rotateY(${rotateY}deg)
-            `,
-          }}
-        >
-          {/* Tail */}
-          <div className="cat-tail">
-            <div className="cat-tail__segment" />
-            <div className="cat-tail__tip" />
-          </div>
-
-          {/* Body */}
-          <div className="cat-body">
-            <div className="cat-body__front" />
-            <div className="cat-body__side" />
-            <div className="cat-body__belly" />
-          </div>
-
-          {/* Back legs */}
-          <div className="cat-leg cat-leg--back-left">
-            <span />
-          </div>
-
-          <div className="cat-leg cat-leg--back-right">
-            <span />
-          </div>
-
-          {/* Front legs */}
-          <div className="cat-leg cat-leg--front-left">
-            <span />
-          </div>
-
-          <div className="cat-leg cat-leg--front-right">
-            <span />
-          </div>
-
-          {/* Neck */}
-          <div className="cat-neck" />
-
-          {/* Head */}
-          <div className="cat-head">
-            <div className="cat-head__front" />
-            <div className="cat-head__side" />
-
-            {/* Ears */}
-            <div className="cat-ear cat-ear--left">
-              <span />
-            </div>
-
-            <div className="cat-ear cat-ear--right">
-              <span />
-            </div>
-
-            {/* Eyes */}
-            <div className="cat-eye cat-eye--left">
-              <span />
-            </div>
-
-            <div className="cat-eye cat-eye--right">
-              <span />
-            </div>
-
-            {/* Nose */}
-            <div className="cat-nose" />
-
-            {/* Whiskers */}
-            <div className="cat-whiskers cat-whiskers--left">
-              <span />
-              <span />
-              <span />
-            </div>
-
-            <div className="cat-whiskers cat-whiskers--right">
-              <span />
-              <span />
-              <span />
-            </div>
-          </div>
-        </div>
-
-        {/* Ground */}
-        <div className="cat-intro__ground">
-          <div className="cat-intro__shadow" />
-        </div>
+        {ready && <LowPolyCat3D onComplete={handleWalkComplete} />}
       </div>
 
       {/* Text */}
