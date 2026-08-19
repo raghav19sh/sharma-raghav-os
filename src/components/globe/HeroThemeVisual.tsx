@@ -20,16 +20,19 @@ function MinimalGlobe() {
   return (
     <div className="theme-visual theme-visual-minimal" aria-hidden="true">
       <div className="minimal-globe-core">
-        <div className="minimal-globe-lat lat-a" />
-        <div className="minimal-globe-lat lat-b" />
-        <div className="minimal-globe-lat lat-c" />
-        <div className="minimal-globe-long long-a" />
-        <div className="minimal-globe-long long-b" />
-        <div className="minimal-globe-long long-c" />
+        <span className="minimal-rib rib-1" />
+        <span className="minimal-rib rib-2" />
+        <span className="minimal-rib rib-3" />
+        <span className="minimal-rib rib-4" />
+        <span className="minimal-rib rib-5" />
+        <span className="minimal-rib rib-6" />
+        <span className="minimal-rib rib-7" />
+        <span className="minimal-rib rib-8" />
+        <span className="minimal-rib rib-9" />
+        <span className="minimal-rib rib-10" />
+        <span className="minimal-rib rib-11" />
+        <span className="minimal-globe-highlight" />
       </div>
-      <div className="minimal-orbit orbit-a" />
-      <div className="minimal-orbit orbit-b" />
-      <div className="minimal-orbit orbit-c" />
     </div>
   );
 }

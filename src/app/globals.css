@@ -2054,14 +2054,89 @@ html[data-theme="ocean"] main .bg-surface:first-child {
 .theme-visual{position:relative;width:min(38vw,520px);height:min(38vw,520px);min-width:280px;min-height:280px;isolation:isolate;overflow:visible}
 .theme-visual>*{position:absolute}
 
-/* 01 — Minimal Light: the original revolving globe */
-.theme-visual-minimal{filter:drop-shadow(0 20px 45px rgba(70,80,160,.16))}
-.minimal-globe-core{inset:20%;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0 8%,#dce3f3 38%,#b8c4dd 72%,#9aa9c6 100%);box-shadow:inset -24px -24px 40px rgba(70,80,120,.25),0 22px 45px rgba(90,105,170,.22);overflow:hidden;animation:themeFloat 5s ease-in-out infinite}
-.minimal-globe-lat,.minimal-globe-long{inset:-10%;border:1px solid rgba(105,125,170,.22);border-radius:50%}
-.lat-a{transform:rotateX(62deg)}.lat-b{transform:rotateX(62deg) scaleY(.62)}.lat-c{transform:rotateX(62deg) scaleY(.32)}
-.minimal-globe-long{transform:rotateY(62deg)}.long-b{transform:rotateY(62deg) scaleX(.62)}.long-c{transform:rotateY(62deg) scaleX(.32)}
-.minimal-orbit{inset:5%;border:2px solid rgba(100,115,175,.18);border-radius:50%;animation:orbitSpin 12s linear infinite}
-.orbit-a{transform:rotateX(68deg) rotateZ(12deg)}.orbit-b{transform:rotateX(68deg) rotateZ(72deg);animation-duration:16s}.orbit-c{transform:rotateX(68deg) rotateZ(132deg);animation-duration:20s}
+/* 01 — Minimal Light: ribbed floating globe inspired by the reference site.
+   No orbital rings — the sphere itself provides the motion and depth. */
+.theme-visual-minimal{filter:drop-shadow(0 22px 45px rgba(70,80,160,.16))}
+.minimal-globe-core{
+  inset:18%;
+  border-radius:50%;
+  overflow:hidden;
+  background:radial-gradient(circle at 30% 24%,#ffffff 0 8%,#f7f8fc 28%,#e4e8f2 57%,#c7cfdf 80%,#aeb9ce 100%);
+  box-shadow:
+    inset -30px -28px 48px rgba(79,91,126,.24),
+    inset 16px 12px 30px rgba(255,255,255,.92),
+    0 25px 55px rgba(91,105,171,.22);
+  animation:minimalGlobeRevolve 12s linear infinite, themeFloat 5s ease-in-out infinite;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.minimal-globe-core::before{
+  content:"";
+  position:absolute;
+  inset:-8% -18%;
+  border-radius:50%;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,.78) 0 5px,
+    rgba(176,187,207,.30) 6px 10px,
+    rgba(255,255,255,.82) 11px 15px
+  );
+  transform:rotate(-5deg) scaleX(.96);
+  opacity:.82;
+  mix-blend-mode:soft-light;
+}
+.minimal-globe-core::after{
+  content:"";
+  position:absolute;
+  inset:-4%;
+  border-radius:50%;
+  background:radial-gradient(ellipse at 28% 22%,rgba(255,255,255,.9),transparent 28%),
+             radial-gradient(ellipse at 76% 72%,rgba(80,92,132,.20),transparent 48%);
+  pointer-events:none;
+}
+.minimal-rib{
+  position:absolute;
+  left:7%;
+  right:7%;
+  height:10%;
+  border-top:2px solid rgba(255,255,255,.82);
+  border-bottom:1px solid rgba(126,139,168,.22);
+  border-radius:50%;
+  transform:scaleX(.96);
+  opacity:.78;
+}
+.rib-1{top:8%;transform:scaleX(.55)}
+.rib-2{top:16%;transform:scaleX(.78)}
+.rib-3{top:24%;transform:scaleX(.91)}
+.rib-4{top:32%;transform:scaleX(.98)}
+.rib-5{top:40%;transform:scaleX(1)}
+.rib-6{top:48%;transform:scaleX(1.02)}
+.rib-7{top:56%;transform:scaleX(1)}
+.rib-8{top:64%;transform:scaleX(.98)}
+.rib-9{top:72%;transform:scaleX(.91)}
+.rib-10{top:80%;transform:scaleX(.78)}
+.rib-11{top:88%;transform:scaleX(.55)}
+.minimal-globe-highlight{
+  position:absolute;
+  width:34%;
+  height:72%;
+  left:18%;
+  top:12%;
+  border-radius:50%;
+  background:linear-gradient(90deg,rgba(255,255,255,.48),rgba(255,255,255,0));
+  filter:blur(10px);
+  opacity:.8;
+  animation:minimalGlobeShimmer 7s ease-in-out infinite;
+}
+@keyframes minimalGlobeRevolve{
+  0%{transform:rotateY(-18deg) rotateZ(-1deg) translateZ(0)}
+  50%{transform:rotateY(18deg) rotateZ(1deg) translateZ(0)}
+  100%{transform:rotateY(-18deg) rotateZ(-1deg) translateZ(0)}
+}
+@keyframes minimalGlobeShimmer{
+  0%,100%{transform:translateX(0);opacity:.55}
+  50%{transform:translateX(38%);opacity:.9}
+}
 
 /* 02 — Cartoon: small RS-OS workstation / secure system scene */
 .theme-visual-cartoon{overflow:hidden;border-radius:40px;background:linear-gradient(180deg,#4caaf1 0 58%,#70c75d 58%);box-shadow:inset 0 -30px 60px rgba(27,95,38,.16)}
