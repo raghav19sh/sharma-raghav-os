@@ -532,6 +532,28 @@ export function Terminal({
 
     /*
      * ------------------------------------------------
+     * RAIN TERMINAL EASTER EGGS
+     * ------------------------------------------------
+     */
+
+    const rareResponses: Record<string, string> = {
+      "sudo": "Permission noted. Curiosity is allowed; root access is not part of this public terminal.",
+      "whoami": "Raghav Sharma — cybersecurity, research, engineering.",
+      "matrix": "Wake up, Raghav. The rain is already running.",
+      "42": "The answer is still 42. The question remains suspicious.",
+      "rain.exe": "rain.exe is already running. You are inside it.",
+      "coffee": "Coffee module: emotionally critical. Hardware dependency: unresolved.",
+    };
+
+    if (rareResponses[lower]) {
+      const response = rareResponses[lower];
+      appendConversation(cmd, response);
+      setInput("");
+      return;
+    }
+
+    /*
+     * ------------------------------------------------
      * HELP
      * ------------------------------------------------
      */
