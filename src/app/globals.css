@@ -2418,3 +2418,252 @@ html.rsos-boot-active body {
     transition: none !important;
   }
 }
+
+
+/* FULL-BODY FIGURE: approximately 1/4 of viewport height.
+   The entire penguin remains visible while crossing the midpoint. */
+
+/* =========================================================
+   R.S OS — WALKING PENGUIN BOOT OVERRIDE
+   Large, horizontal cinematic intro.
+   The penguin crosses the visual center from left to right;
+   the intro ends when it leaves the viewport.
+   ========================================================= */
+
+.rsos-boot {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.055), transparent 24%),
+    radial-gradient(circle at 50% 54%, rgba(114,38,58,.16), transparent 48%),
+    #030304;
+}
+
+.rsos-boot__stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.rsos-boot__fragments {
+  width: min(88vw, 980px);
+  height: min(88vw, 980px);
+  max-width: 86vh;
+  max-height: 86vh;
+  opacity: .82;
+}
+
+.rsos-boot__identity {
+  transform: translateY(-3vh);
+}
+
+.rsos-boot__monogram {
+  font-size: clamp(76px, 11vw, 170px);
+}
+
+.rsos-boot__name {
+  font-size: clamp(12px, 1.35vw, 18px);
+  letter-spacing: .42em;
+  padding-left: .42em;
+}
+
+.rsos-boot__descriptor {
+  font-size: clamp(8px, .82vw, 12px);
+  letter-spacing: .2em;
+  padding-left: .2em;
+}
+
+.rsos-boot__penguin {
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  top: 50%;
+  width: min(18vh, 220px);
+  height: min(25vh, 310px);
+  transform: translate(-125%, -50%);
+  opacity: 0;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.rsos-boot--walk .rsos-boot__penguin {
+  animation: rsosPenguinWalk 7200ms cubic-bezier(.18,.72,.22,1) forwards;
+}
+
+.rsos-boot__penguin-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter:
+    drop-shadow(0 24px 22px rgba(0,0,0,.58))
+    drop-shadow(0 0 28px rgba(255,255,255,.08));
+  animation: rsosPenguinBodyBob 520ms ease-in-out infinite;
+}
+
+.rsos-boot__penguin-shadow {
+  position: absolute;
+  z-index: -1;
+  left: 15%;
+  right: 15%;
+  bottom: 7%;
+  height: 7%;
+  border-radius: 50%;
+  background: rgba(0,0,0,.55);
+  filter: blur(10px);
+  transform-origin: center;
+  animation: rsosPenguinShadow 520ms ease-in-out infinite;
+}
+
+.penguin-black { fill: #17181a; }
+.penguin-dark { fill: #25272a; }
+.penguin-gray { fill: #4a4d51; }
+.penguin-white { fill: #e8e6e1; }
+.penguin-face { fill: #f3f0e8; }
+.penguin-beak { fill: #c9864d; }
+.penguin-eye { fill: #090909; }
+.penguin-facet { fill: #c9c9c5; }
+.penguin-facet-light { fill: #f4f1e9; }
+.penguin-flipper { fill: #111214; }
+.penguin-foot { fill: #b86f3d; transform-box: fill-box; transform-origin: center bottom; }
+
+.rsos-boot__penguin .penguin-flipper-left {
+  transform-box: fill-box;
+  transform-origin: 70% 15%;
+  animation: rsosPenguinFlipperLeft 520ms ease-in-out infinite;
+}
+
+.rsos-boot__penguin .penguin-flipper-right {
+  transform-box: fill-box;
+  transform-origin: 30% 15%;
+  animation: rsosPenguinFlipperRight 520ms ease-in-out infinite;
+}
+
+.rsos-boot__penguin .penguin-foot-left {
+  animation: rsosPenguinFootLeft 520ms ease-in-out infinite;
+}
+
+.rsos-boot__penguin .penguin-foot-right {
+  animation: rsosPenguinFootRight 520ms ease-in-out infinite;
+}
+
+.rsos-boot__walk-caption {
+  position: absolute;
+  left: 50%;
+  bottom: 13%;
+  z-index: 5;
+  display: flex;
+  gap: 22px;
+  transform: translateX(-50%);
+  color: rgba(245,241,235,.36);
+  font: 600 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: opacity 500ms ease;
+}
+
+.rsos-boot--walk .rsos-boot__walk-caption {
+  opacity: .7;
+}
+
+.rsos-boot--exit .rsos-boot__walk-caption {
+  opacity: 0;
+}
+
+.rsos-boot__progress span {
+  animation: rsosProgress 7800ms linear forwards;
+}
+
+@keyframes rsosPenguinWalk {
+  0% {
+    opacity: 0;
+    transform: translate(-125%, -50%);
+  }
+  5% {
+    opacity: 1;
+  }
+  35% {
+    transform: translate(18vw, -50%);
+  }
+  62% {
+    transform: translate(52vw, -50%);
+  }
+  82% {
+    transform: translate(82vw, -50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(128vw, -50%);
+  }
+}
+
+@keyframes rsosPenguinBodyBob {
+  0%, 100% { transform: translateY(0) rotate(-.6deg); }
+  50% { transform: translateY(-7px) rotate(.6deg); }
+}
+
+@keyframes rsosPenguinShadow {
+  0%, 100% { transform: scaleX(.95); opacity: .52; }
+  50% { transform: scaleX(.82); opacity: .38; }
+}
+
+@keyframes rsosPenguinFootLeft {
+  0%, 100% { transform: rotate(14deg) translateY(0); }
+  50% { transform: rotate(-18deg) translateY(-8px); }
+}
+
+@keyframes rsosPenguinFootRight {
+  0%, 100% { transform: rotate(-18deg) translateY(-8px); }
+  50% { transform: rotate(14deg) translateY(0); }
+}
+
+@keyframes rsosPenguinFlipperLeft {
+  0%, 100% { transform: rotate(9deg); }
+  50% { transform: rotate(-10deg); }
+}
+
+@keyframes rsosPenguinFlipperRight {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(9deg); }
+}
+
+@media (max-width: 640px) {
+  .rsos-boot__fragments {
+    width: 110vw;
+    height: 110vw;
+    max-width: none;
+    max-height: none;
+    opacity: .58;
+  }
+
+  .rsos-boot__identity {
+    transform: translateY(-5vh) scale(.82);
+  }
+
+  .rsos-boot__penguin {
+    width: min(18vh, 170px);
+    height: min(25vh, 215px);
+    max-width: none;
+    max-height: none;
+  }
+
+  .rsos-boot__walk-caption {
+    bottom: 17%;
+    font-size: 7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rsos-boot--walk .rsos-boot__penguin,
+  .rsos-boot__penguin-svg,
+  .rsos-boot__penguin-shadow,
+  .rsos-boot__penguin .penguin-flipper-left,
+  .rsos-boot__penguin .penguin-flipper-right,
+  .rsos-boot__penguin .penguin-foot-left,
+  .rsos-boot__penguin .penguin-foot-right {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
