@@ -9,10 +9,13 @@ type Theme =
   | "dark-elegant"
   | "ocean";
 
-type Props = {
-  theme?: string | null;
-};
+type Props = { theme?: string | null };
 
+/**
+ * The hero visual is intentionally theme-specific.
+ * Minimal Light keeps the original revolving globe; every other theme gets
+ * a visual object that belongs to that theme rather than a generic globe.
+ */
 function MinimalGlobe() {
   return (
     <div className="theme-visual theme-visual-minimal" aria-hidden="true">
@@ -36,13 +39,20 @@ function CartoonVisual() {
     <div className="theme-visual theme-visual-cartoon" aria-hidden="true">
       <div className="cartoon-cloud cloud-a" />
       <div className="cartoon-cloud cloud-b" />
+      <div className="cartoon-hill hill-a" />
+      <div className="cartoon-hill hill-b" />
+      <div className="cartoon-satellite" />
       <div className="cartoon-terminal">
         <span>&gt; TERMINAL</span>
-        <strong>SYSTEM SECURE</strong>
+        <b>user@rsos:~$ whoami</b>
+        <strong>Raghav Sharma</strong>
       </div>
+      <div className="cartoon-shield">✓</div>
       <div className="cartoon-person">
         <div className="person-head" />
         <div className="person-body" />
+        <div className="person-arm person-arm-left" />
+        <div className="person-arm person-arm-right" />
       </div>
       <div className="cartoon-signal signal-a" />
       <div className="cartoon-signal signal-b" />
@@ -53,9 +63,13 @@ function CartoonVisual() {
 function NeumorphismVisual() {
   return (
     <div className="theme-visual theme-visual-neumorphism" aria-hidden="true">
-      <div className="neo-orbit neo-orbit-a" />
-      <div className="neo-orbit neo-orbit-b" />
-      <div className="neo-shield">✓</div>
+      <div className="neo-disc">
+        <div className="neo-shield" aria-hidden="true">
+          <span>✓</span>
+        </div>
+      </div>
+      <div className="neo-ring neo-ring-a" />
+      <div className="neo-ring neo-ring-b" />
       <div className="neo-dot neo-dot-a" />
       <div className="neo-dot neo-dot-b" />
     </div>
@@ -68,7 +82,13 @@ function SpaceVisual() {
       <div className="space-stars" />
       <div className="space-planet" />
       <div className="space-moon" />
-      <div className="space-astronaut">◉</div>
+      <div className="space-astronaut">
+        <div className="astronaut-helmet" />
+        <div className="astronaut-pack" />
+        <div className="astronaut-body" />
+        <div className="astronaut-leg astronaut-leg-a" />
+        <div className="astronaut-leg astronaut-leg-b" />
+      </div>
       <div className="space-orbit" />
     </div>
   );
@@ -77,7 +97,11 @@ function SpaceVisual() {
 function GlassVisual() {
   return (
     <div className="theme-visual theme-visual-glass" aria-hidden="true">
+      <div className="glass-haze haze-a" />
       <div className="glass-sphere">
+        <div className="glass-meridian meridian-a" />
+        <div className="glass-meridian meridian-b" />
+        <div className="glass-meridian meridian-c" />
         <span /><span /><span /><span /><span /><span />
       </div>
       <div className="glass-orbit glass-orbit-a" />
@@ -91,10 +115,15 @@ function DarkElegantVisual() {
     <div className="theme-visual theme-visual-dark" aria-hidden="true">
       <div className="dark-halo" />
       <div className="dark-faceted">
-        <span /><span /><span /><span />
+        <span className="facet-line facet-line-a" />
+        <span className="facet-line facet-line-b" />
+        <span className="facet-line facet-line-c" />
+        <span className="facet-line facet-line-d" />
       </div>
       <div className="dark-orbit dark-orbit-a" />
       <div className="dark-orbit dark-orbit-b" />
+      <div className="dark-spark spark-a" />
+      <div className="dark-spark spark-b" />
     </div>
   );
 }
@@ -105,6 +134,8 @@ function OceanVisual() {
       <div className="ocean-rays" />
       <div className="ocean-globe">
         <span /><span /><span /><span /><span />
+        <div className="ocean-reef reef-a" />
+        <div className="ocean-reef reef-b" />
       </div>
       <div className="ocean-bubble bubble-a" />
       <div className="ocean-bubble bubble-b" />
@@ -117,22 +148,14 @@ function OceanVisual() {
 
 export function HeroThemeVisual({ theme }: Props) {
   switch (theme as Theme) {
-    case "cartoon":
-      return <CartoonVisual />;
-    case "neumorphism":
-      return <NeumorphismVisual />;
-    case "space":
-      return <SpaceVisual />;
-    case "glass":
-      return <GlassVisual />;
-    case "dark-elegant":
-      return <DarkElegantVisual />;
-    case "ocean":
-      return <OceanVisual />;
+    case "cartoon": return <CartoonVisual />;
+    case "neumorphism": return <NeumorphismVisual />;
+    case "space": return <SpaceVisual />;
+    case "glass": return <GlassVisual />;
+    case "dark-elegant": return <DarkElegantVisual />;
+    case "ocean": return <OceanVisual />;
     case "minimal":
-    default:
-      // The geographic/orbiting globe exists ONLY in Minimal Light.
-      return <MinimalGlobe />;
+    default: return <MinimalGlobe />;
   }
 }
 
