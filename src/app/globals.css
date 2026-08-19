@@ -2048,190 +2048,57 @@ html[data-theme="ocean"] main .bg-surface:first-child {
   .theme-hero-visual *, .theme-hero-visual::after { animation-play-state: paused !important; }
 }
 
-/* Theme-specific animated hero visuals
-   Each theme gets its own hero object. Minimal Light is the only theme that
-   intentionally uses the original geographic/orbiting globe. */
-.theme-visual{position:relative;width:min(38vw,520px);height:min(38vw,520px);min-width:280px;min-height:280px;isolation:isolate;overflow:visible}
+/* Theme-specific animated hero visuals */
+.theme-visual{position:relative;width:min(38vw,520px);height:min(38vw,520px);min-width:280px;min-height:280px;isolation:isolate}
 .theme-visual>*{position:absolute}
 
-/* 01 — Minimal Light: ribbed floating globe inspired by the reference site.
-   No orbital rings — the sphere itself provides the motion and depth. */
-.theme-visual-minimal{filter:drop-shadow(0 22px 45px rgba(70,80,160,.16))}
-.minimal-globe-core{
-  inset:18%;
-  border-radius:50%;
-  overflow:hidden;
-  background:radial-gradient(circle at 30% 24%,#ffffff 0 8%,#f7f8fc 28%,#e4e8f2 57%,#c7cfdf 80%,#aeb9ce 100%);
-  box-shadow:
-    inset -30px -28px 48px rgba(79,91,126,.24),
-    inset 16px 12px 30px rgba(255,255,255,.92),
-    0 25px 55px rgba(91,105,171,.22);
-  animation:minimalGlobeRevolve 12s linear infinite, themeFloat 5s ease-in-out infinite;
-  transform-style:preserve-3d;
-  will-change:transform;
-}
-.minimal-globe-core::before{
-  content:"";
-  position:absolute;
-  inset:-8% -18%;
-  border-radius:50%;
-  background:repeating-linear-gradient(
-    to bottom,
-    rgba(255,255,255,.78) 0 5px,
-    rgba(176,187,207,.30) 6px 10px,
-    rgba(255,255,255,.82) 11px 15px
-  );
-  transform:rotate(-5deg) scaleX(.96);
-  opacity:.82;
-  mix-blend-mode:soft-light;
-}
-.minimal-globe-core::after{
-  content:"";
-  position:absolute;
-  inset:-4%;
-  border-radius:50%;
-  background:radial-gradient(ellipse at 28% 22%,rgba(255,255,255,.9),transparent 28%),
-             radial-gradient(ellipse at 76% 72%,rgba(80,92,132,.20),transparent 48%);
-  pointer-events:none;
-}
-.minimal-rib{
-  position:absolute;
-  left:7%;
-  right:7%;
-  height:10%;
-  border-top:2px solid rgba(255,255,255,.82);
-  border-bottom:1px solid rgba(126,139,168,.22);
-  border-radius:50%;
-  transform:scaleX(.96);
-  opacity:.78;
-}
-.rib-1{top:8%;transform:scaleX(.55)}
-.rib-2{top:16%;transform:scaleX(.78)}
-.rib-3{top:24%;transform:scaleX(.91)}
-.rib-4{top:32%;transform:scaleX(.98)}
-.rib-5{top:40%;transform:scaleX(1)}
-.rib-6{top:48%;transform:scaleX(1.02)}
-.rib-7{top:56%;transform:scaleX(1)}
-.rib-8{top:64%;transform:scaleX(.98)}
-.rib-9{top:72%;transform:scaleX(.91)}
-.rib-10{top:80%;transform:scaleX(.78)}
-.rib-11{top:88%;transform:scaleX(.55)}
-.minimal-globe-highlight{
-  position:absolute;
-  width:34%;
-  height:72%;
-  left:18%;
-  top:12%;
-  border-radius:50%;
-  background:linear-gradient(90deg,rgba(255,255,255,.48),rgba(255,255,255,0));
-  filter:blur(10px);
-  opacity:.8;
-  animation:minimalGlobeShimmer 7s ease-in-out infinite;
-}
-@keyframes minimalGlobeRevolve{
-  0%{transform:rotateY(-18deg) rotateZ(-1deg) translateZ(0)}
-  50%{transform:rotateY(18deg) rotateZ(1deg) translateZ(0)}
-  100%{transform:rotateY(-18deg) rotateZ(-1deg) translateZ(0)}
-}
-@keyframes minimalGlobeShimmer{
-  0%,100%{transform:translateX(0);opacity:.55}
-  50%{transform:translateX(38%);opacity:.9}
-}
+.theme-visual-minimal{filter:drop-shadow(0 20px 45px rgba(70,80,160,.10));overflow:visible}
+.minimal-jelly-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
 
-/* 02 — Cartoon: small RS-OS workstation / secure system scene */
-.theme-visual-cartoon{overflow:hidden;border-radius:40px;background:linear-gradient(180deg,#4caaf1 0 58%,#70c75d 58%);box-shadow:inset 0 -30px 60px rgba(27,95,38,.16)}
-.cartoon-cloud{width:112px;height:38px;background:#fff;border-radius:40px;opacity:.85;filter:drop-shadow(0 8px 8px rgba(0,0,0,.08));animation:cloudDrift 12s ease-in-out infinite}
-.cloud-a{top:13%;left:3%}.cloud-b{top:25%;right:-2%;animation-delay:-5s}
-.cartoon-hill{border-radius:50% 50% 0 0;background:#58ae52}.hill-a{width:80%;height:34%;left:-10%;bottom:7%;transform:rotate(-5deg)}.hill-b{width:70%;height:28%;right:-8%;bottom:2%;background:#4b9e4b;transform:rotate(7deg)}
-.cartoon-satellite{width:44px;height:44px;right:12%;top:13%;border:7px solid #626b73;border-radius:50%;transform:rotate(-25deg);box-shadow:0 0 0 3px rgba(255,255,255,.45);animation:satelliteFloat 6s ease-in-out infinite}
-.cartoon-satellite:after{content:"";position:absolute;width:70px;height:5px;left:15px;top:17px;background:#626b73;border-radius:8px;transform:rotate(20deg)}
-.cartoon-terminal{left:11%;bottom:15%;width:47%;height:34%;border:6px solid #26313d;border-radius:16px;background:#10171d;box-shadow:0 14px 25px rgba(0,0,0,.18),inset 0 0 28px rgba(0,255,70,.08);padding:15px;color:#83f04a;font:700 12px/1.45 ui-monospace,monospace;animation:screenPulse 3s ease-in-out infinite}
-.cartoon-terminal b,.cartoon-terminal strong{display:block}.cartoon-terminal strong{font-size:18px;margin-top:17px;text-align:center}
-.cartoon-shield{right:18%;bottom:29%;width:80px;height:94px;display:grid;place-items:center;color:#9bf34d;font-size:43px;font-weight:900;background:#18221b;clip-path:polygon(50% 0,90% 14%,84% 62%,50% 100%,16% 62%,10% 14%);filter:drop-shadow(0 8px 12px rgba(0,0,0,.25));animation:shieldBob 4s ease-in-out infinite}
-.cartoon-person{right:4%;bottom:4%;width:30%;height:52%;animation:characterBob 4s ease-in-out infinite;z-index:3}
-.person-head{width:45%;height:31%;margin:auto;border-radius:45% 45% 40% 40%;background:#f1b37d;box-shadow:inset -8px -6px 0 rgba(0,0,0,.12)}
-.person-body{width:78%;height:57%;margin:0 auto;border-radius:45% 45% 15% 15%;background:#20242b}.person-arm{position:absolute;width:16%;height:43%;top:43%;background:#20242b;border-radius:20px}.person-arm-left{left:9%;transform:rotate(28deg)}.person-arm-right{right:9%;transform:rotate(-28deg)}
-.cartoon-signal{width:22px;height:22px;border:4px solid #7cf238;border-radius:50%;animation:signalPulse 2s ease-out infinite}.signal-a{right:29%;top:40%}.signal-b{right:20%;top:34%;animation-delay:1s}
+.theme-visual-cartoon{overflow:hidden;border-radius:40px}
+.cartoon-cloud{width:110px;height:38px;background:#fff;border-radius:40px;opacity:.8;filter:drop-shadow(0 8px 8px rgba(0,0,0,.08));animation:cloudDrift 12s ease-in-out infinite}
+.cloud-a{top:15%;left:3%}.cloud-b{top:28%;right:0;animation-delay:-5s}
+.cartoon-terminal{left:16%;bottom:15%;width:45%;height:32%;border:6px solid #26313d;border-radius:16px;background:#10171d;box-shadow:0 14px 25px rgba(0,0,0,.18);padding:18px;color:#83f04a;font:700 15px/1.5 ui-monospace,monospace;animation:screenPulse 3s ease-in-out infinite}
+.cartoon-terminal strong{display:block;font-size:20px;margin-top:25px;text-align:center}
+.cartoon-person{right:10%;bottom:7%;width:35%;height:55%;animation:characterBob 4s ease-in-out infinite}
+.person-head{width:46%;height:34%;margin:auto;border-radius:45% 45% 40% 40%;background:#f1b37d;box-shadow:inset -8px -6px 0 rgba(0,0,0,.12)}
+.person-body{width:80%;height:55%;margin:0 auto;border-radius:45% 45% 15% 15%;background:#20242b}
+.cartoon-signal{width:22px;height:22px;border:4px solid #7cf238;border-radius:50%;animation:signalPulse 2s ease-out infinite}
+.signal-a{right:28%;top:42%}.signal-b{right:18%;top:36%;animation-delay:1s}
 
-/* 03 — Neumorphism: the shield-in-a-soft-disc from the reference */
 .theme-visual-neumorphism{filter:drop-shadow(10px 14px 20px rgba(0,0,0,.12))}
-.neo-disc{inset:24%;border-radius:50%;display:grid;place-items:center;background:#e8ebf0;box-shadow:inset 14px 14px 28px rgba(0,0,0,.12),inset -14px -14px 28px rgba(255,255,255,.96),10px 16px 32px rgba(0,0,0,.10);animation:neoFloat 5s ease-in-out infinite}
-.neo-shield{width:52%;height:61%;display:grid;place-items:center;clip-path:polygon(50% 0,90% 14%,84% 62%,50% 100%,16% 62%,10% 14%);background:#e8ebf0;color:#c7ced9;filter:drop-shadow(8px 8px 10px rgba(0,0,0,.14)) drop-shadow(-6px -6px 9px rgba(255,255,255,.95));animation:neoShieldPulse 4.5s ease-in-out infinite}
-.neo-shield span{font-size:70px;font-weight:900;color:#c2c9d5;text-shadow:4px 4px 7px rgba(0,0,0,.12),-3px -3px 5px rgba(255,255,255,.95)}
-.neo-ring{inset:10%;border-radius:50%;border:10px solid rgba(255,255,255,.72);box-shadow:inset 7px 7px 14px rgba(0,0,0,.10),7px 7px 14px rgba(255,255,255,.82);animation:neoRingSpin 16s linear infinite}.neo-ring-a{transform:rotateX(68deg)}.neo-ring-b{transform:rotateY(68deg);animation-duration:21s;animation-direction:reverse}
-.neo-dot{width:10px;height:10px;border-radius:50%;background:#9aa4b4;box-shadow:0 0 10px rgba(100,110,130,.2);animation:neoDot 8s linear infinite}.neo-dot-a{left:9%;top:47%}.neo-dot-b{right:9%;bottom:30%;animation-duration:11s}
+.neo-orbit{inset:12%;border-radius:50%;border:12px solid rgba(255,255,255,.75);box-shadow:inset 8px 8px 16px rgba(0,0,0,.12),8px 8px 16px rgba(255,255,255,.8);animation:orbitSpin 14s linear infinite}
+.neo-orbit-a{transform:rotateX(68deg)}.neo-orbit-b{transform:rotateY(68deg);animation-duration:18s}
+.neo-shield{inset:28%;border-radius:50%;display:grid;place-items:center;font-size:90px;font-weight:900;color:#667085;background:#e8ebf0;box-shadow:inset 12px 12px 22px rgba(0,0,0,.12),inset -12px -12px 22px rgba(255,255,255,.95),10px 14px 28px rgba(0,0,0,.1);animation:themeFloat 4s ease-in-out infinite}
+.neo-dot{width:14px;height:14px;border-radius:50%;background:#7d8798;animation:orbitDot 8s linear infinite}.neo-dot-a{left:10%;top:45%}.neo-dot-b{right:10%;bottom:30%;animation-duration:11s}
 
-/* 04 — Space Explorer: astronaut + planet + orbit */
-.theme-visual-space{background:radial-gradient(circle at 62% 44%,rgba(100,145,255,.18),transparent 33%),radial-gradient(circle,#172c58 0,#071226 55%,transparent 72%);border-radius:50%;overflow:hidden}
+.theme-visual-space{background:radial-gradient(circle,#172c58 0,#071226 55%,transparent 70%);border-radius:50%;overflow:hidden}
 .space-stars{inset:0;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:38px 38px;opacity:.45;animation:starDrift 20s linear infinite}
-.space-planet{width:44%;height:44%;right:5%;bottom:13%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d8e5ff,#5e82d0 48%,#24375e 78%);box-shadow:0 0 55px rgba(100,150,255,.45);animation:planetFloat 7s ease-in-out infinite}
-.space-moon{width:13%;height:13%;left:14%;top:24%;border-radius:50%;background:#cfd7e5;box-shadow:0 0 20px rgba(220,235,255,.35);animation:moonOrbit 9s linear infinite}
-.space-astronaut{left:17%;bottom:13%;width:27%;height:48%;filter:drop-shadow(0 10px 16px rgba(0,0,0,.35));animation:astronautFloat 5s ease-in-out infinite;z-index:3}
-.astronaut-helmet{position:absolute;left:24%;top:0;width:53%;height:35%;border-radius:50%;background:linear-gradient(145deg,#f7fbff,#a9bddb);box-shadow:inset -9px -7px 12px rgba(40,60,90,.2)}
-.astronaut-helmet:after{content:"";position:absolute;left:15%;top:22%;width:70%;height:42%;border-radius:45%;background:#263752;box-shadow:inset 0 0 10px rgba(150,200,255,.45)}
-.astronaut-pack{position:absolute;right:5%;top:35%;width:20%;height:37%;border-radius:8px;background:#b8c8dc}
-.astronaut-body{position:absolute;left:16%;top:31%;width:68%;height:47%;border-radius:30% 30% 18% 18%;background:linear-gradient(145deg,#f4f8ff,#9eafc5);box-shadow:inset -10px -8px 12px rgba(40,60,90,.18)}
-.astronaut-leg{position:absolute;top:70%;width:20%;height:28%;border-radius:0 0 12px 12px;background:#a6b6ca}.astronaut-leg-a{left:20%;transform:rotate(8deg)}.astronaut-leg-b{right:20%;transform:rotate(-9deg)}
-.space-orbit{inset:17%;border:1px solid rgba(160,195,255,.35);border-radius:50%;transform:rotateX(68deg);animation:orbitSpin 15s linear infinite}
+.space-planet{width:45%;height:45%;right:8%;bottom:15%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d8e5ff,#5e82d0 48%,#24375e 78%);box-shadow:0 0 55px rgba(100,150,255,.45);animation:themeFloat 7s ease-in-out infinite}
+.space-moon{width:14%;height:14%;left:16%;top:25%;border-radius:50%;background:#cfd7e5;animation:moonOrbit 9s linear infinite}
+.space-astronaut{left:22%;bottom:22%;font-size:82px;filter:drop-shadow(0 8px 15px rgba(0,0,0,.3));animation:astronautFloat 5s ease-in-out infinite}
+.space-orbit{inset:20%;border:1px solid rgba(160,195,255,.35);border-radius:50%;transform:rotateX(68deg);animation:orbitSpin 15s linear infinite}
 
-/* 05 — Glassmorphism: luminous connected sphere */
 .theme-visual-glass{background:radial-gradient(circle at 50% 50%,rgba(120,170,255,.28),transparent 58%);border-radius:35px}
-.glass-haze{inset:23%;border-radius:50%;background:rgba(155,205,255,.18);filter:blur(35px);animation:glassHaze 8s ease-in-out infinite}
-.glass-sphere{inset:20%;border-radius:50%;border:1px solid rgba(255,255,255,.7);background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.38),rgba(80,130,255,.08) 55%,rgba(255,255,255,.02));box-shadow:inset 0 0 35px rgba(255,255,255,.2),0 0 45px rgba(110,150,255,.25);animation:glassFloat 7s ease-in-out infinite;overflow:hidden}
-.glass-meridian{position:absolute;inset:-10%;border:1px solid rgba(255,255,255,.3);border-radius:50%}.meridian-a{transform:rotateY(62deg);animation:glassSpin 13s linear infinite}.meridian-b{transform:rotateY(62deg) scaleX(.55);animation:glassSpin 17s linear infinite reverse}.meridian-c{transform:rotateX(62deg);animation:glassSpinX 19s linear infinite}
-.glass-sphere span{width:8px;height:8px;background:#fff;border-radius:50%;box-shadow:0 0 10px #fff;animation:nodePulse 2s ease-in-out infinite}.glass-sphere span:nth-of-type(1){left:28%;top:20%}.glass-sphere span:nth-of-type(2){left:62%;top:30%}.glass-sphere span:nth-of-type(3){left:40%;top:48%}.glass-sphere span:nth-of-type(4){left:70%;top:60%}.glass-sphere span:nth-of-type(5){left:22%;top:68%}.glass-sphere span:nth-of-type(6){left:55%;top:78%}
-.glass-orbit{inset:10%;border:1px solid rgba(255,255,255,.4);border-radius:50%;animation:glassOrbit 13s linear infinite}.glass-orbit-a{transform:rotateX(68deg)}.glass-orbit-b{transform:rotateY(68deg);animation-duration:17s;animation-direction:reverse}
+.glass-sphere{inset:20%;border-radius:50%;border:1px solid rgba(255,255,255,.65);background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.38),rgba(80,130,255,.08) 55%,rgba(255,255,255,.02));box-shadow:inset 0 0 35px rgba(255,255,255,.2),0 0 45px rgba(110,150,255,.25);animation:globeSpin 10s linear infinite}
+.glass-sphere span{width:8px;height:8px;background:#fff;border-radius:50%;box-shadow:0 0 10px #fff;animation:nodePulse 2s ease-in-out infinite}.glass-sphere span:nth-child(1){left:28%;top:20%}.glass-sphere span:nth-child(2){left:62%;top:30%}.glass-sphere span:nth-child(3){left:40%;top:48%}.glass-sphere span:nth-child(4){left:70%;top:60%}.glass-sphere span:nth-child(5){left:22%;top:68%}.glass-sphere span:nth-child(6){left:55%;top:78%}
+.glass-orbit{inset:10%;border:1px solid rgba(255,255,255,.4);border-radius:50%;animation:orbitSpin 13s linear infinite}.glass-orbit-a{transform:rotateX(68deg)}.glass-orbit-b{transform:rotateY(68deg);animation-duration:17s}
 
-/* 06 — Dark Elegant: faceted black/gold object */
 .theme-visual-dark{background:radial-gradient(circle,rgba(180,140,60,.12),transparent 65%);border-radius:50%}
 .dark-halo{inset:18%;border-radius:50%;box-shadow:0 0 65px rgba(194,151,69,.18);animation:haloBreathe 4s ease-in-out infinite}
-.dark-faceted{inset:24%;background:linear-gradient(135deg,#0d0d0d 0 24%,#4b402c 25% 40%,#161616 41% 68%,#5b4a2d 69% 100%);clip-path:polygon(50% 0,100% 28%,84% 85%,50% 100%,16% 85%,0 28%);animation:facetSpin 14s linear infinite;box-shadow:0 0 35px rgba(180,140,60,.2)}
-.dark-faceted:after{content:"";position:absolute;inset:18%;border:1px solid rgba(228,196,110,.38);clip-path:polygon(50% 0,100% 28%,84% 85%,50% 100%,16% 85%,0 28%);transform:rotate(18deg)}
-.facet-line{position:absolute!important;display:block;inset:10%;border:1px solid rgba(228,196,110,.25);transform-origin:center}.facet-line-a{transform:rotate(30deg)}.facet-line-b{transform:rotate(-30deg)}.facet-line-c{transform:rotate(70deg)}.facet-line-d{transform:rotate(-70deg)}
-.dark-orbit{inset:8%;border:1px solid rgba(220,180,100,.3);border-radius:50%;animation:darkOrbit 15s linear infinite}.dark-orbit-a{transform:rotateX(65deg)}.dark-orbit-b{transform:rotateY(65deg);animation-duration:19s;animation-direction:reverse}
-.dark-spark{width:5px;height:5px;border-radius:50%;background:#e4c46e;box-shadow:0 0 12px #e4c46e;animation:sparkDrift 4s ease-in-out infinite}.spark-a{left:17%;top:29%}.spark-b{right:16%;bottom:27%;animation-delay:-2s}
+.dark-faceted{inset:25%;background:linear-gradient(135deg,#111 0 25%,#3a3225 26% 45%,#171717 46% 70%,#5b4a2d 71% 100%);clip-path:polygon(50% 0,100% 28%,84% 85%,50% 100%,16% 85%,0 28%);animation:facetSpin 12s linear infinite;box-shadow:0 0 35px rgba(180,140,60,.2)}
+.dark-faceted span{position:absolute;inset:20%;border:1px solid rgba(220,180,100,.3);transform:rotate(45deg)}
+.dark-orbit{inset:8%;border:1px solid rgba(220,180,100,.3);border-radius:50%;animation:orbitSpin 15s linear infinite}.dark-orbit-a{transform:rotateX(65deg)}.dark-orbit-b{transform:rotateY(65deg);animation-duration:19s}
 
-/* 07 — Ocean Depths: underwater light, reef and luminous sphere */
 .theme-visual-ocean{overflow:hidden;border-radius:45%;background:linear-gradient(#062a49,#075f88 45%,#012638)}
-.ocean-rays{inset:-10%;background:repeating-linear-gradient(105deg,transparent 0 12%,rgba(160,230,255,.1) 13% 14%,transparent 15% 25%);animation:raySway 8s ease-in-out infinite}
-.ocean-globe{inset:23%;border-radius:50%;border:1px solid rgba(100,220,255,.5);box-shadow:0 0 50px rgba(50,200,255,.35);animation:oceanGlobeFloat 6s ease-in-out infinite;overflow:hidden}
+.ocean-rays{inset:0;background:repeating-linear-gradient(105deg,transparent 0 12%,rgba(160,230,255,.1) 13% 14%,transparent 15% 25%);animation:raySway 8s ease-in-out infinite}
+.ocean-globe{inset:23%;border-radius:50%;border:1px solid rgba(100,220,255,.5);box-shadow:0 0 50px rgba(50,200,255,.35);animation:oceanGlobeFloat 6s ease-in-out infinite}
 .ocean-globe span{position:absolute;width:20%;height:2px;background:rgba(130,230,255,.45);transform-origin:left;animation:nodeWave 4s ease-in-out infinite}.ocean-globe span:nth-child(1){left:20%;top:30%;transform:rotate(30deg)}.ocean-globe span:nth-child(2){left:45%;top:45%;transform:rotate(-25deg)}.ocean-globe span:nth-child(3){left:35%;top:60%;transform:rotate(15deg)}.ocean-globe span:nth-child(4){left:55%;top:25%;transform:rotate(70deg)}.ocean-globe span:nth-child(5){left:60%;top:65%;transform:rotate(-60deg)}
-.ocean-reef{position:absolute;bottom:-4%;width:25%;height:30%;border-radius:55% 45% 0 0;background:linear-gradient(90deg,#0b7c85,#21b8b0,#0a6574);animation:reefSway 5s ease-in-out infinite}.reef-a{left:10%;transform:skewX(-9deg)}.reef-b{right:12%;height:24%;animation-delay:-2s;transform:skewX(10deg)}
 .ocean-bubble{width:8px;height:8px;border:1px solid rgba(200,250,255,.7);border-radius:50%;bottom:5%;animation:bubbleRise 7s linear infinite}.bubble-a{left:18%}.bubble-b{left:58%;animation-delay:2s}.bubble-c{left:78%;animation-delay:4s}
 .ocean-fish{font-size:38px;color:#b5f1ff;animation:fishSwim 10s linear infinite}.fish-a{bottom:22%;left:5%}.fish-b{bottom:38%;right:5%;animation-delay:-5s}
 
-@keyframes themeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes orbitSpin{to{transform:rotateX(68deg) rotateZ(360deg)}}
-@keyframes cloudDrift{50%{transform:translateX(35px)}}
-@keyframes screenPulse{50%{box-shadow:0 14px 30px rgba(0,255,70,.2),inset 0 0 25px rgba(0,255,70,.08)}}
-@keyframes characterBob{50%{transform:translateY(-8px)}}
-@keyframes shieldBob{50%{transform:translateY(-8px) rotate(2deg)}}
-@keyframes signalPulse{0%{transform:scale(.7);opacity:1}100%{transform:scale(2.4);opacity:0}}
-@keyframes satelliteFloat{50%{transform:rotate(-20deg) translateY(-7px)}}
-@keyframes neoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes neoShieldPulse{0%,100%{transform:scale(.98)}50%{transform:scale(1.04)}}
-@keyframes neoRingSpin{to{transform:rotateX(68deg) rotateZ(360deg)}}
-@keyframes neoDot{to{transform:rotate(360deg) translateX(130px) rotate(-360deg)}}
-@keyframes starDrift{to{background-position:120px 80px}}
-@keyframes planetFloat{50%{transform:translateY(-10px) scale(1.02)}}
-@keyframes moonOrbit{to{transform:rotate(360deg) translateX(80px) rotate(-360deg)}}
-@keyframes astronautFloat{50%{transform:translate(8px,-12px) rotate(2deg)}}
-@keyframes glassHaze{50%{transform:scale(1.08);opacity:.55}}
-@keyframes glassFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px) scale(1.02)}}
-@keyframes glassSpin{to{transform:rotateY(360deg)}}
-@keyframes glassSpinX{to{transform:rotateX(360deg)}}
-@keyframes glassOrbit{to{transform:rotateX(68deg) rotateZ(360deg)}}
-@keyframes nodePulse{50%{transform:scale(1.8);opacity:.55}}
-@keyframes haloBreathe{50%{transform:scale(1.08);opacity:.7}}
-@keyframes facetSpin{to{transform:rotateY(360deg) rotateZ(2deg)}}
-@keyframes darkOrbit{to{transform:rotateX(65deg) rotateZ(360deg)}}
-@keyframes sparkDrift{50%{transform:translate(20px,-18px) scale(1.5);opacity:.5}}
-@keyframes raySway{50%{transform:translateX(18px) skewX(-4deg)}}
-@keyframes oceanGlobeFloat{50%{transform:translateY(-10px) rotate(5deg)}}
-@keyframes nodeWave{50%{opacity:.35;transform:scaleX(1.4)}}
-@keyframes reefSway{50%{transform:skewX(-4deg) translateY(-3px)}}
-@keyframes bubbleRise{to{transform:translateY(-420px);opacity:0}}
-@keyframes fishSwim{0%{transform:translateX(-30px)}50%{transform:translateX(180px) translateY(-15px)}100%{transform:translateX(360px)}}
+@keyframes themeFloat{50%{transform:translateY(-12px)}}@keyframes orbitSpin{to{transform:rotateX(68deg) rotateZ(360deg)}}@keyframes globeSpin{to{transform:rotateY(360deg)}}@keyframes facetSpin{to{transform:rotateY(360deg)}}@keyframes cloudDrift{50%{transform:translateX(35px)}}@keyframes screenPulse{50%{box-shadow:0 14px 30px rgba(0,255,70,.2),inset 0 0 25px rgba(0,255,70,.08)}}@keyframes characterBob{50%{transform:translateY(-8px)}}@keyframes signalPulse{0%{transform:scale(.7);opacity:1}100%{transform:scale(2.4);opacity:0}}@keyframes orbitDot{to{transform:rotate(360deg) translateX(120px) rotate(-360deg)}}@keyframes starDrift{to{background-position:120px 80px}}@keyframes moonOrbit{to{transform:rotate(360deg) translateX(80px) rotate(-360deg)}}@keyframes astronautFloat{50%{transform:translate(8px,-12px) rotate(2deg)}}@keyframes nodePulse{50%{transform:scale(1.8);opacity:.55}}@keyframes haloBreathe{50%{transform:scale(1.08);opacity:.7}}@keyframes raySway{50%{transform:translateX(18px) skewX(-4deg)}}@keyframes oceanGlobeFloat{50%{transform:translateY(-10px) rotate(5deg)}}@keyframes nodeWave{50%{opacity:.35;transform:scaleX(1.4)}}@keyframes bubbleRise{to{transform:translateY(-420px);opacity:0}}@keyframes fishSwim{0%{transform:translateX(-30px)}50%{transform:translateX(180px) translateY(-15px)}100%{transform:translateX(360px)}}
 
-@media (max-width:760px){.theme-visual{width:min(78vw,420px);height:min(78vw,420px);min-width:240px;min-height:240px}.theme-visual-cartoon{border-radius:28px}.neo-shield span{font-size:54px}}
-@media (prefers-reduced-motion:reduce){.theme-visual *{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){
+  .theme-visual *{animation:none!important;transition:none!important}
+}
