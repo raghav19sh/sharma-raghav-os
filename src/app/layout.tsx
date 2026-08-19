@@ -3,7 +3,6 @@ import "./globals.css";
 import { AppShell } from "@/components/shell/AppShell";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getCurrentPublicTheme } from "@/lib/theme";
-import { BootSequence } from "@/components/intro/BootSequence";
 export const dynamic = "force-dynamic";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sharma-raghav.com";
@@ -42,7 +41,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <a href="#main-content" className="skip-link">Skip to content</a>
         <AppShell>{children}</AppShell>
-        <BootSequence />
       </body>
     </html>
   );

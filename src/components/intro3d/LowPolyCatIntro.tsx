@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 const INTRO_DURATION = 10000;
 const INTRO_KEY = "rsos-cat-intro-v1";
+const INTRO_INTERVAL_MS = 24 * 60 * 60 * 1000; // once per day
 
 export function LowPolyCatIntro() {
   const [visible, setVisible] = useState(false);
@@ -28,7 +29,7 @@ export function LowPolyCatIntro() {
       params.get("cat") === "1";
 
     if (reset) {
-      sessionStorage.removeItem(INTRO_KEY);
+      localStorage.removeItem(INTRO_KEY);
 
       window.history.replaceState(
         {},
@@ -37,7 +38,10 @@ export function LowPolyCatIntro() {
       );
     }
 
-    if (!force && sessionStorage.getItem(INTRO_KEY) === "1") {
+    const lastShown = Number(localStorage.getItem(INTRO_KEY) ?? 0);
+    const seenRecently = Date.now() - lastShown < INTRO_INTERVAL_MS;
+
+    if (!force && seenRecently) {
       return;
     }
 
@@ -57,7 +61,7 @@ export function LowPolyCatIntro() {
 
       finishing.current = true;
 
-      sessionStorage.setItem(INTRO_KEY, "1");
+      localStorage.setItem(INTRO_KEY, String(Date.now()));
 
       setPhase("exit");
 
