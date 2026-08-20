@@ -15,19 +15,16 @@ const STRIDE_RATE = 5.4; // gait cycles per world-unit of travel
 const START_X = -7.2;
 const END_X = 7.2;
 
-const FUR_ORANGE = "#e8792c"; // primary coat
-const FUR_ORANGE_DEEP = "#c25f1c"; // ears, paws, tail-tip shading
-const FUR_WHITE = "#f6efe2"; // belly, chest, muzzle
-const EYE_COLOR = "#8fd45a";
-const NOSE_COLOR = "#c96b5a";
+const FUR_BLACK = "#111111"; // uniform matte coat — the only color used
+const FUR_BLACK_SOFT = "#1a1a1a"; // pads/tail-tip, subtle separation only
 
-function furMaterial(color: string, roughness = 0.78) {
+function furMaterial(color: string = FUR_BLACK, roughness = 0.55) {
   return (
     <meshStandardMaterial
       color={color}
       flatShading
       roughness={roughness}
-      metalness={0.04}
+      metalness={0.08}
     />
   );
 }
@@ -43,13 +40,13 @@ function Leg({
 }) {
   return (
     <group position={pivot} ref={legRef}>
-      <mesh position={[0, -0.34, 0]} castShadow>
-        <cylinderGeometry args={[0.09, 0.07, 0.68, 5]} />
-        {furMaterial(FUR_ORANGE)}
+      <mesh position={[0, -0.34, 0]} rotation={[0, 0, 0]} castShadow>
+        <cylinderGeometry args={[0.1, 0.08, 0.68, 4]} />
+        {furMaterial()}
       </mesh>
       <mesh position={[0, -0.66, 0.03]} castShadow>
-        <boxGeometry args={[0.14, 0.1, 0.2]} />
-        {furMaterial(FUR_WHITE, 0.85)}
+        <boxGeometry args={[0.16, 0.1, 0.22]} />
+        {furMaterial(FUR_BLACK_SOFT)}
       </mesh>
     </group>
   );
@@ -126,85 +123,76 @@ function CatRig() {
 
   return (
     <group ref={group} position={[START_X, 0, 0]}>
-      {/* Body */}
+      {/* Body — stretched octahedron: a sharp faceted ridge along the
+          spine and belly, the signature look of these low-poly statues */}
       <group ref={body} position={[0, 0.98, 0]}>
-        <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.5, 0.58, 1.55, 7, 1]} />
-          {furMaterial(FUR_ORANGE)}
-        </mesh>
-        <mesh position={[0, -0.22, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
-          <cylinderGeometry args={[0.32, 0.38, 1.3, 6, 1]} />
-          {furMaterial(FUR_WHITE, 0.85)}
+        <mesh scale={[1.7, 0.95, 1.05]} castShadow receiveShadow>
+          <octahedronGeometry args={[0.55, 0]} />
+          {furMaterial()}
         </mesh>
       </group>
 
+      {/* Chest / haunch wedge, angular front */}
+      <mesh
+        position={[0.55, 0.78, 0]}
+        scale={[0.75, 1.1, 0.95]}
+        castShadow
+      >
+        <octahedronGeometry args={[0.34, 0]} />
+        {furMaterial(FUR_BLACK_SOFT)}
+      </mesh>
+
       {/* Neck */}
       <mesh position={[0.72, 1.12, 0]} rotation={[0, 0, -0.5]} castShadow>
-        <cylinderGeometry args={[0.24, 0.32, 0.55, 6]} />
-        {furMaterial(FUR_ORANGE)}
+        <cylinderGeometry args={[0.22, 0.3, 0.5, 5]} />
+        {furMaterial()}
       </mesh>
 
       {/* Head */}
       <group ref={head} position={[1.05, 1.32, 0]}>
-        <mesh castShadow receiveShadow>
-          <icosahedronGeometry args={[0.42, 0]} />
-          {furMaterial(FUR_ORANGE)}
+        <mesh scale={[1.15, 1, 1]} castShadow receiveShadow>
+          <octahedronGeometry args={[0.4, 0]} />
+          {furMaterial()}
         </mesh>
 
-        {/* Ears */}
-        <mesh position={[0.14, 0.4, 0.24]} rotation={[0.2, 0, -0.15]} castShadow>
-          <coneGeometry args={[0.16, 0.34, 4]} />
-          {furMaterial(FUR_ORANGE_DEEP)}
+        {/* Ears — sharp low-poly pyramids */}
+        <mesh position={[0.1, 0.42, 0.22]} rotation={[0.2, 0, -0.1]} castShadow>
+          <coneGeometry args={[0.17, 0.36, 4]} />
+          {furMaterial()}
         </mesh>
-        <mesh position={[0.14, 0.4, -0.24]} rotation={[-0.2, 0, -0.15]} castShadow>
-          <coneGeometry args={[0.16, 0.34, 4]} />
-          {furMaterial(FUR_ORANGE_DEEP)}
-        </mesh>
-
-        {/* Snout */}
-        <mesh position={[0.42, -0.06, 0]} castShadow>
-          <octahedronGeometry args={[0.18, 0]} />
-          {furMaterial(FUR_WHITE, 0.85)}
+        <mesh position={[0.1, 0.42, -0.22]} rotation={[-0.2, 0, -0.1]} castShadow>
+          <coneGeometry args={[0.17, 0.36, 4]} />
+          {furMaterial()}
         </mesh>
 
-        {/* Nose */}
-        <mesh position={[0.58, -0.06, 0]}>
-          <tetrahedronGeometry args={[0.06, 0]} />
-          <meshStandardMaterial color={NOSE_COLOR} flatShading />
+        {/* Snout — a single angular wedge, no separate color */}
+        <mesh position={[0.5, -0.08, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <coneGeometry args={[0.16, 0.32, 4]} />
+          {furMaterial()}
         </mesh>
 
-        {/* Eyes */}
-        <mesh position={[0.32, 0.08, 0.18]}>
-          <octahedronGeometry args={[0.06, 0]} />
-          <meshStandardMaterial
-            color={EYE_COLOR}
-            flatShading
-            emissive={EYE_COLOR}
-            emissiveIntensity={0.15}
-          />
+        {/* Eyes — small recessed facets, same material as the coat */}
+        <mesh position={[0.28, 0.1, 0.17]} scale={[0.5, 0.7, 0.5]}>
+          <octahedronGeometry args={[0.08, 0]} />
+          {furMaterial(FUR_BLACK_SOFT)}
         </mesh>
-        <mesh position={[0.32, 0.08, -0.18]}>
-          <octahedronGeometry args={[0.06, 0]} />
-          <meshStandardMaterial
-            color={EYE_COLOR}
-            flatShading
-            emissive={EYE_COLOR}
-            emissiveIntensity={0.15}
-          />
+        <mesh position={[0.28, 0.1, -0.17]} scale={[0.5, 0.7, 0.5]}>
+          <octahedronGeometry args={[0.08, 0]} />
+          {furMaterial(FUR_BLACK_SOFT)}
         </mesh>
       </group>
 
       {/* Tail: two-segment chain for a natural taper + wag */}
-      <group position={[-0.78, 1.1, 0]} rotation={[0, 0, 0.7]}>
+      <group position={[-0.85, 1.1, 0]} rotation={[0, 0, 0.7]}>
         <group ref={tail1}>
           <mesh position={[0, -0.28, 0]} castShadow>
-            <cylinderGeometry args={[0.09, 0.12, 0.56, 5]} />
-            {furMaterial(FUR_ORANGE)}
+            <cylinderGeometry args={[0.1, 0.13, 0.56, 4]} />
+            {furMaterial()}
           </mesh>
           <group ref={tail2} position={[0, -0.56, 0]} rotation={[0, 0, -0.35]}>
-            <mesh position={[0, -0.22, 0]} castShadow>
-              <cylinderGeometry args={[0.05, 0.09, 0.46, 5]} />
-              {furMaterial(FUR_WHITE, 0.85)}
+            <mesh position={[0, -0.2, 0]} castShadow>
+              <cylinderGeometry args={[0.05, 0.1, 0.42, 4]} />
+              {furMaterial(FUR_BLACK_SOFT)}
             </mesh>
           </group>
         </group>
@@ -244,15 +232,18 @@ function Ground() {
 function WalkScene({ onComplete }: { onComplete: () => void }) {
   return (
     <>
-      <ambientLight intensity={0.55} />
+      <ambientLight intensity={0.32} />
       <directionalLight
-        position={[4, 6, 5]}
-        intensity={1.4}
+        position={[3, 6, 6]}
+        intensity={2.1}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
-      <directionalLight position={[-5, 3, -4]} intensity={0.35} color="#8fb3ff" />
+      {/* Rim light from behind-above so the black facets separate from
+          the dark backdrop instead of disappearing into it. */}
+      <directionalLight position={[-6, 4, -3]} intensity={1.1} color="#dfe8ff" />
+      <directionalLight position={[0, 1.5, 6]} intensity={0.4} color="#ffffff" />
 
       <Ground />
       <CatCompletionWatcher onComplete={onComplete} />
