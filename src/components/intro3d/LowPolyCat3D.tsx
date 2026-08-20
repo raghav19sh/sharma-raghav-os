@@ -15,12 +15,11 @@ const STRIDE_RATE = 5.4; // gait cycles per world-unit of travel
 const START_X = -7.2;
 const END_X = 7.2;
 
-const FUR_DARK = "#232220";
-const FUR_MID = "#4c4740";
-const FUR_LIGHT = "#736c60";
-const FUR_BELLY = "#8f8779";
-const EYE_COLOR = "#d9c073";
-const NOSE_COLOR = "#141311";
+const FUR_ORANGE = "#e8792c"; // primary coat
+const FUR_ORANGE_DEEP = "#c25f1c"; // ears, paws, tail-tip shading
+const FUR_WHITE = "#f6efe2"; // belly, chest, muzzle
+const EYE_COLOR = "#8fd45a";
+const NOSE_COLOR = "#c96b5a";
 
 function furMaterial(color: string, roughness = 0.78) {
   return (
@@ -46,11 +45,11 @@ function Leg({
     <group position={pivot} ref={legRef}>
       <mesh position={[0, -0.34, 0]} castShadow>
         <cylinderGeometry args={[0.09, 0.07, 0.68, 5]} />
-        {furMaterial(FUR_MID)}
+        {furMaterial(FUR_ORANGE)}
       </mesh>
       <mesh position={[0, -0.66, 0.03]} castShadow>
         <boxGeometry args={[0.14, 0.1, 0.2]} />
-        {furMaterial(FUR_DARK)}
+        {furMaterial(FUR_WHITE, 0.85)}
       </mesh>
     </group>
   );
@@ -131,41 +130,41 @@ function CatRig() {
       <group ref={body} position={[0, 0.98, 0]}>
         <mesh rotation={[0, 0, Math.PI / 2]} castShadow receiveShadow>
           <cylinderGeometry args={[0.5, 0.58, 1.55, 7, 1]} />
-          {furMaterial(FUR_MID)}
+          {furMaterial(FUR_ORANGE)}
         </mesh>
         <mesh position={[0, -0.22, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
           <cylinderGeometry args={[0.32, 0.38, 1.3, 6, 1]} />
-          {furMaterial(FUR_BELLY, 0.85)}
+          {furMaterial(FUR_WHITE, 0.85)}
         </mesh>
       </group>
 
       {/* Neck */}
       <mesh position={[0.72, 1.12, 0]} rotation={[0, 0, -0.5]} castShadow>
         <cylinderGeometry args={[0.24, 0.32, 0.55, 6]} />
-        {furMaterial(FUR_MID)}
+        {furMaterial(FUR_ORANGE)}
       </mesh>
 
       {/* Head */}
       <group ref={head} position={[1.05, 1.32, 0]}>
         <mesh castShadow receiveShadow>
           <icosahedronGeometry args={[0.42, 0]} />
-          {furMaterial(FUR_LIGHT)}
+          {furMaterial(FUR_ORANGE)}
         </mesh>
 
         {/* Ears */}
         <mesh position={[0.14, 0.4, 0.24]} rotation={[0.2, 0, -0.15]} castShadow>
           <coneGeometry args={[0.16, 0.34, 4]} />
-          {furMaterial(FUR_DARK)}
+          {furMaterial(FUR_ORANGE_DEEP)}
         </mesh>
         <mesh position={[0.14, 0.4, -0.24]} rotation={[-0.2, 0, -0.15]} castShadow>
           <coneGeometry args={[0.16, 0.34, 4]} />
-          {furMaterial(FUR_DARK)}
+          {furMaterial(FUR_ORANGE_DEEP)}
         </mesh>
 
         {/* Snout */}
         <mesh position={[0.42, -0.06, 0]} castShadow>
           <octahedronGeometry args={[0.18, 0]} />
-          {furMaterial(FUR_LIGHT)}
+          {furMaterial(FUR_WHITE, 0.85)}
         </mesh>
 
         {/* Nose */}
@@ -200,12 +199,12 @@ function CatRig() {
         <group ref={tail1}>
           <mesh position={[0, -0.28, 0]} castShadow>
             <cylinderGeometry args={[0.09, 0.12, 0.56, 5]} />
-            {furMaterial(FUR_MID)}
+            {furMaterial(FUR_ORANGE)}
           </mesh>
           <group ref={tail2} position={[0, -0.56, 0]} rotation={[0, 0, -0.35]}>
             <mesh position={[0, -0.22, 0]} castShadow>
               <cylinderGeometry args={[0.05, 0.09, 0.46, 5]} />
-              {furMaterial(FUR_DARK)}
+              {furMaterial(FUR_WHITE, 0.85)}
             </mesh>
           </group>
         </group>
