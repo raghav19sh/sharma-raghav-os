@@ -55,7 +55,7 @@ export function Sidebar({ open, onNavigate }: { open: boolean; onNavigate?: () =
   const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <aside className={`w-[252px] shrink-0 sticky top-[68px] h-[calc(100vh-68px)] overflow-y-auto border-r border-border bg-bg py-4 px-3 flex flex-col z-[91] max-[980px]:fixed max-[980px]:left-0 max-[980px]:top-[68px] max-[980px]:transition-transform max-[980px]:duration-large ${open ? "max-[980px]:translate-x-0" : "max-[980px]:-translate-x-full"}`}>
+    <aside className={`sidebar w-[252px] shrink-0 sticky top-[68px] h-[calc(100vh-68px)] overflow-y-auto border-r border-border bg-bg py-4 px-3 flex flex-col z-[91] max-[980px]:fixed max-[980px]:left-0 max-[980px]:top-[68px] max-[980px]:transition-transform max-[980px]:duration-large ${open ? "max-[980px]:translate-x-0" : "max-[980px]:-translate-x-full"}`}>
       {SECTIONS.map(({ group, label }) => {
         const items = PAGES.filter((p) => p.group === group);
         return (

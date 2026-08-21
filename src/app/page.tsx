@@ -28,6 +28,31 @@ export default async function CommandCenterPage() {
     getCurrentPublicTheme(supabase),
   ]);
 
+  if (publicTheme === "immersive") {
+    const [{ data: profile }, { data: media }] = await Promise.all([
+      supabase.from("profiles").select("*").maybeSingle(),
+      supabase.from("media").select("*").eq("visibility", "public").eq("kind", "image").order("created_at", { ascending: false }).limit(6),
+    ]);
+
+    const publicMedia = (media ?? []).map((item) => ({
+      ...item,
+      storage_path: supabase.storage.from("media").getPublicUrl(item.storage_path).data.publicUrl,
+    }));
+
+    const { ImmersiveHome } = await import("@/components/ImmersiveHome");
+    return (
+      <ImmersiveHome
+        profile={profile ?? null}
+        projects={projects.data}
+        research={research.data}
+        timeline={timeline}
+        status={status}
+        media={publicMedia}
+        publicTheme={publicTheme}
+      />
+    );
+  }
+
   return (
     <>
     <LowPolyCatIntro />

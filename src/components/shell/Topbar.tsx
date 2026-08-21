@@ -15,7 +15,7 @@ export function Topbar({
 }) {
 
   return (
-    <header className="sticky top-0 z-[100] flex items-center gap-5 h-[68px] px-6 border-b border-border bg-bg/90 backdrop-blur-md">
+    <header className="topbar sticky top-0 z-[100] flex items-center gap-5 h-[68px] px-6 border-b border-border bg-bg/90 backdrop-blur-md">
       <div className="flex items-center gap-3 shrink-0">
         <button
           className="hidden max-[980px]:flex w-9 h-9 rounded-btn border border-border bg-surface items-center justify-center"

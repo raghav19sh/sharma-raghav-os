@@ -41,7 +41,7 @@ export function AppearancePicker({
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 max-[700px]:grid-cols-1">
+      <div className="grid grid-cols-3 gap-3 max-[1000px]:grid-cols-2 max-[700px]:grid-cols-1">
         {themes.map((theme) => {
           const active = selected === theme.id;
           return (

@@ -7,6 +7,7 @@ import { Topbar } from "./Topbar";
 import { SearchModal } from "@/components/search/SearchModal";
 import { MusicPlayer } from "./MusicPlayer";
 import { Minesweeper } from "./Minesweeper";
+import { ImmersiveNav } from "./ImmersiveNav";
 export function AppShell({
   children,
 }: {
@@ -40,6 +41,8 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-bg text-text-1">
+      <ImmersiveNav />
+
       {/* TOPBAR */}
       <Topbar
         mobileNavOpen={mobileNavOpen}

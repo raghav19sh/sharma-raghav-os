@@ -8,6 +8,7 @@ export const PUBLIC_THEMES = [
   { id: "glass", name: "Glassmorphism", description: "Translucent, luminous UI", icon: "🫧" },
   { id: "dark-elegant", name: "Dark Elegant", description: "Premium black and gold", icon: "✦" },
   { id: "ocean", name: "Ocean Depths", description: "Deep blue underwater world", icon: "🌊" },
+  { id: "immersive", name: "Immersive Studio", description: "Editorial black, lime signal, oversized type", icon: "◼" },
 ] as const;
 
 export type PublicTheme = (typeof PUBLIC_THEMES)[number]["id"];
