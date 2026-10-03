@@ -41,6 +41,11 @@ type WindowId =
   | "media"
   | "system"
   | "games"
+  | "minesweeper"
+  | "wordle"
+  | "ballmaze"
+  | "logicsim"
+  | "viewer"
   | "terminal"
   | "music";
 
@@ -105,10 +110,10 @@ const FOLDERS: Record<Exclude<WindowId, "terminal" | "music">, FolderItem[]> = {
     { name: "privacy", description: "Privacy information", path: "/privacy", icon: Shield },
   ],
   games: [
-    { name: "Minesweeper", description: "Minesweeper", icon: Gamepad2 },
-    { name: "Wordle", description: "Wordle", icon: Gamepad2 },
-    { name: "Ball Maze", description: "3D Ball Maze", icon: Gamepad2 },
-    { name: "Logic Sim", description: "Logic Simulator", icon: Gamepad2 },
+    { name: "Minesweeper", description: "Local Minesweeper", game: "minesweeper", icon: Gamepad2 },
+    { name: "Wordle", description: "Local Wordle", game: "wordle", icon: Gamepad2 },
+    { name: "Ball Maze", description: "Local Ball Maze", game: "ballmaze", icon: Gamepad2 },
+    { name: "Logic Sim", description: "Local Logic Simulator", game: "logicsim", icon: Gamepad2 },
   ],
 };
 
@@ -136,6 +141,11 @@ const APP_LABELS: Record<WindowId, string> = {
   media: "Media",
   system: "System",
   games: "Games",
+  minesweeper: "Minesweeper",
+  wordle: "Wordle",
+  ballmaze: "Ball Maze",
+  logicsim: "Logic Sim",
+  viewer: "Page Viewer",
   terminal: "Terminal",
   music: "Music Player",
 };
@@ -153,6 +163,7 @@ export default function ProzillaDesktop({ status }: { status: StatusSnapshot }) 
   const [maximized, setMaximized] = useState(false);
   const [powerMenu, setPowerMenu] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [viewerPath, setViewerPath] = useState<string | null>(null);
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -182,19 +193,31 @@ export default function ProzillaDesktop({ status }: { status: StatusSnapshot }) 
   function openRoute(path: string) {
     const routes: Record<string, WindowId> = {
       "/about": "about",
+      "/now": "viewer",
+      "/timeline": "viewer",
       "/research": "research",
-      "/engineering": "projects",
-      "/security-lab": "security",
-      "/journal": "journal",
+      "/reading-room": "viewer",
+      "/observatory": "viewer",
       "/knowledge": "knowledge",
-      "/learning": "learning",
+      "/engineering": "projects",
+      "/developer-workspace": "viewer",
+      "/changelog": "viewer",
+      "/security-lab": "security",
+      "/soc": "viewer",
+      "/public-api": "viewer",
+      "/journal": "journal",
       "/media-library": "media",
+      "/learning": "learning",
+      "/learning-hub": "viewer",
+      "/docs": "viewer",
+      "/privacy": "viewer",
       "/settings": "system",
     };
 
     const windowId = routes[path];
 
     if (windowId) {
+      if (windowId === "viewer") setViewerPath(path);
       launch(windowId);
     }
   }
@@ -290,6 +313,11 @@ export default function ProzillaDesktop({ status }: { status: StatusSnapshot }) 
                 <div className="prozilla-window__body">
                   {id === "terminal" ? <PortfolioTerminal onLaunch={launch} /> :
                     id === "music" ? <MusicApp /> :
+                    id === "viewer" ? <InternalPageViewer path={viewerPath} /> :
+                    id === "minesweeper" ? <Minesweeper /> :
+                    id === "wordle" ? <Wordle /> :
+                    id === "ballmaze" ? <BallMaze /> :
+                    id === "logicsim" ? <LogicSim /> :
                     <FolderView id={id} onOpenRoute={openRoute} onLaunch={launch} />}
                 </div>
               </section>
@@ -391,6 +419,223 @@ function FolderView({
 }
 
 
+
+
+function InternalPageViewer({ path }: { path: string | null }) {
+  if (!path) {
+    return <div className="prozilla-folder-note">Select a page from a portfolio folder.</div>;
+  }
+
+  const title = path.split("/").filter(Boolean).pop()?.replace(/-/g, " ") ?? "page";
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 520, background: "#09090b" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderBottom: "1px solid rgba(255,255,255,.08)" }}>
+        <Globe2 size={14} />
+        <span style={{ textTransform: "capitalize", fontSize: 12 }}>{title}</span>
+        <span style={{ opacity: .45, fontSize: 11 }}>{path}</span>
+      </div>
+      <iframe
+        key={path}
+        src={path}
+        title={title}
+        style={{ flex: 1, width: "100%", border: 0, background: "#fff" }}
+      />
+    </div>
+  );
+}
+
+function GamePanel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ minHeight: 500, padding: 20, background: "#09090b", color: "#f4f4f5", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
+        <Gamepad2 size={17} />
+        <strong>{title}</strong>
+        <span style={{ opacity: .45, fontSize: 11 }}>LOCAL / OFFLINE</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Minesweeper() {
+  const size = 8;
+  const mines = 10;
+  const makeBoard = () => {
+    const cells = Array.from({ length: size * size }, () => ({ mine: false, open: false, flag: false }));
+    let placed = 0;
+    while (placed < mines) {
+      const i = Math.floor(Math.random() * cells.length);
+      if (!cells[i].mine) { cells[i].mine = true; placed++; }
+    }
+    return cells;
+  };
+  const [board, setBoard] = useState(makeBoard);
+  const [dead, setDead] = useState(false);
+  const [won, setWon] = useState(false);
+
+  const adjacent = (index: number) => {
+    const row = Math.floor(index / size);
+    const col = index % size;
+    const out: number[] = [];
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+      if (!dr && !dc) continue;
+      const r = row + dr, c = col + dc;
+      if (r >= 0 && r < size && c >= 0 && c < size) out.push(r * size + c);
+    }
+    return out;
+  };
+
+  const count = (cells: typeof board, i: number) => adjacent(i).filter((n) => cells[n].mine).length;
+
+  const reveal = (index: number) => {
+    if (dead || won || board[index].open || board[index].flag) return;
+    const next = board.map((x) => ({ ...x }));
+    if (next[index].mine) {
+      next.forEach((x) => { if (x.mine) x.open = true; });
+      setBoard(next);
+      setDead(true);
+      return;
+    }
+    const queue = [index];
+    const seen = new Set<number>();
+    while (queue.length) {
+      const i = queue.shift()!;
+      if (seen.has(i) || next[i].mine || next[i].flag) continue;
+      seen.add(i);
+      next[i].open = true;
+      if (count(next, i) === 0) adjacent(i).forEach((n) => { if (!seen.has(n)) queue.push(n); });
+    }
+    setBoard(next);
+    const safe = next.filter((x) => !x.mine).every((x) => x.open);
+    if (safe) setWon(true);
+  };
+
+  const toggleFlag = (e: React.MouseEvent, index: number) => {
+    e.preventDefault();
+    if (dead || won || board[index].open) return;
+    setBoard((current) => current.map((x, i) => i === index ? { ...x, flag: !x.flag } : x));
+  };
+
+  return (
+    <GamePanel title="Minesweeper">
+      <div style={{ display: "grid", gridTemplateColumns: \`repeat(\${size}, 42px)\`, gap: 3, width: "max-content" }}>
+        {board.map((cell, i) => {
+          const n = count(board, i);
+          return <button key={i} onClick={() => reveal(i)} onContextMenu={(e) => toggleFlag(e, i)}
+            style={{ width: 42, height: 42, border: "1px solid #27272a", background: cell.open ? "#18181b" : "#27272a", color: cell.mine ? "#f87171" : "#e4e4e7", cursor: "pointer", fontWeight: 700 }}>
+            {cell.open ? (cell.mine ? "✹" : n || "") : (cell.flag ? "⚑" : "")}
+          </button>;
+        })}
+      </div>
+      <p style={{ opacity: .65, fontSize: 12 }}>{dead ? "Mine hit." : won ? "Cleared." : "Left click reveal · right click flag"}</p>
+      <button onClick={() => { setBoard(makeBoard()); setDead(false); setWon(false); }} style={{ padding: "8px 12px", border: "1px solid #3f3f46", background: "#18181b", color: "inherit" }}>New game</button>
+    </GamePanel>
+  );
+}
+
+function Wordle() {
+  const words = ["CRANE", "SHARE", "LIGHT", "MOUSE", "PLANT", "WORLD", "TRUST", "STACK"];
+  const [target, setTarget] = useState(() => words[Math.floor(Math.random() * words.length)]);
+  const [guess, setGuess] = useState("");
+  const [rows, setRows] = useState<string[]>([]);
+  const done = rows.includes(target) || rows.length >= 6;
+
+  const submit = () => {
+    const value = guess.trim().toUpperCase();
+    if (value.length !== 5 || done) return;
+    setRows((r) => [...r, value]);
+    setGuess("");
+  };
+
+  const reset = () => { setRows([]); setGuess(""); setTarget(words[Math.floor(Math.random() * words.length)]); };
+
+  const colorFor = (letter: string, i: number) => {
+    if (letter === target[i]) return "#166534";
+    if (target.includes(letter)) return "#854d0e";
+    return "#27272a";
+  };
+
+  return (
+    <GamePanel title="Wordle">
+      <div style={{ display: "grid", gap: 5, width: "max-content" }}>
+        {Array.from({ length: 6 }, (_, row) => {
+          const value = rows[row] ?? (row === rows.length ? guess.toUpperCase() : "");
+          return <div key={row} style={{ display: "grid", gridTemplateColumns: "repeat(5, 48px)", gap: 5 }}>
+            {Array.from({ length: 5 }, (_, i) => <div key={i} style={{ width: 48, height: 48, display: "grid", placeItems: "center", border: "1px solid #3f3f46", background: rows[row] ? colorFor(value[i] ?? "", i) : "#18181b", fontWeight: 800 }}>{value[i] ?? ""}</div>)}
+          </div>;
+        })}
+      </div>
+      <input value={guess} maxLength={5} onChange={(e) => setGuess(e.target.value.replace(/[^a-z]/gi, ""))} onKeyDown={(e) => e.key === "Enter" && submit()} placeholder="5 letters" style={{ marginTop: 14, padding: 9, background: "#18181b", color: "inherit", border: "1px solid #3f3f46" }} />
+      <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+        <button onClick={submit} style={{ padding: "8px 12px", border: "1px solid #3f3f46", background: "#18181b", color: "inherit" }}>Guess</button>
+        <button onClick={reset} style={{ padding: "8px 12px", border: "1px solid #3f3f46", background: "#18181b", color: "inherit" }}>New game</button>
+      </div>
+      <p style={{ opacity: .65, fontSize: 12 }}>{rows.includes(target) ? "Solved." : rows.length >= 6 ? \`Word: \${target}\` : "Green = correct · amber = present"}</p>
+    </GamePanel>
+  );
+}
+
+function BallMaze() {
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [won, setWon] = useState(false);
+  const walls = new Set(["1,0", "1,1", "3,1", "3,2", "0,3", "2,3", "4,3"]);
+  const move = (dx: number, dy: number) => setPos((p) => {
+    if (won) return p;
+    const nx = Math.max(0, Math.min(4, p.x + dx));
+    const ny = Math.max(0, Math.min(4, p.y + dy));
+    if (walls.has(\`\${nx},\${ny}\`)) return p;
+    if (nx === 4 && ny === 4) setWon(true);
+    return { x: nx, y: ny };
+  });
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) e.preventDefault();
+      if (e.key === "ArrowUp") move(0, -1);
+      if (e.key === "ArrowDown") move(0, 1);
+      if (e.key === "ArrowLeft") move(-1, 0);
+      if (e.key === "ArrowRight") move(1, 0);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
+
+  return (
+    <GamePanel title="Ball Maze">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 54px)", gap: 4, width: "max-content" }}>
+        {Array.from({ length: 25 }, (_, i) => {
+          const x = i % 5, y = Math.floor(i / 5), wall = walls.has(\`\${x},\${y}\`);
+          const player = pos.x === x && pos.y === y;
+          return <div key={i} style={{ width: 54, height: 54, display: "grid", placeItems: "center", background: wall ? "#18181b" : "#111113", border: "1px solid #27272a" }}>{player ? "●" : x === 4 && y === 4 ? "◎" : ""}</div>;
+        })}
+      </div>
+      <p style={{ opacity: .65, fontSize: 12 }}>{won ? "Maze solved." : "Use arrow keys. Reach ◎."}</p>
+      <button onClick={() => { setPos({ x: 0, y: 0 }); setWon(false); }} style={{ padding: "8px 12px", border: "1px solid #3f3f46", background: "#18181b", color: "inherit" }}>Reset</button>
+    </GamePanel>
+  );
+}
+
+function LogicSim() {
+  const [a, setA] = useState(false);
+  const [b, setB] = useState(false);
+  const [gate, setGate] = useState<"AND" | "OR" | "XOR" | "NOT">("AND");
+  const out = gate === "AND" ? a && b : gate === "OR" ? a || b : gate === "XOR" ? a !== b : !a;
+  return (
+    <GamePanel title="Logic Sim">
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
+        <button onClick={() => setA(!a)} style={{ padding: 12, border: "1px solid #3f3f46", background: a ? "#166534" : "#18181b", color: "inherit" }}>INPUT A: {a ? "1" : "0"}</button>
+        <button onClick={() => setB(!b)} disabled={gate === "NOT"} style={{ padding: 12, border: "1px solid #3f3f46", background: b ? "#166534" : "#18181b", color: "inherit" }}>INPUT B: {b ? "1" : "0"}</button>
+        <select value={gate} onChange={(e) => setGate(e.target.value as typeof gate)} style={{ padding: 11, background: "#18181b", color: "inherit", border: "1px solid #3f3f46" }}>
+          <option>AND</option><option>OR</option><option>XOR</option><option>NOT</option>
+        </select>
+      </div>
+      <div style={{ marginTop: 24, padding: 20, border: "1px solid #27272a", width: "max-content" }}>
+        {gate} → <strong style={{ fontSize: 28 }}>{out ? "1" : "0"}</strong>
+      </div>
+    </GamePanel>
+  );
+}
 
 function BootScreen({ onSkip }: { onSkip: () => void }) {
   const [lines, setLines] = useState<string[]>([]);
