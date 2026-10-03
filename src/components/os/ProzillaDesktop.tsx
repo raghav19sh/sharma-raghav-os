@@ -386,9 +386,9 @@ function MusicApp() {
   return (
     <div className="prozilla-music-app">
       <div className="prozilla-music-app__disc"><Music2 size={42} /></div>
-      <h2>{MUSIC[track].title}</h2>
+      <h2>{MUSIC[track]?.title}</h2>
       <p>Raghav Sharma · local media</p>
-      <audio ref={audioRef} src={MUSIC[track].src} onEnded={() => setTrack((track + 1) % MUSIC.length)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
+      <audio ref={audioRef} src={MUSIC[track]?.src} onEnded={() => setTrack((track + 1) % MUSIC.length)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
       <div className="prozilla-music-app__controls">
         <button onClick={() => setTrack((track - 1 + MUSIC.length) % MUSIC.length)}>‹</button>
         <button className="primary" onClick={toggle}>{playing ? <span>Ⅱ</span> : <Play size={17} />}</button>
