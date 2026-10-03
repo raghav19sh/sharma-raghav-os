@@ -48,6 +48,7 @@ type FolderItem = {
   name: string;
   description: string;
   path?: string;
+  game?: WindowId;
   external?: string;
   icon?: typeof Folder;
 };
@@ -330,11 +331,19 @@ function FolderView({ id, onOpenRoute, onLaunch }: { id: Exclude<WindowId, "term
         {items.map((item) => {
           const Icon = item.icon ?? FileText;
           return (
-            <button key={item.name} className="prozilla-file-card" onDoubleClick={() => item.path ? onOpenRoute(item.path) : item.name === "music" ? onLaunch("music") : undefined}>
+            <button key={item.name} className="prozilla-file-card" onDoubleClick={() =>
+              item.path
+                ? onOpenRoute(item.path)
+                : item.game
+                  ? onLaunch(item.game)
+                  : item.name === "music"
+                    ? onLaunch("music")
+                    : undefined
+            }>
               <div className="prozilla-file-card__icon"><Icon size={25} /></div>
               <strong>{item.name}</strong>
               <span>{item.description}</span>
-              <small>{item.path ? "double-click to open" : item.external ? "opens ProzillaOS" : "application"}</small>
+              <small>{item.path || item.game ? "double-click to open" : "application"}</small>
             </button>
           );
         })}
