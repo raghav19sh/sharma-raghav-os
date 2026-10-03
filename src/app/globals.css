@@ -3686,3 +3686,209 @@ html[data-theme="immersive"] .immersive-home .immersive-hero {
     padding: 0;
   }
 }
+
+
+/* =========================================================
+   RAGHAV SHARMA OS — PROZILLA-INSPIRED DESKTOP
+   ========================================================= */
+
+.prozilla-os {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #090b0f;
+  color: #f4f5f7;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  z-index: 1;
+}
+
+.prozilla-os button, .prozilla-os a { font: inherit; }
+
+.prozilla-wallpaper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 72% 20%, rgba(114,38,58,.32), transparent 32%),
+    radial-gradient(circle at 18% 82%, rgba(41,93,105,.18), transparent 35%),
+    linear-gradient(135deg, #0a0c10 0%, #11141b 48%, #0a0b0f 100%);
+}
+
+.prozilla-wallpaper__glow {
+  position:absolute; inset:-20%;
+  background: conic-gradient(from 190deg at 50% 50%, transparent 0 25%, rgba(154,77,103,.10) 28%, transparent 36% 65%, rgba(126,188,207,.08) 68%, transparent 78%);
+  filter: blur(50px);
+  animation: prozillaSpin 34s linear infinite;
+}
+@keyframes prozillaSpin { to { transform: rotate(360deg); } }
+
+.prozilla-wallpaper__grid {
+  position:absolute; inset:0; opacity:.11;
+  background-image:
+    linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+.prozilla-wallpaper__grain {
+  position:absolute; inset:0; opacity:.035; pointer-events:none;
+  background-image: radial-gradient(rgba(255,255,255,.5) .5px, transparent .5px);
+  background-size: 4px 4px;
+}
+
+.prozilla-topbar {
+  position:absolute; left:0; right:0; top:0; height:40px; z-index:20;
+  display:flex; align-items:center; padding:0 14px;
+  background:rgba(8,10,14,.78); border-bottom:1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(18px);
+  font-size:11px; letter-spacing:.06em;
+}
+.prozilla-brand { display:flex; align-items:center; gap:9px; min-width:230px; font-weight:700; }
+.prozilla-brand__mark {
+  width:22px; height:22px; border-radius:5px; display:grid; place-items:center;
+  background:#72263a; color:#fff; font-size:9px;
+}
+.prozilla-topbar__center { flex:1; text-align:center; opacity:.62; }
+.prozilla-topbar__right { display:flex; align-items:center; gap:15px; opacity:.78; }
+.prozilla-iconbtn { display:grid; place-items:center; width:28px; height:28px; border:0; color:inherit; background:transparent; cursor:pointer; border-radius:7px; }
+.prozilla-iconbtn:hover { background:rgba(255,255,255,.08); }
+
+.prozilla-power {
+  position:absolute; right:12px; top:48px; z-index:40; width:220px; padding:14px;
+  display:flex; flex-direction:column; gap:8px; border:1px solid rgba(255,255,255,.10);
+  background:rgba(10,12,16,.92); box-shadow:0 20px 60px rgba(0,0,0,.45); border-radius:10px;
+}
+.prozilla-power strong { font-size:12px; } .prozilla-power span { font-size:10px; opacity:.55; margin-bottom:5px; }
+.prozilla-power button { display:flex; align-items:center; gap:9px; border:0; border-radius:6px; background:rgba(255,255,255,.05); color:inherit; padding:9px; cursor:pointer; text-align:left; }
+.prozilla-power button:hover { background:rgba(255,255,255,.10); }
+
+.prozilla-workspace { position:absolute; inset:40px 0 52px; z-index:5; }
+.prozilla-workspace.is-maximized { inset:40px 0 0; }
+
+.prozilla-welcome { position:absolute; left:7vw; top:9vh; max-width:520px; pointer-events:none; }
+.prozilla-welcome__eyebrow { font-size:10px; letter-spacing:.24em; opacity:.42; margin-bottom:18px; }
+.prozilla-welcome h1 { font-family: ui-sans-serif, system-ui, sans-serif; font-size:clamp(50px, 7vw, 100px); line-height:.88; letter-spacing:-.065em; margin:0; font-weight:800; text-shadow:0 15px 50px rgba(0,0,0,.28); }
+.prozilla-welcome h1 span { color:#bb6b82; }
+.prozilla-welcome p { margin:18px 0 0; font-size:12px; opacity:.62; letter-spacing:.12em; text-transform:uppercase; }
+.prozilla-welcome__hint { margin-top:90px; font-size:10px; opacity:.34; }
+
+.prozilla-icons {
+  position:absolute; left:calc(50% + 180px); top:55px; display:grid; grid-template-columns:repeat(2, 110px); gap:14px;
+}
+.prozilla-desktop-icon {
+  width:100px; padding:8px 5px; border:1px solid transparent; background:transparent; color:inherit;
+  display:flex; flex-direction:column; align-items:center; gap:7px; border-radius:10px; cursor:pointer;
+}
+.prozilla-desktop-icon:hover, .prozilla-desktop-icon:focus-visible { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); outline:none; }
+.prozilla-desktop-icon__image {
+  width:48px; height:48px; display:grid; place-items:center; border-radius:12px;
+  color:#d5d9df; background:linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.025));
+  border:1px solid rgba(255,255,255,.10); box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.prozilla-desktop-icon span { max-width:100px; font-size:9px; line-height:1.2; opacity:.8; text-align:center; }
+
+.prozilla-window {
+  position:absolute; left:13vw; top:12vh; width:min(910px,72vw); height:min(650px,68vh);
+  display:flex; flex-direction:column; overflow:hidden; border-radius:11px;
+  border:1px solid rgba(255,255,255,.12); background:rgba(11,13,18,.90);
+  box-shadow:0 32px 100px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.03);
+  backdrop-filter: blur(22px); z-index:12; animation: prozillaWindowIn .18s ease-out;
+}
+.prozilla-window.is-active { z-index:18; border-color:rgba(187,107,130,.30); }
+.prozilla-window.is-maximized { inset:0; left:0; top:0; width:auto; height:auto; border-radius:0; }
+@keyframes prozillaWindowIn { from { opacity:0; transform:translateY(10px) scale(.985);} to {opacity:1;transform:none;} }
+
+.prozilla-window__bar { height:38px; flex:none; display:flex; align-items:center; justify-content:space-between; padding-left:12px; background:rgba(255,255,255,.045); border-bottom:1px solid rgba(255,255,255,.08); }
+.prozilla-window__title { display:flex; align-items:center; gap:8px; font-size:11px; }
+.prozilla-window__controls { display:flex; }
+.prozilla-window__controls button { width:38px; height:38px; border:0; background:transparent; color:inherit; display:grid; place-items:center; cursor:pointer; opacity:.65; }
+.prozilla-window__controls button:hover { opacity:1; background:rgba(255,255,255,.08); }
+.prozilla-window__body { flex:1; min-height:0; background:#0d0f13; }
+.prozilla-iframe { width:100%; height:100%; border:0; background:#0d0f13; }
+.prozilla-empty { height:100%; display:grid; place-items:center; opacity:.5; font-size:12px; }
+
+.prozilla-terminal { height:100%; display:flex; flex-direction:column; background:radial-gradient(circle at 80% 10%, rgba(114,38,58,.08), transparent 30%), #090b0f; color:#dce4dc; font-size:12px; }
+.prozilla-terminal__banner { padding:14px 16px 11px; border-bottom:1px solid rgba(255,255,255,.07); display:flex; justify-content:space-between; font-size:11px; }
+.terminal-user { color:#9bd3aa; } .terminal-path { color:#b77a8a; } .terminal-meta { opacity:.35; }
+.prozilla-terminal__output { flex:1; overflow:auto; padding:16px; line-height:1.7; white-space:pre-wrap; }
+.prozilla-terminal__input { padding:12px 16px; border-top:1px solid rgba(255,255,255,.07); display:flex; gap:8px; }
+.prozilla-terminal__input span { color:#8fba9b; } .prozilla-terminal__input input { flex:1; min-width:0; border:0; outline:0; background:transparent; color:inherit; }
+
+.prozilla-dock {
+  position:absolute; left:50%; bottom:10px; transform:translateX(-50%);
+  height:44px; padding:5px 7px; display:flex; align-items:center; gap:4px;
+  background:rgba(12,14,18,.76); border:1px solid rgba(255,255,255,.12); border-radius:12px;
+  box-shadow:0 18px 50px rgba(0,0,0,.35); backdrop-filter:blur(20px); z-index:30;
+}
+.prozilla-dock__home, .prozilla-dock__item { position:relative; width:34px; height:34px; border:0; background:transparent; color:inherit; display:grid; place-items:center; border-radius:8px; cursor:pointer; }
+.prozilla-dock__home:hover, .prozilla-dock__item:hover, .prozilla-dock__item.is-active { background:rgba(255,255,255,.10); }
+.prozilla-dock__dot { position:absolute; bottom:3px; width:3px; height:3px; border-radius:99px; background:#c98292; }
+.prozilla-dock__spacer { width:10px; }
+
+.prozilla-statusbar {
+  position:absolute; left:0; right:0; bottom:0; height:24px; z-index:31; padding:0 12px; display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,.06); background:rgba(7,9,12,.72); font-size:9px; opacity:.6;
+}
+.status-dot { display:inline-block; width:5px; height:5px; border-radius:99px; background:#59c97e; margin-right:5px; vertical-align:1px; }
+
+.prozilla-boot { position:fixed; inset:0; z-index:1000; background:#050609; color:#d3d9d5; overflow:hidden; padding:30px; font:12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.prozilla-boot__scanlines { position:absolute; inset:0; pointer-events:none; opacity:.08; background:repeating-linear-gradient(to bottom, transparent 0 3px, #fff 4px); }
+.prozilla-boot__head { position:absolute; inset:24px 30px auto; display:flex; justify-content:space-between; opacity:.48; font-size:10px; letter-spacing:.13em; }
+.prozilla-boot__logo { position:absolute; left:50%; top:17%; transform:translateX(-50%); width:74px; height:74px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.22); border-radius:16px; font-weight:800; font-size:20px; background:rgba(114,38,58,.18); box-shadow:0 0 80px rgba(114,38,58,.28); }
+.prozilla-boot__name { position:absolute; left:50%; top:30%; transform:translateX(-50%); font:800 clamp(28px, 4vw, 54px)/1 ui-sans-serif, system-ui, sans-serif; letter-spacing:-.055em; white-space:nowrap; }
+.prozilla-boot__prompt { position:absolute; left:30px; bottom:25%; opacity:.55; }
+.prozilla-boot__logs { position:absolute; left:30px; right:30px; bottom:30px; height:23%; overflow:hidden; color:#a8b2ab; opacity:.72; }
+.prozilla-boot__loader { position:absolute; left:50%; bottom:18%; transform:translateX(-50%); width:min(560px,70vw); height:2px; background:rgba(255,255,255,.08); overflow:hidden; }
+.prozilla-boot__loader span { display:block; width:35%; height:100%; background:#c98292; animation:bootLoad 2.2s linear forwards; }
+@keyframes bootLoad { from {transform:translateX(-110%)} to {transform:translateX(320%)} }
+.prozilla-boot__skip { position:absolute; right:30px; bottom:30px; padding:7px 10px; border:1px solid rgba(255,255,255,.12); color:inherit; background:transparent; cursor:pointer; font-size:9px; letter-spacing:.1em; }
+.prozilla-boot__skip:hover { background:rgba(255,255,255,.06); }
+
+
+.prozilla-filepath { position:absolute; left:26px; top:22px; display:flex; align-items:center; gap:6px; color:rgba(255,255,255,.42); font:10px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.04em; }
+.prozilla-search { position:absolute; z-index:80; top:54px; right:52px; width:min(380px,calc(100vw - 30px)); display:flex; align-items:center; gap:9px; padding:10px 12px; border:1px solid rgba(255,255,255,.14); background:rgba(10,12,16,.94); border-radius:10px; box-shadow:0 18px 60px rgba(0,0,0,.45); backdrop-filter:blur(18px); }
+.prozilla-search input { flex:1; border:0; outline:0; background:transparent; color:inherit; font:12px ui-monospace,SFMono-Regular,Menlo,monospace; }
+.prozilla-brand { border:0; background:transparent; color:inherit; display:flex; align-items:center; gap:9px; cursor:pointer; padding:0; }
+.prozilla-folder-view { height:100%; overflow:auto; padding:18px; background:linear-gradient(180deg,#10131a,#0c0f14); }
+.prozilla-folder-view__path { display:flex; align-items:center; gap:7px; color:rgba(255,255,255,.43); font:10px ui-monospace,SFMono-Regular,Menlo,monospace; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,.07); }
+.prozilla-folder-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:9px; padding-top:16px; }
+.prozilla-file-card { min-height:135px; text-align:left; border:1px solid rgba(255,255,255,.07); border-radius:9px; background:rgba(255,255,255,.025); color:inherit; padding:13px; cursor:pointer; display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+.prozilla-file-card:hover { background:rgba(255,255,255,.06); border-color:rgba(201,130,146,.28); }
+.prozilla-file-card__icon { color:#c98292; margin-bottom:4px; }
+.prozilla-file-card strong { font-size:12px; font-weight:600; }
+.prozilla-file-card span { font-size:10px; line-height:1.5; opacity:.48; }
+.prozilla-file-card small { margin-top:auto; font-size:8px; opacity:.27; }
+.prozilla-folder-note { margin-top:16px; padding:10px 12px; display:flex; align-items:center; gap:8px; border:1px solid rgba(201,130,146,.16); background:rgba(201,130,146,.05); border-radius:8px; font-size:10px; opacity:.72; }
+.prozilla-music-app { height:100%; display:flex; flex-direction:column; align-items:center; padding:32px 24px; background:radial-gradient(circle at 50% 20%,rgba(139,54,79,.16),transparent 35%),#0b0e13; }
+.prozilla-music-app__disc { width:125px; height:125px; border-radius:50%; display:grid; place-items:center; border:1px solid rgba(255,255,255,.14); background:radial-gradient(circle,#151923 0 12%,#0b0e13 13% 45%,#171b24 46% 48%,#0b0e13 49%); box-shadow:0 25px 70px rgba(0,0,0,.4); color:#c98292; }
+.prozilla-music-app h2 { margin:22px 0 5px; font-size:18px; }
+.prozilla-music-app p { margin:0; font-size:10px; opacity:.4; }
+.prozilla-music-app__controls { display:flex; align-items:center; gap:10px; margin:24px 0; }
+.prozilla-music-app__controls button { width:35px; height:35px; border:0; border-radius:50%; background:rgba(255,255,255,.06); color:inherit; display:grid; place-items:center; cursor:pointer; }
+.prozilla-music-app__controls .primary { width:45px; height:45px; background:#c98292; color:#090b0f; }
+.prozilla-music-app__playlist { width:min(450px,100%); display:flex; flex-direction:column; gap:3px; }
+.prozilla-music-app__playlist button { border:0; background:transparent; color:inherit; padding:9px 11px; border-radius:6px; display:flex; align-items:center; gap:8px; text-align:left; cursor:pointer; font-size:10px; opacity:.55; }
+.prozilla-music-app__playlist button:hover,.prozilla-music-app__playlist button.is-current { background:rgba(255,255,255,.06); opacity:1; }
+
+@media (max-width: 800px) {
+  .prozilla-topbar__center, .prozilla-topbar__right span { display:none; }
+  .prozilla-brand { min-width:0; }
+  .prozilla-welcome { left:7vw; top:10vh; }
+  .prozilla-welcome h1 { font-size:58px; }
+  .prozilla-welcome__hint { margin-top:50px; }
+  .prozilla-icons { left:auto; right:5vw; top:30px; grid-template-columns:repeat(2,88px); }
+  .prozilla-window { left:3vw; top:10vh; width:94vw; height:70vh; }
+}
+@media (max-width: 520px) {
+  .prozilla-icons { display:none; }
+  .prozilla-topbar { padding:0 9px; }
+  .prozilla-dock { max-width:calc(100vw - 16px); overflow-x:auto; }
+  .prozilla-dock__item, .prozilla-dock__home { flex:none; }
+  .prozilla-welcome { top:13vh; }
+  .prozilla-welcome h1 { font-size:48px; }
+  .prozilla-boot__name { font-size:27px; }
+  .prozilla-boot__prompt { bottom:29%; }
+}
+
+html, body { height: 100%; }
+body:has(.prozilla-os) { overflow: hidden; }

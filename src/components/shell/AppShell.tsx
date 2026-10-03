@@ -2,6 +2,7 @@
 
 import { RainAudio } from "@/components/terminal/RainAudio";
 import { useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { SearchModal } from "@/components/search/SearchModal";
@@ -13,6 +14,7 @@ export function AppShell({
 }: {
   children: ReactNode;
 }) {
+  const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -38,6 +40,8 @@ export function AppShell({
       window.removeEventListener("keydown", onKey);
     };
   }, []);
+
+  if (pathname === "/") return <>{children}</>;
 
   return (
     <div className="min-h-screen bg-bg text-text-1">

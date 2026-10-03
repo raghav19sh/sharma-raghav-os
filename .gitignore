@@ -8,3 +8,9 @@ out
 .DS_Store
 npm-debug.log*
 .vercel
+
+# Local build metadata
+*.tsbuildinfo
+.env
+.env.local
+.vercel
