@@ -4001,3 +4001,11 @@ body:has(.prozilla-os) { overflow: hidden; }
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
+
+/* Fix desktop workspace height */
+.prozilla-workspace {
+  height: calc(100vh - 40px);
+  min-height: 0;
+  position: relative;
+}
+
