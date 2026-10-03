@@ -49,7 +49,6 @@ type FolderItem = {
   description: string;
   path?: string;
   game?: WindowId;
-  external?: string;
   icon?: typeof Folder;
 };
 
@@ -321,36 +320,77 @@ export default function ProzillaDesktop({ status }: { status: StatusSnapshot }) 
   );
 }
 
-function FolderView({ id, onOpenRoute, onLaunch }: { id: Exclude<WindowId, "terminal" | "music">; onOpenRoute: (path: string) => void; onLaunch: (id: WindowId) => void }) {
+function FolderView({
+  id,
+  onOpenRoute,
+  onLaunch,
+}: {
+  id: Exclude<
+    WindowId,
+    "terminal" | "music" | "viewer" | "minesweeper" | "wordle" | "ballmaze" | "logicsim"
+  >;
+  onOpenRoute: (path: string) => void;
+  onLaunch: (id: WindowId) => void;
+}) {
   const items = FOLDERS[id] ?? [];
+
   return (
     <div className="prozilla-folder-view">
-      <div className="prozilla-folder-view__path"><FolderOpen size={13} /> /home/raghav/{id}</div>
+      <div className="prozilla-folder-view__path">
+        <FolderOpen size={13} />
+        /home/raghav/{id}
+      </div>
+
       <div className="prozilla-folder-grid">
         {items.map((item) => {
           const Icon = item.icon ?? FileText;
+
           return (
-            <button key={item.name} className="prozilla-file-card" onClick={() =>
-              item.path
-                ? onOpenRoute(item.path)
-                : item.game
-                  ? onLaunch(item.game)
-                  : item.name === "music"
-                    ? onLaunch("music")
-                    : undefined
-            }>
-              <div className="prozilla-file-card__icon"><Icon size={25} /></div>
+            <button
+              key={item.name}
+              className="prozilla-file-card"
+              onClick={() => {
+                if (item.game) {
+                  onLaunch(item.game);
+                  return;
+                }
+
+                if (item.path) {
+                  onOpenRoute(item.path);
+                  return;
+                }
+
+                if (item.name === "music") {
+                  onLaunch("music");
+                }
+              }}
+            >
+              <div className="prozilla-file-card__icon">
+                <Icon size={25} />
+              </div>
+
               <strong>{item.name}</strong>
               <span>{item.description}</span>
-              <small>{item.path || item.game ? "double-click to open" : "application"}</small>
+
+              <small>
+                {item.game ? "run game" : item.path ? "open" : "application"}
+              </small>
             </button>
           );
         })}
       </div>
-      {id === "games" && <div className="prozilla-folder-note"><Gamepad2 size={14} /> Games available inside Raghav Sharma OS.</div>}
+
+      {id === "games" && (
+        <div className="prozilla-folder-note">
+          <Gamepad2 size={14} />
+          All games run locally inside Raghav Sharma OS.
+        </div>
+      )}
     </div>
   );
 }
+
+
 
 function BootScreen({ onSkip }: { onSkip: () => void }) {
   const [lines, setLines] = useState<string[]>([]);
