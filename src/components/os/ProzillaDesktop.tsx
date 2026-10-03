@@ -262,8 +262,7 @@ export default function ProzillaDesktop({ status }: { status: StatusSnapshot }) 
                 <button
                   key={item.id}
                   className="prozilla-desktop-icon"
-                  onDoubleClick={() => launch(item.id)}
-                  onClick={() => setActive(item.id)}
+                  onClick={() => launch(item.id)}
                   title={item.description}
                 >
                   <div className="prozilla-desktop-icon__image"><Icon size={27} strokeWidth={1.35} /></div>
@@ -331,7 +330,7 @@ function FolderView({ id, onOpenRoute, onLaunch }: { id: Exclude<WindowId, "term
         {items.map((item) => {
           const Icon = item.icon ?? FileText;
           return (
-            <button key={item.name} className="prozilla-file-card" onDoubleClick={() =>
+            <button key={item.name} className="prozilla-file-card" onClick={() =>
               item.path
                 ? onOpenRoute(item.path)
                 : item.game
