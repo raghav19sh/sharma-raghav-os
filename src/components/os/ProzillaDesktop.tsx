@@ -105,10 +105,10 @@ const FOLDERS: Record<Exclude<WindowId, "terminal" | "music">, FolderItem[]> = {
     { name: "privacy", description: "Privacy information", path: "/privacy", icon: Shield },
   ],
   games: [
-    { name: "Minesweeper", description: "ProzillaOS Minesweeper", external: "https://os.prozilla.dev/", icon: Gamepad2 },
-    { name: "Wordle", description: "ProzillaOS Wordle", external: "https://os.prozilla.dev/", icon: Gamepad2 },
-    { name: "Ball Maze", description: "ProzillaOS 3D Ball Maze", external: "https://os.prozilla.dev/", icon: Gamepad2 },
-    { name: "Logic Sim", description: "ProzillaOS Logic Simulator", external: "https://os.prozilla.dev/", icon: Gamepad2 },
+    { name: "Minesweeper", description: "Minesweeper", icon: Gamepad2 },
+    { name: "Wordle", description: "Wordle", icon: Gamepad2 },
+    { name: "Ball Maze", description: "3D Ball Maze", icon: Gamepad2 },
+    { name: "Logic Sim", description: "Logic Simulator", icon: Gamepad2 },
   ],
 };
 
@@ -180,7 +180,23 @@ export default function ProzillaDesktop({ status }: { status: StatusSnapshot }) 
   }
 
   function openRoute(path: string) {
-    window.location.href = path;
+    const routes: Record<string, WindowId> = {
+      "/about": "about",
+      "/research": "research",
+      "/engineering": "projects",
+      "/security-lab": "security",
+      "/journal": "journal",
+      "/knowledge": "knowledge",
+      "/learning": "learning",
+      "/media-library": "media",
+      "/settings": "system",
+    };
+
+    const windowId = routes[path];
+
+    if (windowId) {
+      launch(windowId);
+    }
   }
 
   if (booting) {
@@ -314,7 +330,7 @@ function FolderView({ id, onOpenRoute, onLaunch }: { id: Exclude<WindowId, "term
         {items.map((item) => {
           const Icon = item.icon ?? FileText;
           return (
-            <button key={item.name} className="prozilla-file-card" onDoubleClick={() => item.path ? onOpenRoute(item.path) : item.external ? window.open(item.external, "_blank", "noopener,noreferrer") : item.name === "music" ? onLaunch("music") : undefined}>
+            <button key={item.name} className="prozilla-file-card" onDoubleClick={() => item.path ? onOpenRoute(item.path) : item.name === "music" ? onLaunch("music") : undefined}>
               <div className="prozilla-file-card__icon"><Icon size={25} /></div>
               <strong>{item.name}</strong>
               <span>{item.description}</span>
@@ -323,7 +339,7 @@ function FolderView({ id, onOpenRoute, onLaunch }: { id: Exclude<WindowId, "term
           );
         })}
       </div>
-      {id === "games" && <div className="prozilla-folder-note"><Gamepad2 size={14} /> The games are kept as ProzillaOS experiences. Double-click a game to open the ProzillaOS games environment.</div>}
+      {id === "games" && <div className="prozilla-folder-note"><Gamepad2 size={14} /> Games available inside Raghav Sharma OS.</div>}
     </div>
   );
 }
