@@ -580,7 +580,7 @@ function MusicWindow() {
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  const current = TRACKS[track] ?? TRACKS[0];
+  const current = TRACKS[track] ?? TRACKS[0] ?? { title: "Soundtrack", file: "/music/soundtrack.mp3", note: "Sharma-Raghav OS" };
 
   function playIndex(index: number) {
     setTrack(index);
