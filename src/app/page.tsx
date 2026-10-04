@@ -1,68 +1,84 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import RaghavOSDesktop from "@/components/RaghavOSDesktop";
 
-export const metadata: Metadata = {
-  title: "Raghav Sharma",
-  description: "Choose between Raghav Sharma's cybersecurity portfolio and online tools.",
+type Profile = {
+  display_name: string;
+  headline: string | null;
+  bio: string | null;
+  location: string | null;
+  email_public: string | null;
+  linkedin_url: string | null;
+  github_url: string | null;
 };
 
-const options = [
-  {
-    href: "/os",
-    eyebrow: "01 / PORTFOLIO",
-    title: "Portfolio",
-    description: "Enter the cybersecurity workstation.",
-    action: "Open OS",
-  },
-  {
-    href: "https://tools.sharma-raghav.com",
-    eyebrow: "02 / TOOLS",
-    title: "Tools",
-    description: "Useful online utilities for everyday work.",
-    action: "Open Tools",
-  },
-];
+type Project = {
+  id: string;
+  slug: string;
+  title: string;
+  kind: string | null;
+  summary: string | null;
+  body: string | null;
+  repo_url: string | null;
+  live_url: string | null;
+  stack: string[];
+  status: string;
+  started_at: string | null;
+};
 
-export default function HomePage() {
+type Research = {
+  id: string;
+  slug: string;
+  title: string;
+  kind: string;
+  summary: string | null;
+  body: string | null;
+  status: string;
+  read_time_minutes: number | null;
+  published_at: string | null;
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  let profile: Profile | null = null;
+  let projects: Project[] = [];
+  let research: Research[] = [];
+  let databaseOnline = false;
+
+  try {
+    const supabase = await createServerSupabaseClient();
+
+    const [profileResult, projectsResult, researchResult] = await Promise.all([
+      supabase.from("profiles").select("display_name,headline,bio,location,email_public,linkedin_url,github_url").maybeSingle(),
+      supabase
+        .from("projects")
+        .select("*")
+        .eq("visibility", "public")
+        .order("created_at", { ascending: false })
+        .range(0, 49),
+      supabase
+        .from("research")
+        .select("*")
+        .eq("visibility", "public")
+        .in("status", ["preprint", "published"])
+        .order("created_at", { ascending: false })
+        .range(0, 49),
+    ]);
+
+    profile = (profileResult.data as Profile | null) ?? null;
+    projects = (projectsResult.data as Project[] | null) ?? [];
+    research = (researchResult.data as Research[] | null) ?? [];
+    databaseOnline = !profileResult.error && !projectsResult.error && !researchResult.error;
+  } catch {
+    databaseOnline = false;
+  }
+
   return (
-    <main className="entry-page">
-      <div className="entry-grid" aria-hidden="true" />
-      <div className="entry-glow entry-glow-one" aria-hidden="true" />
-      <div className="entry-glow entry-glow-two" aria-hidden="true" />
-
-      <section className="entry-shell">
-        <div className="entry-brand">
-          <span className="entry-mark">RS</span>
-          <span>SHARMA-RAGHAV</span>
-        </div>
-
-        <div className="entry-copy">
-          <span className="entry-kicker">SELECT DESTINATION</span>
-          <h1>What are you looking for?</h1>
-          <p>Choose a workspace to continue.</p>
-        </div>
-
-        <div className="entry-options">
-          {options.map((option) => (
-            <Link className="entry-option" href={option.href} key={option.href}>
-              <div className="entry-option-top">
-                <span>{option.eyebrow}</span>
-                <span className="entry-arrow">↗</span>
-              </div>
-              <div className="entry-option-main">
-                <h2>{option.title}</h2>
-                <p>{option.description}</p>
-              </div>
-              <span className="entry-action">{option.action}</span>
-            </Link>
-          ))}
-        </div>
-
-        <div className="entry-footer">
-          <span>RAGHAV SHARMA</span>
-          <span>SECURITY • ENGINEERING • TOOLS</span>
-        </div>
-      </section>
-    </main>
+    <RaghavOSDesktop
+      profile={profile}
+      projects={projects}
+      research={research}
+      databaseOnline={databaseOnline}
+    />
   );
 }
