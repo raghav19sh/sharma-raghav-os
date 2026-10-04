@@ -3,14 +3,5 @@ node_modules
 out
 .env
 .env.local
-.env.*.local
-*.tsbuildinfo
 .DS_Store
-npm-debug.log*
-.vercel
-
-# Local build metadata
-*.tsbuildinfo
-.env
-.env.local
-.vercel
+*.log

@@ -1,125 +1,166 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Hash, Key, FileText, Lock, Copy, Check, AlertCircle, Eye, EyeOff, Search, ShieldCheck } from "lucide-react";
+import { AlertCircle, Check, Copy, Eye, EyeOff, FileText, Hash, KeyRound, Lock, Search, ShieldCheck } from "lucide-react";
 
-/** All four tools are pure client-side computation. Nothing typed into any
- *  of them is sent to a server or stored anywhere — verified by the
- *  absence of any fetch()/localStorage call in this file. */
+function bytesToHex(buffer: ArrayBuffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map((value) => value.toString(16).padStart(2, "0"))
+    .join("");
+}
 
-function ToolCard({ icon: Icon, title, hint, children }: {
-  icon: typeof Hash; title: string; hint: string; children: React.ReactNode;
-}) {
+function base64UrlDecode(value: string) {
+  const compact = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = compact + "=".repeat((4 - (compact.length % 4)) % 4);
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder("utf-8").decode(bytes);
+}
+
+function looksLikeBase64(value: string) {
+  const compact = value.replace(/\s+/g, "");
+  if (compact.length < 8 || compact.length % 4 === 1) return false;
+  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact)) return false;
+  try {
+    const binary = atob(compact);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    const decoded = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    return decoded.length > 0 && Array.from(decoded).every((char) => {
+      const code = char.charCodeAt(0);
+      return code === 9 || code === 10 || code === 13 || code >= 32;
+    });
+  } catch {
+    return false;
+  }
+}
+
+async function digest(algorithm: "SHA-1" | "SHA-256" | "SHA-512", input: string) {
+  return bytesToHex(await crypto.subtle.digest(algorithm, new TextEncoder().encode(input)));
+}
+
+type ToolId = "hash" | "jwt" | "base64" | "password" | "cipher";
+
+export default function SecurityTools() {
+  const [tool, setTool] = useState<ToolId>("hash");
+
   return (
-    <div className="bg-surface border border-border rounded-card p-[18px] flex flex-col gap-2.5">
-      <div className="flex items-center gap-2.5 text-[14px] font-semibold text-text-1">
-        <Icon size={16} /><span>{title}</span>
+    <div className="lab">
+      <div className="lab-tabs" role="tablist" aria-label="Security tools">
+        {[
+          ["hash", "Hash"],
+          ["jwt", "JWT"],
+          ["base64", "Base64"],
+          ["password", "Password"],
+          ["cipher", "CipherScope"],
+        ].map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            className={tool === id ? "lab-tab is-active" : "lab-tab"}
+            onClick={() => setTool(id as ToolId)}
+          >
+            {label}
+          </button>
+        ))}
       </div>
-      <p className="text-[12px] text-text-2 leading-relaxed">{hint}</p>
-      {children}
+
+      {tool === "hash" && <HashTool />}
+      {tool === "jwt" && <JwtTool />}
+      {tool === "base64" && <Base64Tool />}
+      {tool === "password" && <PasswordTool />}
+      {tool === "cipher" && <CipherScopeTool />}
+
+      <div className="lab-safe">
+        <ShieldCheck size={14} />
+        Local-only analysis — nothing typed into these tools is uploaded or stored.
+      </div>
     </div>
   );
 }
 
+function Panel({ icon: Icon, title, hint, children }: { icon: typeof Hash; title: string; hint: string; children: React.ReactNode }) {
+  return (
+    <section className="lab-panel">
+      <div className="lab-panel-head">
+        <div className="lab-icon"><Icon size={16} /></div>
+        <div>
+          <h2>{title}</h2>
+          <p>{hint}</p>
+        </div>
+      </div>
+      {children}
+    </section>
+  );
+}
+
 function HashTool() {
-  const [text, setText] = useState("");
+  const [input, setInput] = useState("");
+  const [algorithm, setAlgorithm] = useState<"SHA-256" | "SHA-1" | "SHA-512">("SHA-256");
   const [hash, setHash] = useState("");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!text) { setHash(""); return; }
-    let active = true;
-    (async () => {
-      const enc = new TextEncoder().encode(text);
-      const buf = await crypto.subtle.digest("SHA-256", enc);
-      const hex = Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
-      if (active) setHash(hex);
-    })();
-    return () => { active = false; };
-  }, [text]);
+    let cancelled = false;
+    if (!input) {
+      setHash("");
+      return;
+    }
+    void digest(algorithm, input).then((value) => {
+      if (!cancelled) setHash(value);
+    });
+    return () => { cancelled = true; };
+  }, [algorithm, input]);
 
   return (
-    <ToolCard icon={Hash} title="SHA-256 Hash Generator" hint="Runs entirely in your browser via the Web Crypto API. Nothing you type here is sent anywhere.">
-      <textarea
-        className="w-full bg-bg border border-border rounded-[10px] px-3 py-2.5 text-[13px] font-mono text-text-1 resize-y"
-        rows={3}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Type or paste text to hash…"
-        aria-label="Text to hash"
-      />
-      <div className="flex items-center gap-2.5 bg-bg border border-border rounded-[10px] px-3 py-2.5">
-        <code className="flex-1 font-mono text-[12px] text-text-1 break-all">{hash || "—"}</code>
-        <button
-          onClick={() => { if (hash) { navigator.clipboard.writeText(hash); setCopied(true); setTimeout(() => setCopied(false), 1400); } }}
-          disabled={!hash}
-          className="w-9 h-9 rounded-btn border border-border bg-surface flex items-center justify-center disabled:opacity-40"
-          aria-label="Copy hash"
-        >
-          {copied ? <Check size={15} /> : <Copy size={15} />}
+    <Panel icon={Hash} title="Hash Generator" hint="Browser Web Crypto API. Choose the digest and type a value.">
+      <div className="lab-row">
+        <select value={algorithm} onChange={(event) => setAlgorithm(event.target.value as typeof algorithm)}>
+          <option>SHA-256</option>
+          <option>SHA-1</option>
+          <option>SHA-512</option>
+        </select>
+        <input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Text to hash…" aria-label="Text to hash" />
+      </div>
+      <div className="lab-output">
+        <code>{hash || "—"}</code>
+        <button type="button" disabled={!hash} onClick={() => { if (hash) { void navigator.clipboard.writeText(hash); setCopied(true); window.setTimeout(() => setCopied(false), 1200); } }}>
+          {copied ? <Check size={14} /> : <Copy size={14} />}
         </button>
       </div>
-    </ToolCard>
+    </Panel>
   );
-}
-
-function base64UrlDecode(str: string): string {
-  const pad = str.length % 4 === 0 ? "" : "=".repeat(4 - (str.length % 4));
-  const base64 = str.replace(/-/g, "+").replace(/_/g, "/") + pad;
-  const binary = atob(base64);
-  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
-  return new TextDecoder("utf-8").decode(bytes);
 }
 
 function JwtTool() {
   const [token, setToken] = useState("");
-  const [result, setResult] = useState<{ header: unknown; payload: unknown } | null>(null);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (!token.trim()) { setResult(null); setError(""); return; }
+  const { result, error } = useMemo(() => {
+    if (!token.trim()) return { result: null as null | { header: unknown; payload: unknown }, error: "" };
     const parts = token.trim().split(".");
-    if (parts.length !== 3) {
-      setResult(null);
-      setError("Not a JWT structurally — expected three dot-separated segments (header.payload.signature).");
-      return;
-    }
+    if (parts.length !== 3) return { result: null, error: "JWT structure: header.payload.signature" };
     try {
-      const [headerPart, payloadPart] = parts as [string, string, string];
-      const header = JSON.parse(base64UrlDecode(headerPart));
-      const payload = JSON.parse(base64UrlDecode(payloadPart));
-      setResult({ header, payload });
-      setError("");
+      return {
+        result: {
+          header: JSON.parse(base64UrlDecode(parts[0] ?? "")),
+          payload: JSON.parse(base64UrlDecode(parts[1] ?? "")),
+        },
+        error: "",
+      };
     } catch {
-      setResult(null);
-      setError("Could not decode — the header/payload segments aren't valid base64url JSON.");
+      return { result: null, error: "Header/payload could not be decoded as base64url JSON." };
     }
   }, [token]);
 
   return (
-    <ToolCard icon={Key} title="JWT Decoder" hint="Decodes the header and payload only. This tool does NOT verify the signature — a decoded, readable JWT is not the same as a valid one.">
-      <textarea
-        className="w-full bg-bg border border-border rounded-[10px] px-3 py-2.5 text-[13px] font-mono text-text-1 resize-y"
-        rows={3}
-        value={token}
-        onChange={(e) => setToken(e.target.value)}
-        placeholder="Paste a JWT…"
-        aria-label="JWT to decode"
-      />
-      {error && <div className="flex items-center gap-1.5 text-[12.5px] text-status-red-text"><AlertCircle size={14} />{error}</div>}
+    <Panel icon={KeyRound} title="JWT Decoder" hint="Decodes header and payload only; it does not verify the signature.">
+      <textarea value={token} onChange={(event) => setToken(event.target.value)} rows={4} placeholder="Paste a JWT…" />
+      {error && <div className="lab-error"><AlertCircle size={14} />{error}</div>}
       {result && (
-        <div className="grid grid-cols-2 gap-3 max-[640px]:grid-cols-1">
-          <div>
-            <div className="text-[11px] font-semibold text-text-2 uppercase tracking-wide mb-1">Header</div>
-            <pre className="bg-bg border border-border rounded-[10px] px-3 py-2.5 text-[11.5px] font-mono text-text-1 overflow-x-auto whitespace-pre-wrap break-words">{JSON.stringify(result.header, null, 2)}</pre>
-          </div>
-          <div>
-            <div className="text-[11px] font-semibold text-text-2 uppercase tracking-wide mb-1">Payload</div>
-            <pre className="bg-bg border border-border rounded-[10px] px-3 py-2.5 text-[11.5px] font-mono text-text-1 overflow-x-auto whitespace-pre-wrap break-words">{JSON.stringify(result.payload, null, 2)}</pre>
-          </div>
+        <div className="lab-json-grid">
+          <pre>{JSON.stringify(result.header, null, 2)}</pre>
+          <pre>{JSON.stringify(result.payload, null, 2)}</pre>
         </div>
       )}
-    </ToolCard>
+    </Panel>
   );
 }
 
@@ -127,212 +168,137 @@ function Base64Tool() {
   const [mode, setMode] = useState<"encode" | "decode">("encode");
   const [input, setInput] = useState("");
 
-  // Correct UTF-8 handling (the old unescape/escape trick is deprecated and
-  // mangles some multi-byte characters) — TextEncoder/TextDecoder are the
-  // real fix called out in §30.
   const { output, error } = useMemo(() => {
     if (!input) return { output: "", error: "" };
     try {
       if (mode === "encode") {
         const bytes = new TextEncoder().encode(input);
-        const binary = Array.from(bytes, (b) => String.fromCharCode(b)).join("");
+        const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
         return { output: btoa(binary), error: "" };
       }
-      const binary = atob(input);
-      const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+      const binary = atob(input.replace(/\s+/g, ""));
+      const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
       return { output: new TextDecoder("utf-8").decode(bytes), error: "" };
     } catch {
-      return { output: "", error: "That doesn't look like valid base64." };
+      return { output: "", error: "Invalid Base64 input." };
     }
   }, [input, mode]);
 
   return (
-    <ToolCard icon={FileText} title="Base64 Encode / Decode" hint="Full UTF-8 safe — handles multi-byte characters correctly, not just ASCII.">
-      <div className="flex gap-1.5">
-        {(["encode", "decode"] as const).map((m) => (
-          <button
-            key={m}
-            onClick={() => setMode(m)}
-            className={`text-[12.5px] px-3.5 py-1.5 rounded-lg border ${mode === m ? "bg-lavender border-lavender text-on-lavender" : "bg-surface border-border text-text-2"}`}
-          >
-            {m === "encode" ? "Encode" : "Decode"}
-          </button>
-        ))}
+    <Panel icon={FileText} title="Base64 Encode / Decode" hint="UTF-8 safe for multi-byte text.">
+      <div className="lab-toggle">
+        <button className={mode === "encode" ? "is-active" : ""} onClick={() => setMode("encode")}>Encode</button>
+        <button className={mode === "decode" ? "is-active" : ""} onClick={() => setMode("decode")}>Decode</button>
       </div>
-      <textarea
-        className="w-full bg-bg border border-border rounded-[10px] px-3 py-2.5 text-[13px] font-mono text-text-1 resize-y"
-        rows={3}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder={mode === "encode" ? "Plain text…" : "Base64 text…"}
-        aria-label="Base64 input"
-      />
-      {error && <div className="flex items-center gap-1.5 text-[12.5px] text-status-red-text"><AlertCircle size={14} />{error}</div>}
-      <div className="bg-bg border border-border rounded-[10px] px-3 py-2.5">
-        <code className="font-mono text-[12px] text-text-1 break-all">{output || "—"}</code>
-      </div>
-    </ToolCard>
+      <textarea value={input} onChange={(event) => setInput(event.target.value)} rows={4} placeholder={mode === "encode" ? "Plain text…" : "Base64 text…"} />
+      {error && <div className="lab-error"><AlertCircle size={14} />{error}</div>}
+      <pre className="lab-pre">{output || "—"}</pre>
+    </Panel>
   );
 }
 
-function PasswordStrengthTool() {
-  const [pw, setPw] = useState("");
+function PasswordTool() {
+  const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
 
-  const { score, label, tone } = useMemo(() => {
-    if (!pw) return { score: 0, label: "—", tone: "neutral" as const };
-    let s = 0;
-    if (pw.length >= 8) s++;
-    if (pw.length >= 12) s++;
-    if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) s++;
-    if (/\d/.test(pw)) s++;
-    if (/[^A-Za-z0-9]/.test(pw)) s++;
-    if (pw.length < 8) s = Math.min(s, 1);
-    const labels = ["Very weak", "Weak", "Fair", "Strong", "Very strong", "Excellent"];
-    const tones = ["red", "red", "amber", "amber", "green", "green"] as const;
-    return { score: s, label: labels[s], tone: tones[s] };
-  }, [pw]);
+  const { score, label } = useMemo(() => {
+    if (!password) return { score: 0, label: "—" };
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    if (password.length < 8) score = Math.min(score, 1);
+    return { score, label: ["Very weak", "Weak", "Fair", "Strong", "Very strong", "Excellent"][score] };
+  }, [password]);
 
   return (
-    <ToolCard icon={Lock} title="Password Strength Estimate" hint="A rough local heuristic, not a real cracking-time estimate. Nothing typed here is saved, logged, or sent anywhere — verify that yourself by checking this file for any fetch/storage call.">
-      <div className="relative">
-        <input
-          // §30 fix: this was a plain text input before, showing the
-          // password in the clear by default — real password fields
-          // default to masked.
-          type={visible ? "text" : "password"}
-          className="w-full bg-bg border border-border rounded-[10px] px-3 py-2.5 pr-10 text-[13px] font-mono text-text-1"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
-          placeholder="Type a password to test…"
-          aria-label="Password to test"
-          autoComplete="off"
-        />
-        <button
-          type="button"
-          onClick={() => setVisible((v) => !v)}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-2"
-          aria-label={visible ? "Hide password" : "Show password"}
-        >
-          {visible ? <EyeOff size={15} /> : <Eye size={15} />}
-        </button>
+    <Panel icon={Lock} title="Password Strength Estimate" hint="A lightweight local heuristic, not a cracking-time estimate.">
+      <div className="lab-password">
+        <input type={visible ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Type a password to test…" autoComplete="off" />
+        <button type="button" onClick={() => setVisible((value) => !value)}>{visible ? <EyeOff size={15} /> : <Eye size={15} />}</button>
       </div>
-      <div className="h-1.5 bg-bg rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-normal ${tone === "red" ? "bg-status-red" : tone === "amber" ? "bg-status-amber" : tone === "green" ? "bg-status-green" : "bg-border-strong"}`}
-          style={{ width: `${(score / 5) * 100}%` }}
-        />
-      </div>
-      <div className={`text-[12px] font-semibold ${tone === "red" ? "text-status-red-text" : tone === "amber" ? "text-status-amber-text" : tone === "green" ? "text-status-green-text" : "text-text-2"}`}>
-        {label}
-      </div>
-    </ToolCard>
+      <div className="lab-meter"><span style={{ width: `${(score / 5) * 100}%` }} /></div>
+      <div className="lab-score">{label}</div>
+    </Panel>
   );
 }
 
+type CipherAnalysis = {
+  format: string;
+  type: string;
+  confidence: string;
+  detail: string;
+  decoded?: string;
+  hashAlgorithm?: "SHA-1" | "SHA-256" | "SHA-512";
+};
 
-function looksLikeBase64(value: string): boolean {
+function decodeHex(value: string) {
   const compact = value.replace(/\s+/g, "");
-  if (compact.length < 8 || compact.length % 4 === 1) return false;
-  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(compact)) return false;
-  try {
-    const binary = atob(compact);
-    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
-    const decoded = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-    return decoded.length > 0 && Array.from(decoded).every((c) => {
-      const code = c.charCodeAt(0);
-      return code === 9 || code === 10 || code === 13 || code >= 32;
-    });
-  } catch { return false; }
-}
-
-function decodeHex(value: string): string {
-  const compact = value.replace(/\s+/g, "");
-  if (compact.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(compact)) throw new Error("Invalid hexadecimal input.");
+  if (compact.length % 2 || !/^[0-9a-fA-F]+$/.test(compact)) throw new Error("Invalid hexadecimal.");
   const bytes = new Uint8Array(compact.length / 2);
   for (let i = 0; i < compact.length; i += 2) bytes[i / 2] = Number.parseInt(compact.slice(i, i + 2), 16);
   return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
 }
 
-function decodeBase64(value: string): string {
+function decodeBase64(value: string) {
   const binary = atob(value.replace(/\s+/g, ""));
-  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
   return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
 }
-
-async function digestHex(algorithm: "SHA-1" | "SHA-256" | "SHA-512", text: string): Promise<string> {
-  const buffer = await crypto.subtle.digest(algorithm, new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-type CipherAnalysis = {
-  format: string; type: string; confidence: string; detail: string;
-  decoded?: string; hashAlgorithm?: "SHA-1" | "SHA-256" | "SHA-512";
-};
 
 function analyzeCipherInput(raw: string): CipherAnalysis {
   const value = raw.trim();
   if (!value) return { format: "—", type: "—", confidence: "—", detail: "Paste something to analyze." };
 
-  const parts = value.split(".");
-  if (parts.length === 3) {
-    const headerSegment = parts[0];
-    const payloadSegment = parts[1];
-
-    if (headerSegment && payloadSegment) {
-      try {
-        const header = JSON.parse(base64UrlDecode(headerSegment));
-        const payload = JSON.parse(base64UrlDecode(payloadSegment));
-        return {
-          format: "JWT",
-          type: "JSON Web Token",
-          confidence: "High",
-          detail: "Three dot-separated segments with valid base64url JSON in the header and payload.",
-          decoded: JSON.stringify({ header, payload }, null, 2),
-        };
-      } catch {}
-    }
+  const jwtParts = value.split(".");
+  if (jwtParts.length === 3) {
+    try {
+      const header = JSON.parse(base64UrlDecode(jwtParts[0] ?? ""));
+      const payload = JSON.parse(base64UrlDecode(jwtParts[1] ?? ""));
+      return {
+        format: "JWT",
+        type: "JSON Web Token",
+        confidence: "High",
+        detail: "Three segments with valid base64url JSON in the header and payload.",
+        decoded: JSON.stringify({ header, payload }, null, 2),
+      };
+    } catch {}
   }
 
   const compact = value.replace(/\s+/g, "");
   if (/^[0-9a-fA-F]+$/.test(compact) && compact.length >= 8 && compact.length % 2 === 0) {
-    const hashByLength: Record<number, string> = { 32: "MD5 / NTLM candidate", 40: "SHA-1 candidate", 64: "SHA-256 candidate", 128: "SHA-512 candidate" };
-    const hashType = hashByLength[compact.length];
-
-    if (hashType) {
+    const map: Record<number, string> = { 40: "SHA-1 candidate", 64: "SHA-256 candidate", 128: "SHA-512 candidate" };
+    if (map[compact.length]) {
       return {
-        format: "Hexadecimal digest",
-        type: hashType,
+        format: "Hex digest",
+        type: map[compact.length] ?? "Hash candidate",
         confidence: "Candidate",
-        detail: "Hash algorithms can share the same visible format. Length and character set alone cannot prove which algorithm generated it.",
-        hashAlgorithm:
-          compact.length === 40
-            ? "SHA-1"
-            : compact.length === 64
-              ? "SHA-256"
-              : compact.length === 128
-                ? "SHA-512"
-                : undefined,
+        detail: "Format and length can suggest a hash family, but cannot prove the algorithm.",
+        hashAlgorithm: compact.length === 40 ? "SHA-1" : compact.length === 64 ? "SHA-256" : "SHA-512",
       };
     }
     try {
-      return { format: "Hexadecimal", type: "Encoded binary/text data", confidence: "Likely", detail: "Valid hexadecimal. If it represents text, it can be decoded locally.", decoded: decodeHex(compact) };
+      return { format: "Hexadecimal", type: "Encoded text", confidence: "Likely", detail: "Valid hexadecimal that decodes cleanly as UTF-8.", decoded: decodeHex(compact) };
     } catch {
-      return { format: "Hexadecimal", type: "Binary data", confidence: "Likely", detail: "Valid hexadecimal, but it does not decode cleanly as UTF-8 text." };
+      return { format: "Hexadecimal", type: "Binary data", confidence: "Likely", detail: "Valid hexadecimal, but it does not decode as UTF-8 text." };
     }
   }
 
   if (looksLikeBase64(compact)) {
-    try { return { format: "Base64", type: "Encoded data", confidence: "High", detail: "Valid Base64 containing readable UTF-8 data.", decoded: decodeBase64(compact) }; }
-    catch {}
+    try {
+      return { format: "Base64", type: "Encoded data", confidence: "High", detail: "Valid Base64 containing readable UTF-8 data.", decoded: decodeBase64(compact) };
+    } catch {}
   }
 
   if (/%[0-9A-Fa-f]{2}/.test(value)) {
-    try { return { format: "URL encoding", type: "Percent-encoded data", confidence: "Candidate", detail: "Contains percent-encoded bytes commonly used in URLs.", decoded: decodeURIComponent(value) }; }
-    catch {}
+    try {
+      return { format: "URL encoding", type: "Percent-encoded data", confidence: "Candidate", detail: "Contains percent-encoded bytes.", decoded: decodeURIComponent(value) };
+    } catch {}
   }
 
-  return { format: "Unknown", type: "No confident match", confidence: "Low", detail: "CipherScope could not confidently identify the input from its structure alone." };
+  return { format: "Unknown", type: "No confident match", confidence: "Low", detail: "CipherScope could not confidently classify the input from structure alone." };
 }
 
 function CipherScopeTool() {
@@ -340,97 +306,47 @@ function CipherScopeTool() {
   const [analysis, setAnalysis] = useState<CipherAnalysis | null>(null);
   const [candidate, setCandidate] = useState("");
   const [verification, setVerification] = useState("");
-  const [copied, setCopied] = useState(false);
 
-  const runAnalysis = () => { setVerification(""); setAnalysis(analyzeCipherInput(input)); };
-
-  const verifyHash = async () => {
-    if (!analysis?.hashAlgorithm || !candidate.trim() || !input.trim()) { setVerification("Enter a candidate plaintext first."); return; }
-    try {
-      const expected = input.replace(/\s+/g, "").toLowerCase();
-      const actual = await digestHex(analysis.hashAlgorithm, candidate);
-      setVerification(actual === expected
-        ? `Match confirmed — ${analysis.hashAlgorithm} of the candidate produces this digest.`
-        : `No match — the candidate does not produce the supplied ${analysis.hashAlgorithm} digest.`);
-    } catch { setVerification("Could not verify this candidate locally."); }
-  };
-
-  const copyDecoded = () => {
-    if (!analysis?.decoded) return;
-    navigator.clipboard.writeText(analysis.decoded);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1400);
-  };
+  async function verifyCandidate() {
+    if (!analysis?.hashAlgorithm || !candidate.trim()) {
+      setVerification("Enter a candidate plaintext first.");
+      return;
+    }
+    const actual = await digest(analysis.hashAlgorithm, candidate);
+    const expected = input.replace(/\s+/g, "").toLowerCase();
+    setVerification(actual === expected ? `Match confirmed — ${analysis.hashAlgorithm} digest matches.` : `No match — candidate does not produce the supplied ${analysis.hashAlgorithm} digest.`);
+  }
 
   return (
-    <div className="bg-surface border border-border rounded-card p-[18px] flex flex-col gap-4">
-      <div className="flex items-start gap-2.5">
-        <div className="w-8 h-8 rounded-btn bg-lavender-tint text-burgundy-accent flex items-center justify-center shrink-0"><Search size={16} /></div>
-        <div>
-          <div className="flex items-center gap-2 text-[15px] font-semibold text-text-1">
-            <span>CipherScope</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-bg border border-border text-text-2 uppercase tracking-wide">Local</span>
-          </div>
-          <p className="text-[12px] text-text-2 leading-relaxed mt-0.5">Universal Crypto Analyzer — identify, decode, inspect, and verify encoded or hashed data. CipherScope does not decrypt one-way hashes.</p>
-        </div>
+    <Panel icon={Search} title="CipherScope" hint="Identify, decode, inspect, and verify structured or encoded values. It does not decrypt one-way hashes.">
+      <textarea value={input} onChange={(event) => { setInput(event.target.value); setAnalysis(null); setVerification(""); }} rows={5} placeholder="Paste encoded, hashed, encrypted, or token data…" />
+      <div className="lab-actions">
+        <button className="lab-primary" onClick={() => setAnalysis(analyzeCipherInput(input))}>Analyze</button>
+        <button onClick={() => { setInput(""); setAnalysis(null); setCandidate(""); setVerification(""); }}>Clear</button>
       </div>
-      <textarea className="w-full min-h-[120px] bg-bg border border-border rounded-[10px] px-3 py-2.5 text-[13px] font-mono text-text-1 resize-y" value={input} onChange={(e) => { setInput(e.target.value); setAnalysis(null); setVerification(""); }} placeholder="Paste encoded, hashed, encrypted, or token data…" aria-label="CipherScope input" />
-      <div className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={runAnalysis} className="px-4 py-2 rounded-lg bg-lavender text-on-lavender text-[12.5px] font-semibold">Analyze</button>
-        <button type="button" onClick={() => { setInput(""); setAnalysis(null); setCandidate(""); setVerification(""); }} className="px-4 py-2 rounded-lg border border-border bg-surface text-text-2 text-[12.5px]">Clear</button>
-        <span className="ml-auto flex items-center gap-1.5 text-[11px] text-status-green-text"><ShieldCheck size={14} />Local analysis — nothing is uploaded</span>
-      </div>
+
       {analysis && (
-        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-3 max-[760px]:grid-cols-1">
-          <div className="bg-bg border border-border rounded-[10px] p-3">
-            <div className="text-[10.5px] font-semibold text-text-2 uppercase tracking-wide mb-2">Detection</div>
-            <div className="grid grid-cols-[90px_1fr] gap-y-2 text-[12px]">
-              <span className="text-text-2">Format</span><span className="font-medium text-text-1 break-words">{analysis.format}</span>
-              <span className="text-text-2">Likely type</span><span className="font-medium text-text-1 break-words">{analysis.type}</span>
-              <span className="text-text-2">Confidence</span><span className="font-medium text-text-1">{analysis.confidence}</span>
-            </div>
-            <p className="text-[11.5px] text-text-2 leading-relaxed mt-3">{analysis.detail}</p>
+        <div className="lab-cipher-grid">
+          <div className="lab-card">
+            <small>Detection</small>
+            <div><span>Format</span><b>{analysis.format}</b></div>
+            <div><span>Type</span><b>{analysis.type}</b></div>
+            <div><span>Confidence</span><b>{analysis.confidence}</b></div>
+            <p>{analysis.detail}</p>
           </div>
-          <div className="bg-bg border border-border rounded-[10px] p-3">
-            <div className="flex items-center justify-between gap-2 mb-2"><div className="text-[10.5px] font-semibold text-text-2 uppercase tracking-wide">Analysis</div>{analysis.decoded && <button type="button" onClick={copyDecoded} className="w-8 h-8 rounded-btn border border-border bg-surface flex items-center justify-center" aria-label="Copy decoded result">{copied ? <Check size={14} /> : <Copy size={14} />}</button>}</div>
-            {analysis.decoded ? <pre className="max-h-[260px] overflow-auto whitespace-pre-wrap break-words text-[12px] font-mono text-text-1">{analysis.decoded}</pre> : <p className="text-[12px] text-text-2 leading-relaxed">{analysis.type.includes("candidate") ? "This is a one-way hash candidate. It cannot be decrypted. Verify a plaintext candidate by hashing it locally and comparing the digest." : "No reversible representation was confidently detected."}</p>}
-            {analysis.hashAlgorithm && <div className="mt-4 pt-3 border-t border-border"><div className="text-[10.5px] font-semibold text-text-2 uppercase tracking-wide mb-2">Verify candidate</div><div className="flex gap-2 max-[640px]:flex-col"><input type="text" value={candidate} onChange={(e) => setCandidate(e.target.value)} placeholder="Candidate plaintext…" className="flex-1 bg-surface border border-border rounded-[10px] px-3 py-2 text-[12px] font-mono text-text-1" /><button type="button" onClick={verifyHash} className="px-3.5 py-2 rounded-lg border border-border bg-surface text-text-1 text-[12px] font-semibold">Verify</button></div>{verification && <div className="flex items-start gap-1.5 mt-2 text-[11.5px] text-text-2">{verification.includes("Match confirmed") ? <Check size={14} className="mt-0.5 shrink-0" /> : <AlertCircle size={14} className="mt-0.5 shrink-0" />}<span>{verification}</span></div>}</div>}
+          <div className="lab-card">
+            <small>Analysis</small>
+            {analysis.decoded ? <pre className="lab-pre">{analysis.decoded}</pre> : <p>No reversible representation was confidently detected.</p>}
+            {analysis.hashAlgorithm && (
+              <div className="lab-verify">
+                <input value={candidate} onChange={(event) => setCandidate(event.target.value)} placeholder="Candidate plaintext…" />
+                <button onClick={() => void verifyCandidate()}>Verify</button>
+                {verification && <div className="lab-score"><Check size={13} />{verification}</div>}
+              </div>
+            )}
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-const COMING_SOON = [
-  { title: "CIDR Calculator" },
-  { title: "HTTP Header Analyzer" },
-  { title: "URL Reputation" },
-  { title: "DNS Inspection" },
-  { title: "Encoding Toolkit" },
-];
-
-export function SecurityTools() {
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-2 gap-4 max-[1024px]:grid-cols-1">
-        <HashTool />
-        <JwtTool />
-        <Base64Tool />
-        <PasswordStrengthTool />
-      </div>
-      <CipherScopeTool />
-      <div>
-        <div className="text-[12px] font-semibold uppercase tracking-wide text-text-2 mb-3">More labs, coming soon</div>
-        <div className="grid grid-cols-3 gap-3 max-[980px]:grid-cols-2 max-[640px]:grid-cols-1">
-          {COMING_SOON.map((c) => (
-            <div key={c.title} className="flex items-center justify-between gap-2 p-4 rounded-card border border-dashed border-border-strong text-text-2">
-              <span className="text-[13px]">{c.title}</span>
-              <span className="text-[10.5px] px-2 py-0.5 rounded-full bg-bg border border-border">Coming soon</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    </Panel>
   );
 }
