@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import {
   Activity,
   BookOpen,
@@ -410,7 +411,7 @@ function BootScreen({ onSkip }: { onSkip: () => void }) {
   useEffect(() => {
     const timers = bootLines.map((line, i) => setTimeout(() => setLines((l) => [...l, line]), 120 + i * 230));
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [bootLines]);
 
   return (
     <div className="prozilla-boot" role="dialog" aria-label="System boot">
