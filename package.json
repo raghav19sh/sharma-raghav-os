@@ -31,7 +31,8 @@
     "@prozilla-os/wordle": "^1.2.4",
     "@prozilla-os/ball-maze": "^1.0.10",
     "@prozilla-os/skins": "^1.1.9",
-    "@prozilla-os/logic-sim": "^1.1.25"
+    "@prozilla-os/logic-sim": "^1.1.25",
+    "lucide-react": "^0.468.0"
   },
   "devDependencies": {
     "@types/d3-geo": "^3.1.1",
