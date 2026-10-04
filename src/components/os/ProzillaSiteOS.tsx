@@ -8,7 +8,8 @@ import {
   ModalsView,
   ProzillaOS,
   Taskbar,
-  WindowProps,
+  type WindowProps,
+  type VirtualRoot,
   WindowsView,
   fileExplorer,
   mediaViewer,
@@ -265,7 +266,7 @@ function makeSkin() {
 const apps = configureApps();
 const skin = makeSkin();
 
-const loadData = (root: any) => {
+const loadData = (root: VirtualRoot) => {
   const home = root.navigateToFolder("~/") ?? root;
   const createFolder = (name: string, files: Array<[string, string]>) => {
     let folder = home.findSubFolder(name);
@@ -293,12 +294,16 @@ const loadData = (root: any) => {
     ["SOC.md", "# SOC Console\n\nAlert triage, MITRE ATT&CK mapping, log analysis and incident notes."],
   ]);
 
+  home.createFolder("Documents");
+  home.createFolder("Pictures");
+  home.createFolder("Music");
+
   const documents = root.navigateToFolder("~/Documents");
   documents?.createFile("About-Raghav", "md", (file: any) => file.setContent("# About Raghav Sharma\n\nCybersecurity & Forensics.\n\nBuild. Verify. Document. Improve.\n\ncontact@sharma-raghav.com"));
   documents?.createFile("Research", "md", (file: any) => file.setContent("# Research\n\nSecurity research, investigations, reading and observations."));
   documents?.createFile("Projects", "md", (file: any) => file.setContent("# Projects\n\nVoice Command Operator, Web Scraper, SOC Detection Lab."));
   documents?.createFile("Privacy", "md", (file: any) => file.setContent("# Privacy\n\nVisitor-side preferences remain local. Admin functionality remains protected."));
-  
+
   const pictures = root.navigateToFolder("~/Pictures");
   pictures?.createFile("Burgundy-Wallpaper", "svg", (file: any) => file.setSource("/os/wallpaper.svg"));
 
