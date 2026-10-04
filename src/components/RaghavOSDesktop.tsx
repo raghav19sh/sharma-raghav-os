@@ -149,7 +149,7 @@ export default function RaghavOSDesktop({
 
   function focus(id: AppId) {
     setWindows((current) => {
-      const top = current.reduce((max, win) => Math.max(max, win.z), 0);
+      const top = current.reduce((max, win) => Math.max(max, win.z), 100);
       return current.map((win) => win.id === id ? { ...win, minimized: false, z: top + 1 } : win);
     });
   }
