@@ -1,17 +1,19 @@
 # Third-party notices
 
+This site uses the ProzillaOS open-source desktop framework and the ProzillaIO game applications as bundled dependencies/assets. They are built into this site; the site does not redirect visitors to Prozilla's website or load the OS UI from Prozilla at runtime.
+
 ## ProzillaOS
 
-This project incorporates selected visual assets from the open-source ProzillaOS project:
+Source repository: https://github.com/prozilla-os/ProzillaOS
 
-https://github.com/prozilla-os/ProzillaOS
-
-Those copied assets are distributed under the MIT License.
+License: MIT
 
 Copyright (c) 2023 Sieben De Beule
 
+MIT License
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of the software and associated documentation files (the "Software"), to deal
+of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
@@ -20,4 +22,49 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
-The software is provided "as is", without warranty of any kind.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## ProzillaIO games
+
+Source repository: https://github.com/prozilla-os/ProzillaIO
+
+Bundled applications used by this site:
+- @prozilla-os/minesweeper
+- @prozilla-os/wordle
+- @prozilla-os/ball-maze
+- @prozilla-os/logic-sim
+- @prozilla-os/logic-sim is distributed from the ProzillaOS project under its MIT-licensed package.
+
+License: MIT
+
+Copyright (c) 2024 Sieben De Beule
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## Local modifications
+
+The ProzillaOS desktop is integrated into Sharma-Raghav OS and restyled with a custom burgundy skin and local assets. Raghav Sharma's portfolio data, Supabase backend, authentication, admin routes, security controls, domain and deployment configuration remain part of the Sharma-Raghav OS application.
