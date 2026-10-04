@@ -249,34 +249,6 @@ a{-webkit-tap-highlight-color:transparent}
 .switch.is-on span{transform:translateX(18px);background:#f7efff}
 .settings-note{display:flex;align-items:center;gap:8px;margin-top:9px;color:#93889c;font-size:10px;line-height:1.6}
 
-.music-window{display:flex;flex-direction:column;align-items:center;text-align:center}
-.music-art{
-  width:126px;height:126px;margin-top:4px;display:grid;place-items:center;border-radius:30px;
-  border:1px solid rgba(218,184,255,.19);color:#d0a4ff;
-  background:
-    radial-gradient(circle at 35% 30%,rgba(195,134,255,.28),transparent 32%),
-    linear-gradient(145deg,rgba(101,42,167,.62),rgba(25,9,41,.95));
-  box-shadow:0 18px 35px rgba(0,0,0,.35),0 0 35px rgba(124,46,212,.12);
-}
-.music-window>h2{margin:15px 0 4px;font-size:18px;font-weight:550}
-.music-window>p{margin:0 0 14px;color:#8f8497;font-size:9px}
-.music-seek{width:min(430px,100%);accent-color:#a362ed}
-.music-time{width:min(430px,100%);display:flex;justify-content:space-between;color:#71677a;font-size:8px;margin-top:3px}
-.music-controls{display:flex;align-items:center;gap:10px;margin:12px 0 15px}
-.music-controls button{
-  width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.05);
-  display:grid;place-items:center;cursor:pointer;
-}
-.music-controls button:hover{background:rgba(255,255,255,.09)}
-.music-controls .music-play{width:42px;height:42px;background:linear-gradient(145deg,#bd82ff,#7231c8);color:#16091f;box-shadow:0 9px 22px rgba(111,40,191,.25)}
-.playlist{width:min(520px,100%);display:grid;gap:3px}
-.playlist-item{
-  width:100%;padding:9px 10px;border:0;border-radius:6px;background:transparent;color:#9d92a5;
-  display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:10px;
-}
-.playlist-item span{display:flex;gap:8px;align-items:center}
-.playlist-item:hover,.playlist-item.is-current{color:#e8dff0;background:rgba(255,255,255,.04)}
-.playlist-item i{color:#bd80ef;font-size:7px;letter-spacing:.13em;font-style:normal}
 
 .lab{height:100%;overflow:auto;padding:16px;color:#cfc7d4}
 .lab-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
