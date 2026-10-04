@@ -759,9 +759,10 @@ function TerminalWindow({ openWindow }: { openWindow: (id: WindowId) => void }) 
       settings: "settings",
       music: "music",
     };
-    if (map[value]) {
-      setLines((current) => [...current, "$ " + command, "Opening " + APP_META[map[value]].label + "…"]);
-      openWindow(map[value]);
+    const appId = map[value];
+    if (appId) {
+      setLines((current) => [...current, "$ " + command, "Opening " + APP_META[appId].label + "…"]);
+      openWindow(appId);
       return;
     }
     setLines((current) => [...current, "$ " + command, "command not found: " + value]);
