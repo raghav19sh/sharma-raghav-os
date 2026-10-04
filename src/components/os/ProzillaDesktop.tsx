@@ -65,7 +65,7 @@ type DesktopItem = {
   folder: boolean;
 };
 
-const FOLDERS: Record<Exclude<WindowId, "terminal" | "music">, FolderItem[]> = {
+const FOLDERS: Record<Exclude<WindowId, "terminal" | "music" | "viewer" | "minesweeper" | "wordle" | "ballmaze" | "logicsim">, FolderItem[]> = {
   about: [
     { name: "profile.md", description: "About Raghav Sharma", path: "/about", icon: User },
     { name: "now", description: "Current focus and activity", path: "/now", icon: Activity },
@@ -191,36 +191,13 @@ export default function ProzillaDesktop({ status }: { status: StatusSnapshot }) 
   }
 
   function openRoute(path: string) {
-    const routes: Record<string, WindowId> = {
-      "/about": "about",
-      "/now": "viewer",
-      "/timeline": "viewer",
-      "/research": "research",
-      "/reading-room": "viewer",
-      "/observatory": "viewer",
-      "/knowledge": "knowledge",
-      "/engineering": "projects",
-      "/developer-workspace": "viewer",
-      "/changelog": "viewer",
-      "/security-lab": "security",
-      "/soc": "viewer",
-      "/public-api": "viewer",
-      "/journal": "journal",
-      "/media-library": "media",
-      "/learning": "learning",
-      "/learning-hub": "viewer",
-      "/docs": "viewer",
-      "/privacy": "viewer",
-      "/settings": "system",
-    };
-
-    const windowId = routes[path];
-
-    if (windowId) {
-      if (windowId === "viewer") setViewerPath(path);
-      launch(windowId);
-    }
+    // Files inside OS folders open the real portfolio page in the OS viewer.
+    // Folder windows themselves are opened by launch(); this prevents a file
+    // click from merely re-focusing the already-open parent folder.
+    setViewerPath(path);
+    launch("viewer");
   }
+
 
   if (booting) {
     return <BootScreen onSkip={() => setBooting(false)} />;
