@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Raghav Sharma",
-  description: "Choose between Raghav Sharma's cybersecurity portfolio and online tools.",
+  title: "Raghav Sharma — Cybersecurity Portfolio & Tools",
+  description:
+    "Explore Raghav Sharma's cybersecurity portfolio, research, projects, security lab, and browser-based utility tools.",
 };
 
 const options = [
@@ -11,14 +12,16 @@ const options = [
     href: "/os",
     eyebrow: "01 / PORTFOLIO",
     title: "Portfolio",
-    description: "Enter the cybersecurity workstation.",
-    action: "Open OS",
+    description:
+      "Explore cybersecurity projects, research, security work, and the interactive portfolio workstation.",
+    action: "Open Portfolio",
   },
   {
     href: "https://tools.sharma-raghav.com",
     eyebrow: "02 / TOOLS",
     title: "Tools",
-    description: "Useful online utilities for everyday work.",
+    description:
+      "Use browser-based utilities for images, PDFs, calculations, developer tasks, conversions, and more.",
     action: "Open Tools",
   },
 ];
@@ -29,16 +32,22 @@ export default function HomePage() {
       <div className="entry-grid" aria-hidden="true" />
       <div className="entry-glow entry-glow-one" aria-hidden="true" />
       <div className="entry-glow entry-glow-two" aria-hidden="true" />
+
       <section className="entry-shell">
         <div className="entry-brand">
           <span className="entry-mark">RS</span>
           <span>SHARMA-RAGHAV</span>
         </div>
+
         <div className="entry-copy">
-          <span className="entry-kicker">SELECT DESTINATION</span>
-          <h1>What are you looking for?</h1>
-          <p>Choose a workspace to continue.</p>
+          <span className="entry-kicker">CYBERSECURITY • ENGINEERING • TOOLS</span>
+          <h1>Raghav Sharma</h1>
+          <p>
+            Explore my cybersecurity portfolio, research, practical projects, and a collection
+            of browser-based tools built for everyday work.
+          </p>
         </div>
+
         <div className="entry-options">
           {options.map((option) => (
             <Link className="entry-option" href={option.href} key={option.href}>
@@ -54,9 +63,21 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
+
+        <div className="entry-info">
+          <div>
+            <span>PORTFOLIO</span>
+            <strong>Projects · Research · Security Lab</strong>
+          </div>
+          <div>
+            <span>TOOLS</span>
+            <strong>Images · PDFs · Calculators · Developer</strong>
+          </div>
+        </div>
+
         <div className="entry-footer">
           <span>RAGHAV SHARMA</span>
-          <span>SECURITY • ENGINEERING • TOOLS</span>
+          <span>SHARMA-RAGHAV.COM</span>
         </div>
       </section>
     </main>
