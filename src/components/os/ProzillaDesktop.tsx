@@ -496,7 +496,7 @@ function Minesweeper() {
 
   return (
     <GamePanel title="Minesweeper">
-      <div style={{ display: "grid", gridTemplateColumns: \`repeat(\${size}, 42px)\`, gap: 3, width: "max-content" }}>
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${size}, 42px)`, gap: 3, width: "max-content" }}>
         {board.map((cell, i) => {
           const n = count(board, i);
           return <button key={i} onClick={() => reveal(i)} onContextMenu={(e) => toggleFlag(e, i)}
@@ -548,7 +548,7 @@ function Wordle() {
         <button onClick={submit} style={{ padding: "8px 12px", border: "1px solid #3f3f46", background: "#18181b", color: "inherit" }}>Guess</button>
         <button onClick={reset} style={{ padding: "8px 12px", border: "1px solid #3f3f46", background: "#18181b", color: "inherit" }}>New game</button>
       </div>
-      <p style={{ opacity: .65, fontSize: 12 }}>{rows.includes(target) ? "Solved." : rows.length >= 6 ? \`Word: \${target}\` : "Green = correct · amber = present"}</p>
+      <p style={{ opacity: .65, fontSize: 12 }}>{rows.includes(target) ? "Solved." : rows.length >= 6 ? `Word: ${target}` : "Green = correct · amber = present"}</p>
     </GamePanel>
   );
 }
@@ -561,7 +561,7 @@ function BallMaze() {
     if (won) return p;
     const nx = Math.max(0, Math.min(4, p.x + dx));
     const ny = Math.max(0, Math.min(4, p.y + dy));
-    if (walls.has(\`\${nx},\${ny}\`)) return p;
+    if (walls.has(`${nx},${ny}`)) return p;
     if (nx === 4 && ny === 4) setWon(true);
     return { x: nx, y: ny };
   });
@@ -582,7 +582,7 @@ function BallMaze() {
     <GamePanel title="Ball Maze">
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 54px)", gap: 4, width: "max-content" }}>
         {Array.from({ length: 25 }, (_, i) => {
-          const x = i % 5, y = Math.floor(i / 5), wall = walls.has(\`\${x},\${y}\`);
+          const x = i % 5, y = Math.floor(i / 5), wall = walls.has(`${x},${y}`);
           const player = pos.x === x && pos.y === y;
           return <div key={i} style={{ width: 54, height: 54, display: "grid", placeItems: "center", background: wall ? "#18181b" : "#111113", border: "1px solid #27272a" }}>{player ? "●" : x === 4 && y === 4 ? "◎" : ""}</div>;
         })}
