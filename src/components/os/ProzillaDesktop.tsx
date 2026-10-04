@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from "react";
 import {
   Activity, BookOpen, BriefcaseBusiness, Code2, FileText, Folder, FolderOpen,
   Gamepad2, Globe2, Home, Laptop, Maximize2, Minus, Music2, Play, Power,
@@ -192,9 +192,9 @@ export default function ProzillaDesktop({ status }: { status: StatusSnapshot }) 
   </div>;
 }
 
-const iconButton:React.CSSProperties={border:0,background:"rgba(255,255,255,.06)",color:"white",width:34,height:34,borderRadius:10,display:"grid",placeItems:"center",cursor:"pointer"};
-const inputStyle:React.CSSProperties={flex:1,background:"transparent",border:0,outline:0,color:"white",fontSize:13};
-const searchItem:React.CSSProperties={border:0,background:"rgba(255,255,255,.04)",color:"white",padding:"8px 10px",borderRadius:9,textAlign:"left",display:"flex",gap:9,alignItems:"center",cursor:"pointer"};
+const iconButton:CSSProperties={border:0,background:"rgba(255,255,255,.06)",color:"white",width:34,height:34,borderRadius:10,display:"grid",placeItems:"center",cursor:"pointer"};
+const inputStyle:CSSProperties={flex:1,background:"transparent",border:0,outline:0,color:"white",fontSize:13};
+const searchItem:CSSProperties={border:0,background:"rgba(255,255,255,.04)",color:"white",padding:"8px 10px",borderRadius:9,textAlign:"left",display:"flex",gap:9,alignItems:"center",cursor:"pointer"};
 
 function DesktopIcon({app,onClick}:{app:DesktopApp;onClick:()=>void}){return <button onClick={onClick} style={{border:0,background:"transparent",color:"white",cursor:"pointer",padding:10,borderRadius:16}}><div style={{width:58,height:58,margin:"auto",display:"grid",placeItems:"center",borderRadius:17,background:`linear-gradient(135deg,${app.accent}44,${app.accent}12)`,border:`1px solid ${app.accent}66`,boxShadow:`0 8px 25px ${app.accent}22`}}><app.icon size={28} color={app.accent}/></div><div style={{fontSize:12,fontWeight:700,marginTop:7}}>{app.label}</div></button>}
 
@@ -208,7 +208,7 @@ function OSWindow({id,active,maximized,onActivate,onClose,onMinimize,onMaximize,
   <div style={{height:"calc(100% - 44px)",overflow:"auto"}}>{children}</div>
 </section>}
 
-const windowButton:React.CSSProperties={border:0,background:"transparent",color:"rgba(255,255,255,.7)",width:30,height:30,display:"grid",placeItems:"center",cursor:"pointer",borderRadius:8};
+const windowButton:CSSProperties={border:0,background:"transparent",color:"rgba(255,255,255,.7)",width:30,height:30,display:"grid",placeItems:"center",cursor:"pointer",borderRadius:8};
 
 function FolderApp({id,items,onOpen,query,setQuery}:{id:string;items:Item[];onOpen:(id:AppId)=>void;query:string;setQuery:(s:string)=>void}){return <div style={{padding:22}}>
   <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:18}}><FolderOpen size={20} color="#a78bfa"/><div><div style={{fontSize:11,opacity:.45}}>/home/raghav/{id}</div><h2 style={{margin:"3px 0",fontSize:22}}>{TITLES[id as AppId]??id}</h2></div></div>
@@ -229,7 +229,7 @@ function PageApp({id}:{id:string}){const d=pageData[id]??{eyebrow:"APP",title:TI
 function TerminalApp({onOpen}:{onOpen:(id:AppId)=>void}){const [cmd,setCmd]=useState("");const [lines,setLines]=useState(["Raghav Sharma OS terminal","Type help for commands."]);const run=()=>{const c=cmd.trim().toLowerCase();if(!c)return;let out=`raghav@os:~$ ${cmd}`;if(c==="help")out+="\\ncommands: about research projects security games music settings clear";else if(c==="clear"){setLines([]);setCmd("");return}else if(c==="about"||c==="research"||c==="projects"||c==="security"||c==="games"||c==="music"||c==="settings"){onOpen(c as AppId);out+="\\nopening internal window..."}else out+="\\ncommand not found";setLines(v=>[...v,...out.split("\\n")]);setCmd("")};return <div style={{padding:20,height:"100%",background:"#05070f",fontFamily:"ui-monospace,monospace",color:"#86efac"}}><div style={{opacity:.7,marginBottom:14}}>LOCAL PORTFOLIO SHELL</div>{lines.map((x,i)=><div key={i} style={{margin:"5px 0"}}>{x}</div>)}<div style={{display:"flex",gap:8,marginTop:14}}><span>raghav@os:~$</span><input autoFocus value={cmd} onChange={e=>setCmd(e.target.value)} onKeyDown={e=>e.key==="Enter"&&run()} style={{...inputStyle,color:"#86efac"}}/></div></div>}
 
 function MusicApp(){const ref=useRef<HTMLAudioElement>(null);const [track,setTrack]=useState(0);const [playing,setPlaying]=useState(false);const [muted,setMuted]=useState(false);const toggle=async()=>{if(!ref.current)return;if(ref.current.paused){try{await ref.current.play();setPlaying(true)}catch{}}else{ref.current.pause();setPlaying(false)}};return <div style={{padding:28,textAlign:"center"}}><div style={{width:130,height:130,borderRadius:"50%",margin:"10px auto 22px",display:"grid",placeItems:"center",background:"conic-gradient(#8b5cf6,#ec4899,#22d3ee,#8b5cf6)",boxShadow:"0 0 70px rgba(139,92,246,.3)"}}><div style={{width:105,height:105,borderRadius:"50%",display:"grid",placeItems:"center",background:"#11152a"}}><Music2 size={42}/></div></div><h2>{MUSIC[track].title}</h2><p style={{opacity:.5}}>Local media · no external streaming</p><audio ref={ref} src={MUSIC[track].src} muted={muted} onEnded={()=>setTrack(v=>(v+1)%MUSIC.length)} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)}/><div style={{display:"flex",justifyContent:"center",gap:8,margin:20}}><button style={pill} onClick={()=>setTrack(v=>(v+MUSIC.length-1)%MUSIC.length)}>‹</button><button style={{...pill,width:52}} onClick={toggle}>{playing?"Ⅱ":<Play size={17}/>}</button><button style={pill} onClick={()=>setTrack(v=>(v+1)%MUSIC.length)}>›</button><button style={pill} onClick={()=>setMuted(v=>!v)}>{muted?<VolumeX size={16}/>:<Volume2 size={16}/>}</button></div>{MUSIC.map((m,i)=><button key={m.src} onClick={()=>setTrack(i)} style={{display:"block",width:"100%",padding:11,border:0,borderRadius:10,background:i===track?"rgba(139,92,246,.18)":"transparent",color:"white",textAlign:"left",cursor:"pointer"}}>{i+1}. {m.title}</button>)}</div>}
-const pill:React.CSSProperties={border:0,borderRadius:12,width:42,height:42,display:"grid",placeItems:"center",background:"rgba(255,255,255,.08)",color:"white",cursor:"pointer"};
+const pill:CSSProperties={border:0,borderRadius:12,width:42,height:42,display:"grid",placeItems:"center",background:"rgba(255,255,255,.08)",color:"white",cursor:"pointer"};
 
 function GameShell({title,children,reset}:{title:string;children:ReactNode;reset:()=>void}){return <div style={{padding:24,minHeight:"100%",background:"radial-gradient(circle at 70% 20%,rgba(139,92,246,.15),transparent 30%)"}}><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:20}}><Gamepad2 color="#22d3ee"/><h2 style={{margin:0}}>{title}</h2><span style={{fontSize:10,color:"#34d399",marginLeft:6}}>LOCAL</span></div>{children}<button onClick={reset} style={{...pill,width:"auto",padding:"0 15px",marginTop:18}}>New Game</button></div>}
 
