@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FC, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import {
   App,
   AppsConfig,
@@ -8,7 +8,6 @@ import {
   ModalsView,
   ProzillaOS,
   Taskbar,
-  Vector2,
   WindowProps,
   WindowsView,
   fileExplorer,
@@ -264,10 +263,6 @@ function makeSkin() {
   });
 }
 
-function loadPortfolioFiles(root: Parameters<NonNullable<ReturnType<typeof makeSkin>>["loadStyleSheet"]>[0] extends never ? never : never) {
-  void root;
-}
-
 const apps = configureApps();
 const skin = makeSkin();
 
@@ -323,17 +318,7 @@ const loadData = (root: any) => {
   });
 };
 
-const withData = new AppsConfig({ apps: apps.apps });
-void apps;
-
 export default function ProzillaSiteOS(): ReactElement {
-  const [ready, setReady] = useState(false);
-  useEffect(() => { setReady(true); }, []);
-
-  if (!ready) {
-    return <div className="rsos-loading"><div className="rsos-loading-mark">RS</div><span>Starting Raghav Sharma OS…</span></div>;
-  }
-
   return (
     <div className="rsos-root">
       <ProzillaOS
