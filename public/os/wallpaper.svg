@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#12070A"/><stop offset=".48" stop-color="#2A0D14"/><stop offset="1" stop-color="#0D0508"/></linearGradient>
+  <radialGradient id="glow1" cx=".72" cy=".18" r=".5"><stop offset="0" stop-color="#A52A3A" stop-opacity=".5"/><stop offset="1" stop-color="#A52A3A" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glow2" cx=".12" cy=".88" r=".48"><stop offset="0" stop-color="#6E1626" stop-opacity=".42"/><stop offset="1" stop-color="#6E1626" stop-opacity="0"/></radialGradient>
+  <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#F7DCE0" stroke-opacity=".055"/></pattern>
+  <pattern id="circuit" width="180" height="180" patternUnits="userSpaceOnUse"><path d="M24 90h48m0 0V42h48m-48 48v50m72-98h24v48h36m-60 48h48" fill="none" stroke="#D26C7D" stroke-opacity=".08" stroke-width="2"/><circle cx="72" cy="90" r="3" fill="#D26C7D" fill-opacity=".18"/><circle cx="120" cy="42" r="3" fill="#D26C7D" fill-opacity=".18"/><circle cx="156" cy="90" r="3" fill="#D26C7D" fill-opacity=".18"/></pattern>
+  <filter id="blur"><feGaussianBlur stdDeviation="35"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="url(#bg)"/>
+<rect width="1920" height="1080" fill="url(#glow1)"/>
+<rect width="1920" height="1080" fill="url(#glow2)"/>
+<g opacity=".55" filter="url(#blur)"><circle cx="1440" cy="250" r="250" fill="#8F2638"/><circle cx="240" cy="850" r="220" fill="#5B1020"/></g>
+<rect width="1920" height="1080" fill="url(#grid)"/>
+<rect width="1920" height="1080" fill="url(#circuit)"/>
+<g fill="none" stroke="#D26C7D" stroke-opacity=".08"><path d="M-40 820 C 240 620, 490 980, 760 740 S 1220 450, 1520 650 S 1830 900, 1980 720" stroke-width="2"/><path d="M-60 850 C 250 650, 520 1000, 770 770 S 1240 490, 1520 690 S 1850 930, 1990 760" stroke-width="1"/></g>
+<text x="80" y="980" fill="#F7DCE0" fill-opacity=".11" font-family="monospace" font-size="18" letter-spacing="5">RAGHAV SHARMA OS // SECURE PERSONAL WORKSTATION</text>
+</svg>
