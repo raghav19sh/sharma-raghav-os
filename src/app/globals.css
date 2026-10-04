@@ -153,7 +153,7 @@ a{-webkit-tap-highlight-color:transparent}
   box-shadow:0 34px 100px rgba(0,0,0,.48),0 0 40px rgba(90,30,153,.09);
   backdrop-filter:none;-webkit-backdrop-filter:none;
 }
-.os-window.is-maximized{position:absolute;inset:0;width:auto!important;height:auto!important;border-radius:0}
+.os-window.is-maximized{position:absolute;inset:0 0 78px;width:auto!important;height:auto!important;border-radius:0}
 .os-window-bar{
   height:38px;display:flex;align-items:center;justify-content:space-between;
   padding-left:11px;background:linear-gradient(180deg,#321549,#1b0a29);
@@ -370,7 +370,7 @@ a{-webkit-tap-highlight-color:transparent}
   .os-hero p{font-size:11px;letter-spacing:.16em}
   .os-rule{margin:18px auto 0}.os-keywords{margin:15px auto 0}
   .os-window{left:12px!important;top:88px!important;width:calc(100vw - 24px)!important;height:calc(100vh - 126px)!important}
-  .os-window.is-maximized{inset:38px 0 0!important;width:auto!important;height:auto!important}
+  .os-window.is-maximized{inset:0 0 72px!important;width:auto!important;height:auto!important}
   .about-grid,.research-grid,.detail-sections,.lab-json-grid,.lab-cipher-grid{grid-template-columns:1fr}
   .research-tree{border-right:0;border-bottom:1px solid rgba(224,201,255,.07);padding-right:0;padding-bottom:8px}
   .os-dock{max-width:calc(100vw - 14px);overflow-x:auto;bottom:13px}
