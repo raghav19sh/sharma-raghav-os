@@ -1,19 +1,11 @@
 "use client";
 
 import {
-  Activity,
-  Battery,
-  BookOpen,
   ChevronLeft,
   ChevronRight,
   Code2,
-  FileCode2,
-  FileText,
-  Folder,
   Github,
   HardDrive,
-  Info,
-  LayoutGrid,
   LockKeyhole,
   Mail,
   Maximize2,
@@ -21,20 +13,17 @@ import {
   Minimize2,
   Music2,
   Network,
-  Play,
   Pause,
-  Power,
+  Play,
   Search,
   Settings,
   Shield,
-  Terminal as TerminalIcon,
   UserRound,
-  Wifi,
   Volume2,
+  Wifi,
   X,
-  Zap,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SecurityTools from "@/components/security/SecurityTools";
 
 type Profile = {
@@ -73,10 +62,10 @@ type Research = {
   published_at: string | null;
 };
 
-type WindowId = "files" | "terminal" | "about" | "research" | "projects" | "security" | "settings" | "music";
+type AppId = "about" | "research" | "projects" | "security" | "settings" | "music";
 
 type WindowState = {
-  id: WindowId;
+  id: AppId;
   title: string;
   x: number;
   y: number;
@@ -87,29 +76,22 @@ type WindowState = {
   z: number;
 };
 
-const APP_META: Record<WindowId, { label: string; hint: string; icon: typeof Folder }> = {
-  files: { label: "Files", hint: "Browse the public workspace", icon: Folder },
-  terminal: { label: "Terminal", hint: "Local command interface", icon: TerminalIcon },
-  about: { label: "About", hint: "Profile & skills", icon: UserRound },
-  research: { label: "Research", hint: "Research archive", icon: BookOpen },
-  projects: { label: "Projects", hint: "Engineering case files", icon: Code2 },
-  security: { label: "Security Lab", hint: "Interactive local tools", icon: Shield },
-  settings: { label: "Settings", hint: "Visitor preferences", icon: Settings },
-  music: { label: "Music", hint: "Local audio library", icon: Music2 },
+const APP_META: Record<AppId, { label: string; icon: string }> = {
+  about: { label: "About", icon: "/os/about.svg" },
+  research: { label: "Research", icon: "/os/research.svg" },
+  projects: { label: "Projects", icon: "/os/projects.svg" },
+  security: { label: "Security Lab", icon: "/os/security.svg" },
+  music: { label: "Music", icon: "/os/music.svg" },
+  settings: { label: "Settings", icon: "/os/settings.svg" },
 };
 
-const INITIAL_WINDOWS: WindowState[] = [
-  { id: "files", title: "Files", x: 520, y: 300, width: 660, height: 470, minimized: false, maximized: false, z: 4 },
-  { id: "terminal", title: "Terminal", x: 70, y: 390, width: 500, height: 400, minimized: false, maximized: false, z: 5 },
-];
+const APPS: AppId[] = ["about", "research", "projects", "security", "music", "settings"];
 
 const TRACKS = [
   { title: "Soundtrack", file: "/music/soundtrack.mp3", note: "Sharma-Raghav OS" },
   { title: "Für Elise", file: "/music/Fu╠êr Elise.mp3", note: "Classical" },
   { title: "Rain Ambient", file: "/music/rain-ambient.mp3", note: "Ambient" },
 ];
-
-const DESKTOP_APPS: WindowId[] = ["about", "research", "projects", "security", "settings", "music"];
 
 export default function RaghavOSDesktop({
   profile,
@@ -122,23 +104,23 @@ export default function RaghavOSDesktop({
   research: Research[];
   databaseOnline: boolean;
 }) {
-  const [windows, setWindows] = useState<WindowState[]>(INITIAL_WINDOWS);
-  const [menu, setMenu] = useState<string | null>(null);
+  const [windows, setWindows] = useState<WindowState[]>([]);
+  const [menu, setMenu] = useState<"system" | "File" | "Edit" | "View" | "Go" | "Window" | "Help" | null>(null);
   const [online, setOnline] = useState(true);
   const [now, setNow] = useState(() => new Date());
   const [sessionStart] = useState(() => Date.now());
-  const [drag, setDrag] = useState<{ id: WindowId; offsetX: number; offsetY: number } | null>(null);
+  const [drag, setDrag] = useState<{ id: AppId; offsetX: number; offsetY: number } | null>(null);
 
   useEffect(() => {
     const tick = () => setNow(new Date());
-    const id = window.setInterval(tick, 1000);
+    const interval = window.setInterval(tick, 1000);
     const onOnline = () => setOnline(true);
     const onOffline = () => setOnline(false);
     setOnline(navigator.onLine);
     window.addEventListener("online", onOnline);
     window.addEventListener("offline", onOffline);
     return () => {
-      window.clearInterval(id);
+      window.clearInterval(interval);
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
     };
@@ -150,10 +132,10 @@ export default function RaghavOSDesktop({
       setWindows((current) =>
         current.map((win) => {
           if (win.id !== drag.id || win.maximized) return win;
-          const nextX = Math.max(8, Math.min(window.innerWidth - 140, event.clientX - drag.offsetX));
-          const nextY = Math.max(34, Math.min(window.innerHeight - 100, event.clientY - drag.offsetY));
+          const nextX = Math.max(8, Math.min(window.innerWidth - 160, event.clientX - drag.offsetX));
+          const nextY = Math.max(42, Math.min(window.innerHeight - 120, event.clientY - drag.offsetY));
           return { ...win, x: nextX, y: nextY };
-        })
+        }),
       );
     };
     const up = () => setDrag(null);
@@ -165,59 +147,74 @@ export default function RaghavOSDesktop({
     };
   }, [drag]);
 
-  function focus(id: WindowId) {
+  function focus(id: AppId) {
     setWindows((current) => {
-      const top = current.reduce((highest, win) => Math.max(highest, win.z), 0);
+      const top = current.reduce((max, win) => Math.max(max, win.z), 0);
       return current.map((win) => win.id === id ? { ...win, minimized: false, z: top + 1 } : win);
     });
   }
 
-  function openWindow(id: WindowId) {
+  function openWindow(id: AppId) {
     setWindows((current) => {
-      const top = current.reduce((highest, win) => Math.max(highest, win.z), 0);
+      const top = current.reduce((max, win) => Math.max(max, win.z), 0);
       const existing = current.find((win) => win.id === id);
       if (existing) {
         return current.map((win) => win.id === id ? { ...win, minimized: false, z: top + 1 } : win);
       }
-      const offset = current.length * 24;
-      return [...current, { id, title: APP_META[id].label, x: 160 + offset, y: 90 + offset, width: id === "security" ? 930 : id === "research" || id === "projects" ? 820 : 650, height: id === "security" ? 650 : 520, minimized: false, maximized: false, z: top + 1 }];
+      const offset = Math.min(current.length, 5) * 26;
+      const wide = id === "security" || id === "projects" || id === "research";
+      const size = {
+        width: wide ? 850 : 650,
+        height: id === "security" ? 610 : 500,
+      };
+      return [
+        ...current,
+        {
+          id,
+          title: APP_META[id].label,
+          x: Math.max(34, 210 + offset),
+          y: Math.max(52, 78 + offset),
+          width: size.width,
+          height: size.height,
+          minimized: false,
+          maximized: false,
+          z: top + 1,
+        },
+      ];
     });
     setMenu(null);
   }
 
-  function closeWindow(id: WindowId) {
+  function closeWindow(id: AppId) {
     setWindows((current) => current.filter((win) => win.id !== id));
   }
 
-  function minimizeWindow(id: WindowId) {
+  function minimizeWindow(id: AppId) {
     setWindows((current) => current.map((win) => win.id === id ? { ...win, minimized: true } : win));
   }
 
-  function toggleMaximize(id: WindowId) {
+  function toggleMaximize(id: AppId) {
     setWindows((current) => current.map((win) => win.id === id ? { ...win, maximized: !win.maximized, minimized: false } : win));
   }
 
-  function resetWindows() {
-    setWindows(INITIAL_WINDOWS.map((win) => ({ ...win })));
-  }
-
-  function closeAll() {
+  function resetDesktop() {
     setWindows([]);
+    setMenu(null);
   }
 
-  function startDrag(id: WindowId, event: React.PointerEvent<HTMLDivElement>) {
+  function startDrag(id: AppId, event: React.PointerEvent<HTMLDivElement>) {
     const target = windows.find((win) => win.id === id);
     if (!target || target.maximized || event.button !== 0) return;
     focus(id);
     setDrag({ id, offsetX: event.clientX - target.x, offsetY: event.clientY - target.y });
   }
 
-  const uptime = Math.floor((now.getTime() - sessionStart) / 1000);
-  const uptimeText = [Math.floor(uptime / 3600), Math.floor((uptime % 3600) / 60), uptime % 60]
-    .map((part) => String(part).padStart(2, "0"))
+  const elapsed = Math.floor((now.getTime() - sessionStart) / 1000);
+  const uptime = [Math.floor(elapsed / 3600), Math.floor((elapsed % 3600) / 60), elapsed % 60]
+    .map((value) => String(value).padStart(2, "0"))
     .join(":");
 
-  const displayDate = now.toLocaleString("en-IN", {
+  const stamp = now.toLocaleString("en-IN", {
     weekday: "short",
     day: "2-digit",
     month: "short",
@@ -226,42 +223,34 @@ export default function RaghavOSDesktop({
     hour12: false,
   });
 
-  function renderWindowContent(id: WindowId) {
+  function renderWindow(id: AppId) {
     switch (id) {
-      case "files":
-        return <FilesWindow openWindow={openWindow} />;
-      case "terminal":
-        return <TerminalWindow openWindow={openWindow} />;
-      case "about":
-        return <AboutWindow profile={profile} />;
-      case "research":
-        return <ResearchWindow research={research} />;
-      case "projects":
-        return <ProjectsWindow projects={projects} />;
-      case "security":
-        return <SecurityTools />;
-      case "settings":
-        return <SettingsWindow />;
-      case "music":
-        return <MusicWindow />;
+      case "about": return <AboutWindow profile={profile} />;
+      case "research": return <ResearchWindow research={research} />;
+      case "projects": return <ProjectsWindow projects={projects} />;
+      case "security": return <SecurityTools />;
+      case "settings": return <SettingsWindow />;
+      case "music": return <MusicWindow />;
     }
   }
 
   return (
     <main className="os-root" onClick={() => menu && setMenu(null)}>
       <div className="os-wallpaper">
-        <div className="os-stars" />
-        <div className="os-topbar" onClick={(event) => event.stopPropagation()}>
-          <button className="os-system" onClick={() => setMenu(menu === "system" ? null : "system")} aria-label="System menu">
+        <div className="os-overlay" aria-hidden="true" />
+
+        <header className="os-topbar" onClick={(event) => event.stopPropagation()}>
+          <button className="os-system" type="button" onClick={() => setMenu(menu === "system" ? null : "system")} aria-label="Open system menu">
             <span className="os-logo">RS</span>
             <strong>RAGHAV SHARMA OS</strong>
           </button>
 
           <nav className="os-menus" aria-label="System menus">
-            {["File", "Edit", "View", "Go", "Window", "Help"].map((label) => (
+            {(["File", "Edit", "View", "Go", "Window", "Help"] as const).map((label) => (
               <button
-                key={label}
                 className={menu === label ? "os-menu is-open" : "os-menu"}
+                type="button"
+                key={label}
                 onClick={() => setMenu(menu === label ? null : label)}
               >
                 {label}
@@ -270,63 +259,73 @@ export default function RaghavOSDesktop({
           </nav>
 
           <div className="os-status">
-            {online ? <Wifi size={14} /> : <Network size={14} />}
+            {online ? <Wifi size={14} /> : <span className="status-offline"><Wifi size={14} /></span>}
             <Volume2 size={14} />
-            <Battery size={15} />
-            <span>{displayDate}</span>
-            <Search size={14} onClick={() => openWindow("terminal")} className="os-clickable" />
+            <span className="os-date">{stamp}</span>
+            <Search size={14} className="os-search-button" onClick={() => openWindow("about")} />
           </div>
 
           {menu && (
             <div className="os-dropdown" onClick={(event) => event.stopPropagation()}>
-              {menu === "File" && <>
-                <button onClick={() => openWindow("files")}>Open Files</button>
-                <button onClick={() => openWindow("terminal")}>New Terminal</button>
-              </>}
-              {menu === "Edit" && <>
-                <button onClick={() => navigator.clipboard?.writeText("Raghav Sharma OS")}>Copy system name</button>
-                <button onClick={() => navigator.clipboard?.writeText(window.location.href)}>Copy URL</button>
-              </>}
-              {menu === "View" && <>
-                <button onClick={resetWindows}>Reset desktop layout</button>
-                <button onClick={closeAll}>Close all windows</button>
-              </>}
-              {menu === "Go" && DESKTOP_APPS.map((id) => <button key={id} onClick={() => openWindow(id)}>{APP_META[id].label}</button>)}
-              {menu === "Window" && <>
-                <button onClick={() => setWindows((current) => current.map((win) => ({ ...win, minimized: true })))}>Minimize all</button>
-                <button onClick={resetWindows}>Restore default windows</button>
-              </>}
-              {menu === "Help" && <>
-                <button onClick={() => openWindow("about")}>About this OS</button>
-                <button onClick={() => openWindow("terminal")}>Terminal help</button>
-              </>}
-              {menu === "system" && <>
-                <button onClick={() => openWindow("settings")}>System Settings</button>
-                <button onClick={() => setMenu(null)}>Lock screen</button>
-              </>}
+              {menu === "system" && (
+                <>
+                  <button type="button" onClick={() => openWindow("settings")}>System Settings</button>
+                  <button type="button" onClick={resetDesktop}>Clear desktop</button>
+                </>
+              )}
+              {menu === "File" && (
+                <>
+                  <button type="button" onClick={() => openWindow("about")}>Open About</button>
+                  <button type="button" onClick={() => openWindow("projects")}>Open Projects</button>
+                </>
+              )}
+              {menu === "Edit" && (
+                <>
+                  <button type="button" onClick={() => navigator.clipboard?.writeText("Raghav Sharma OS")}>Copy system name</button>
+                  <button type="button" onClick={() => navigator.clipboard?.writeText(window.location.href)}>Copy URL</button>
+                </>
+              )}
+              {menu === "View" && (
+                <>
+                  <button type="button" onClick={resetDesktop}>Reset desktop</button>
+                  <button type="button" onClick={() => setWindows((current) => current.map((win) => ({ ...win, minimized: true })))}>Minimize all</button>
+                </>
+              )}
+              {menu === "Go" && APPS.map((id) => (
+                <button key={id} type="button" onClick={() => openWindow(id)}>{APP_META[id].label}</button>
+              ))}
+              {menu === "Window" && (
+                <>
+                  <button type="button" onClick={() => setWindows((current) => current.map((win) => ({ ...win, maximized: true, minimized: false })))}>Maximize all</button>
+                  <button type="button" onClick={() => setWindows((current) => current.map((win) => ({ ...win, minimized: true })))}>Minimize all</button>
+                </>
+              )}
+              {menu === "Help" && (
+                <>
+                  <button type="button" onClick={() => openWindow("about")}>About this OS</button>
+                  <button type="button" onClick={() => openWindow("security")}>Security Lab</button>
+                </>
+              )}
             </div>
           )}
-        </div>
+        </header>
 
-        <div className="os-desktop">
-          <div className="os-desktop-icons">
-            {DESKTOP_APPS.map((id) => {
-              const Icon = APP_META[id].icon;
-              return (
-                <button key={id} className="os-desktop-icon" onClick={(event) => { event.stopPropagation(); openWindow(id); }}>
-                  <span className="os-icon-tile"><Icon size={27} /></span>
-                  <span>{APP_META[id].label}</span>
-                </button>
-              );
-            })}
-          </div>
+        <section className="os-desktop" onClick={(event) => event.stopPropagation()}>
+          <aside className="os-desktop-icons" aria-label="Applications">
+            {APPS.map((id) => (
+              <button className="os-desktop-icon" type="button" key={id} onClick={() => openWindow(id)} title={APP_META[id].label}>
+                <img src={APP_META[id].icon} alt="" />
+                <span>{APP_META[id].label}</span>
+              </button>
+            ))}
+          </aside>
 
-          <section className="os-center" onClick={(event) => event.stopPropagation()}>
+          <section className="os-center">
             <div className="os-hero">
-              <span className="os-kicker">SECURITY WORKSTATION</span>
-              <h1>RAGHAV SHARMA</h1>
+              <span className="os-kicker">&gt;_ SECURITY WORKSTATION</span>
+              <h1>RAGHAV <em>SHARMA</em></h1>
               <p>Cybersecurity &amp; Forensics</p>
-              <span className="os-cursor">▸_</span>
+              <span className="os-rule" />
               <div className="os-keywords">
                 <span>SECURITY RESEARCH</span>
                 <span>ENGINEERING</span>
@@ -334,101 +333,73 @@ export default function RaghavOSDesktop({
                 <span>DOCUMENTATION</span>
               </div>
             </div>
-
-            <div className="os-cards">
-              <button onClick={() => openWindow("research")} className="os-card">
-                <BookOpen size={29} />
-                <span><b>Research</b><small>Explorations, Analysis &amp; Notes</small></span>
-                <ChevronRight size={19} />
-              </button>
-              <button onClick={() => openWindow("projects")} className="os-card">
-                <Code2 size={29} />
-                <span><b>Projects</b><small>Engineering &amp; Open Source</small></span>
-                <ChevronRight size={19} />
-              </button>
-              <button onClick={() => openWindow("security")} className="os-card">
-                <Shield size={29} />
-                <span><b>Security Lab</b><small>SOC, Tools &amp; Experiments</small></span>
-                <ChevronRight size={19} />
-              </button>
-            </div>
           </section>
 
-          <aside className="os-status-card" onClick={(event) => event.stopPropagation()}>
-            <div className="os-status-card__head">
-              <span>SYSTEM STATUS</span>
-              <span className={online ? "os-live" : "os-offline"}>{online ? "ONLINE" : "OFFLINE"} <i /></span>
+          <aside className="os-quiet-status" aria-label="System status">
+            <div className="os-quiet-head">
+              <span>SYSTEM</span>
+              <b className={online ? "is-online" : "is-offline"}>{online ? "ONLINE" : "OFFLINE"}</b>
             </div>
-            <div className="os-status-line"><Wifi size={14} /><span>Network</span><b>{online ? "Connected" : "Offline"}</b></div>
-            <div className="os-status-line"><HardDrive size={14} /><span>Database</span><b>{databaseOnline ? "Connected" : "Unavailable"}</b></div>
-            <div className="os-status-line"><Activity size={14} /><span>Session</span><b>{uptimeText}</b></div>
-            <div className="os-status-line"><Zap size={14} /><span>Focus</span><b>Application Security</b></div>
+            <div><Wifi size={13} /><span>Network</span><b>{online ? "Connected" : "Offline"}</b></div>
+            <div><HardDrive size={13} /><span>Database</span><b>{databaseOnline ? "Connected" : "Unavailable"}</b></div>
+            <div><span className="mini-dot" /><span>Session</span><b>{uptime}</b></div>
           </aside>
-
-          <div className="os-quote">
-            <span>BUILD</span>
-            <span>ANALYSE</span>
-            <span>SECURE</span>
-            <span>REPEAT</span>
-          </div>
 
           {windows.map((win) => {
             if (win.minimized) return null;
-            const Icon = APP_META[win.id].icon;
-            const style = win.maximized
-              ? undefined
-              : { left: win.x, top: win.y, width: win.width, height: win.height, zIndex: win.z };
+            const meta = APP_META[win.id];
             return (
               <section
                 key={win.id}
                 className={win.maximized ? "os-window is-maximized" : "os-window"}
-                style={style}
+                style={win.maximized ? undefined : { left: win.x, top: win.y, width: win.width, height: win.height, zIndex: win.z }}
                 onMouseDown={() => focus(win.id)}
-                aria-label={win.title}
+                aria-label={meta.label}
               >
-                <div
-                  className="os-window-bar"
-                  onPointerDown={(event) => startDrag(win.id, event)}
-                >
+                <div className="os-window-bar" onPointerDown={(event) => startDrag(win.id, event)}>
                   <div className="os-window-title">
-                    <span className="os-window-dot red" />
-                    <span className="os-window-dot amber" />
-                    <span className="os-window-dot green" />
-                    <Icon size={14} />
-                    <span>{win.title}</span>
+                    <span className="window-dot" />
+                    <img src={meta.icon} alt="" />
+                    <strong>{meta.label}</strong>
                   </div>
                   <div className="os-window-actions">
-                    <button onClick={(event) => { event.stopPropagation(); minimizeWindow(win.id); }} aria-label="Minimize"><Minimize2 size={13} /></button>
-                    <button onClick={(event) => { event.stopPropagation(); toggleMaximize(win.id); }} aria-label="Maximize"><Maximize2 size={13} /></button>
-                    <button onClick={(event) => { event.stopPropagation(); closeWindow(win.id); }} aria-label="Close"><X size={14} /></button>
+                    <button type="button" onClick={(event) => { event.stopPropagation(); minimizeWindow(win.id); }} aria-label="Minimize"><Minimize2 size={13} /></button>
+                    <button type="button" onClick={(event) => { event.stopPropagation(); toggleMaximize(win.id); }} aria-label="Maximize"><Maximize2 size={13} /></button>
+                    <button type="button" onClick={(event) => { event.stopPropagation(); closeWindow(win.id); }} aria-label="Close"><X size={14} /></button>
                   </div>
                 </div>
-                <div className="os-window-body">{renderWindowContent(win.id)}</div>
+                <div className="os-window-body">{renderWindow(win.id)}</div>
               </section>
             );
           })}
 
-          <div className="os-dock" onClick={(event) => event.stopPropagation()}>
-            <button className="os-dock-item os-dock-launch" onClick={() => openWindow("files")} title="Files"><LayoutGrid size={17} /></button>
-            <span className="os-dock-sep" />
-            {(["terminal", "files", "research", "projects", "security", "music", "settings"] as WindowId[]).map((id) => {
-              const Icon = APP_META[id].icon;
+          <nav className="os-dock" aria-label="Dock">
+            <button type="button" className="os-dock-launch" onClick={() => openWindow("about")} title="About">
+              <Menu size={18} />
+            </button>
+            {APPS.map((id) => {
               const active = windows.some((win) => win.id === id && !win.minimized);
               return (
-                <button key={id} className={active ? "os-dock-item is-active" : "os-dock-item"} onClick={() => openWindow(id)} title={APP_META[id].label}>
-                  <Icon size={18} />
+                <button
+                  type="button"
+                  key={id}
+                  className={active ? "os-dock-item is-active" : "os-dock-item"}
+                  onClick={() => openWindow(id)}
+                  title={APP_META[id].label}
+                >
+                  <img src={APP_META[id].icon} alt="" />
                   {active && <i />}
                 </button>
               );
             })}
-          </div>
+          </nav>
 
-          <div className="os-bottom-bar">
-            <span><span className={online ? "status-dot" : "status-dot is-offline"} />{online ? "Connected" : "Offline"}</span>
+          <div className="os-bottom">
+            <span><i className={online ? "status-dot" : "status-dot is-offline"} />{online ? "Connected" : "Offline"}</span>
             <span>RAGHAV-OS / HOME</span>
             <span>Visitor mode · read-only</span>
           </div>
-        </div>
+        </section>
       </div>
     </main>
   );
@@ -497,32 +468,34 @@ function ResearchWindow({ research }: { research: Research[] }) {
     <div className="content-scroll research-window">
       <WindowHeader eyebrow="KNOWLEDGE GRAPH" title="Research" subtitle="Research is treated as a living system: questions branch into methods, results and future work." />
       {!research.length ? (
-        <div className="empty-state"><BookOpen size={20} /><p>No public research records are currently published.</p></div>
+        <div className="empty-state"><Search size={20} /><p>No public research records are currently published.</p></div>
       ) : (
         <div className="research-grid">
           <aside className="research-tree">
             <div className="tree-root">PUBLIC RESEARCH</div>
             {research.map((record) => (
-              <button className={record.id === selected ? "tree-node is-selected" : "tree-node"} key={record.id} onClick={() => setSelected(record.id)}>
+              <button className={record.id === selected ? "tree-node is-selected" : "tree-node"} key={record.id} type="button" onClick={() => setSelected(record.id)}>
                 <ChevronRight size={13} />{record.title}
               </button>
             ))}
           </aside>
           <section className="research-detail">
-            {item && <>
-              <div className="detail-meta">{item.kind} · {item.status.replace("_", " ").toUpperCase()}</div>
-              <h3>{item.title}</h3>
-              {item.summary && <p className="detail-summary">{item.summary}</p>}
-              <div className="detail-sections">
-                {["PROBLEM", "HYPOTHESIS", "METHODOLOGY", "RESULTS"].map((label, index) => (
-                  <div key={label}><span>0{index + 1} / {label}</span><p>{snippets[index] || "Recorded in the published research write-up."}</p></div>
-                ))}
-              </div>
-              <div className="record-row">
-                <span>{item.read_time_minutes ? item.read_time_minutes + " min read" : "Research record"}</span>
-                <span>{item.published_at ? new Date(item.published_at).toLocaleDateString("en-IN") : "Publication date not set"}</span>
-              </div>
-            </>}
+            {item && (
+              <>
+                <div className="detail-meta">{item.kind} · {item.status.replace("_", " ").toUpperCase()}</div>
+                <h3>{item.title}</h3>
+                {item.summary && <p className="detail-summary">{item.summary}</p>}
+                <div className="detail-sections">
+                  {["PROBLEM", "HYPOTHESIS", "METHODOLOGY", "RESULTS"].map((label, index) => (
+                    <div key={label}><span>0{index + 1} / {label}</span><p>{snippets[index] || "Recorded in the published research write-up."}</p></div>
+                  ))}
+                </div>
+                <div className="record-row">
+                  <span>{item.read_time_minutes ? item.read_time_minutes + " min read" : "Research record"}</span>
+                  <span>{item.published_at ? new Date(item.published_at).toLocaleDateString("en-IN") : "Publication date not set"}</span>
+                </div>
+              </>
+            )}
           </section>
         </div>
       )}
@@ -536,14 +509,14 @@ function ProjectsWindow({ projects }: { projects: Project[] }) {
 
   return (
     <div className="content-scroll projects-window">
-      <WindowHeader eyebrow="SECURITY ARCHIVE" title="Projects" subtitle="Every build is presented as a compact case file: problem, method, evidence and outcome." />
+      <WindowHeader eyebrow="ENGINEERING ARCHIVE" title="Projects" subtitle="Practical builds presented as compact engineering case files." />
       {!projects.length ? (
-        <div className="empty-state"><Code2 size={20} /><p>No public case files are currently published.</p></div>
+        <div className="empty-state"><Code2 size={20} /><p>No public projects are currently published.</p></div>
       ) : (
         <>
           <div className="project-tabs">
             {projects.map((project, index) => (
-              <button key={project.id} className={project.id === selected ? "project-tab is-selected" : "project-tab"} onClick={() => setSelected(project.id)}>
+              <button key={project.id} type="button" className={project.id === selected ? "project-tab is-selected" : "project-tab"} onClick={() => setSelected(project.id)}>
                 <small>CASE #{String(index + 1).padStart(3, "0")}</small>
                 <strong>{project.title}</strong>
                 <span>{project.status.replace("_", " ")}</span>
@@ -561,7 +534,7 @@ function ProjectsWindow({ projects }: { projects: Project[] }) {
                 <span>{item.started_at ? "Started " + new Date(item.started_at).toLocaleDateString("en-IN") : "Project record"}</span>
                 <span className="project-links">
                   {item.repo_url && <a href={item.repo_url} target="_blank" rel="noreferrer">GitHub <Github size={12} /></a>}
-                  {item.live_url && <a href={item.live_url} target="_blank" rel="noreferrer">Live <Zap size={12} /></a>}
+                  {item.live_url && <a href={item.live_url} target="_blank" rel="noreferrer">Live <ChevronRight size={12} /></a>}
                 </span>
               </div>
             </article>
@@ -583,19 +556,18 @@ function SettingsWindow() {
     const next = !reducedMotion;
     setReducedMotion(next);
     window.localStorage.setItem("sr-os-reduced-motion", String(next));
-    window.dispatchEvent(new CustomEvent("sr-os-motion-change", { detail: next }));
   }
 
   return (
     <div className="content-scroll settings-window">
-      <WindowHeader eyebrow="SYSTEM PREFERENCES" title="Settings" subtitle="Visitor-only preferences are stored locally in this browser." />
+      <WindowHeader eyebrow="SYSTEM PREFERENCES" title="Settings" subtitle="Visitor-only preferences stay in this browser." />
       <div className="content-card setting-row">
-        <div><b>Reduce motion</b><p>Reduce ambient animation for a calmer workspace.</p></div>
-        <button className={reducedMotion ? "switch is-on" : "switch"} role="switch" aria-checked={reducedMotion} onClick={toggleMotion}><span /></button>
+        <div><b>Reduce motion</b><p>Reduce ambient movement for a calmer workspace.</p></div>
+        <button className={reducedMotion ? "switch is-on" : "switch"} type="button" role="switch" aria-checked={reducedMotion} onClick={toggleMotion}><span /></button>
       </div>
       <div className="content-card">
         <span className="section-label">ACCESS</span>
-        <div className="settings-note"><LockKeyhole size={14} />Visitor session — read-only. Administrative controls are not exposed in the public workstation.</div>
+        <div className="settings-note"><LockKeyhole size={14} />Public visitor session · read-only</div>
       </div>
     </div>
   );
@@ -610,14 +582,7 @@ function MusicWindow() {
 
   const current = TRACKS[track] ?? TRACKS[0];
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !current) return;
-    audio.load();
-    if (playing) void audio.play().catch(() => setPlaying(false));
-  }, [current, playing]);
-
-  function select(index: number) {
+  function playIndex(index: number) {
     setTrack(index);
     setTime(0);
     setPlaying(true);
@@ -625,15 +590,15 @@ function MusicWindow() {
   }
 
   function step(delta: number) {
-    const next = (track + delta + TRACKS.length) % TRACKS.length;
-    select(next);
+    playIndex((track + delta + TRACKS.length) % TRACKS.length);
   }
 
   return (
     <div className="music-window content-scroll">
       <audio
         ref={audioRef}
-        src={current?.file}
+        key={current.file}
+        src={current.file}
         preload="metadata"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
@@ -641,31 +606,20 @@ function MusicWindow() {
         onTimeUpdate={(event) => setTime(event.currentTarget.currentTime)}
         onEnded={() => step(1)}
       />
-      <div className="music-art"><Music2 size={34} /></div>
+      <div className="music-art"><Music2 size={38} /></div>
       <span className="section-label">LOCAL AUDIO</span>
-      <h2>{current?.title}</h2>
-      <p>{current?.note}</p>
-      <input
-        className="music-seek"
-        type="range"
-        min="0"
-        max={duration || 0}
-        step="0.1"
-        value={Math.min(time, duration || 0)}
-        onChange={(event) => { const value = Number(event.target.value); setTime(value); if (audioRef.current) audioRef.current.currentTime = value; }}
-        aria-label="Track progress"
-      />
+      <h2>{current.title}</h2>
+      <p>{current.note}</p>
+      <input className="music-seek" type="range" min="0" max={duration || 0} step="0.1" value={Math.min(time, duration || 0)} onChange={(event) => { const value = Number(event.target.value); setTime(value); if (audioRef.current) audioRef.current.currentTime = value; }} aria-label="Track progress" />
       <div className="music-time"><span>{formatSeconds(time)}</span><span>{formatSeconds(duration)}</span></div>
       <div className="music-controls">
-        <button onClick={() => step(-1)} aria-label="Previous"><ChevronLeft size={18} /></button>
-        <button className="music-play" onClick={() => { if (!audioRef.current) return; if (playing) audioRef.current.pause(); else void audioRef.current.play().catch(() => {}); }} aria-label={playing ? "Pause" : "Play"}>
-          {playing ? <Pause size={18} /> : <Play size={18} />}
-        </button>
-        <button onClick={() => step(1)} aria-label="Next"><ChevronRight size={18} /></button>
+        <button type="button" onClick={() => step(-1)} aria-label="Previous"><ChevronLeft size={18} /></button>
+        <button type="button" className="music-play" onClick={() => { if (!audioRef.current) return; if (playing) audioRef.current.pause(); else void audioRef.current.play().catch(() => setPlaying(false)); }} aria-label={playing ? "Pause" : "Play"}>{playing ? <Pause size={18} /> : <Play size={18} />}</button>
+        <button type="button" onClick={() => step(1)} aria-label="Next"><ChevronRight size={18} /></button>
       </div>
       <div className="playlist">
         {TRACKS.map((item, index) => (
-          <button key={item.file} className={index === track ? "playlist-item is-current" : "playlist-item"} onClick={() => select(index)}>
+          <button key={item.file} type="button" className={index === track ? "playlist-item is-current" : "playlist-item"} onClick={() => playIndex(index)}>
             <span><Music2 size={14} />{item.title}</span>
             {index === track && <i>{playing ? "PLAYING" : "PAUSED"}</i>}
           </button>
@@ -677,107 +631,5 @@ function MusicWindow() {
 
 function formatSeconds(value: number) {
   if (!Number.isFinite(value)) return "0:00";
-  const minutes = Math.floor(value / 60);
-  const seconds = Math.floor(value % 60).toString().padStart(2, "0");
-  return minutes + ":" + seconds;
-}
-
-function FilesWindow({ openWindow }: { openWindow: (id: WindowId) => void }) {
-  const [folder, setFolder] = useState<"home" | "music">("home");
-
-  if (folder === "music") {
-    return (
-      <div className="files-window content-scroll">
-        <div className="files-path"><button onClick={() => setFolder("home")}><ChevronLeft size={13} />Home</button><span>/</span><b>Music</b></div>
-        <div className="file-grid">
-          {TRACKS.map((track) => (
-            <button key={track.file} className="file-card" onClick={() => openWindow("music")}>
-              <span className="file-card-icon"><Music2 size={23} /></span>
-              <strong>{track.title}.mp3</strong>
-              <small>Local audio file</small>
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  const folders: { id: WindowId | "music"; label: string; icon: typeof Folder; description: string }[] = [
-    { id: "about", label: "About", icon: UserRound, description: "Profile, skills, experience" },
-    { id: "research", label: "Research", icon: BookOpen, description: "Published research archive" },
-    { id: "projects", label: "Projects", icon: Code2, description: "Engineering case files" },
-    { id: "security", label: "Security Lab", icon: Shield, description: "Browser-only tools" },
-    { id: "settings", label: "Settings", icon: Settings, description: "Visitor preferences" },
-    { id: "music", label: "Music", icon: Music2, description: "Local audio library" },
-  ];
-
-  return (
-    <div className="files-window content-scroll">
-      <div className="files-path"><span>Home</span><span>/</span><b>RAGHAV-OS</b></div>
-      <div className="file-grid">
-        {folders.map((item) => {
-          const Icon = item.icon;
-          return (
-            <button key={item.id} className="file-card" onClick={() => item.id === "music" ? setFolder("music") : openWindow(item.id)}>
-              <span className="file-card-icon"><Icon size={23} /></span>
-              <strong>{item.label}</strong>
-              <small>{item.description}</small>
-            </button>
-          );
-        })}
-      </div>
-      <div className="files-foot"><FileText size={13} /> Public workstation filesystem · selected public content only</div>
-    </div>
-  );
-}
-
-function TerminalWindow({ openWindow }: { openWindow: (id: WindowId) => void }) {
-  const [lines, setLines] = useState<string[]>([
-    "Raghav Sharma OS v3.0",
-    "Public workstation — read-only",
-    "",
-    "Type help to list commands.",
-  ]);
-  const [input, setInput] = useState("");
-
-  function run(command: string) {
-    const value = command.trim().toLowerCase();
-    if (!value) return;
-    if (value === "clear") {
-      setLines([]);
-      return;
-    }
-    if (value === "help") {
-      setLines((current) => [...current, "$ " + command, "about    Open profile", "research Open research", "projects Open projects", "security Open Security Lab", "settings Open settings", "music    Open Music", "clear    Clear terminal"]);
-      return;
-    }
-    const map: Record<string, WindowId> = {
-      about: "about",
-      research: "research",
-      projects: "projects",
-      security: "security",
-      settings: "settings",
-      music: "music",
-    };
-    const appId = map[value];
-    if (appId) {
-      setLines((current) => [...current, "$ " + command, "Opening " + APP_META[appId].label + "…"]);
-      openWindow(appId);
-      return;
-    }
-    setLines((current) => [...current, "$ " + command, "command not found: " + value]);
-  }
-
-  return (
-    <div className="terminal-window">
-      <div className="terminal-banner"><span>visitor@raghav-os</span><span>/home/public</span></div>
-      <div className="terminal-output">
-        {lines.map((line, index) => <div key={index}>{line || " "}</div>)}
-      </div>
-      <form className="terminal-input" onSubmit={(event) => { event.preventDefault(); run(input); setInput(""); }}>
-        <span>visitor@os:~$</span>
-        <input value={input} onChange={(event) => setInput(event.target.value)} autoFocus aria-label="Terminal command" spellCheck={false} />
-      </form>
-    </div>
-  );
+  return Math.floor(value / 60) + ":" + String(Math.floor(value % 60)).padStart(2, "0");
 }
