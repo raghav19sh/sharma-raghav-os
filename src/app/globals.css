@@ -4009,3 +4009,19 @@ body:has(.prozilla-os) { overflow: hidden; }
   position: relative;
 }
 
+
+
+/* =========================================================
+   SHARMA-RAGHAV OS — PROZILLAOS BURGUNDY SKIN
+   ========================================================= */
+.rsos-root{position:fixed;inset:0;overflow:hidden;background:#12070A;color:#F8EFEC}
+.rsos-root,.rsos-root button,.rsos-root input,.rsos-root select{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.rsos-root .Taskbar{--foreground-color-0:#F8EFEC;--foreground-color-1:#E0C7CD;--foreground-color-2:#A89197;--background-color-0:#6E1626;--background-color-1:#3A101A;--background-color-2:#211015;--background-color-3:#1A0A0F;--background-color-4:#12070A;--taskbar-color:#12070A;--taskbar-menu-color:#2A0D14;--taskbar-button-hover-color:rgba(255,255,255,.08)}
+.rsos-root .Window-inner{--foreground-color-0:#F8EFEC;--foreground-color-1:#D8BEC5;--foreground-color-2:#99848A;--background-color-0:#4A1724;--background-color-1:#32121B;--background-color-2:#211015;--background-color-3:#1A0A0F;--background-color-4:#12070A;--window-shadow-opacity:48%;border:1px solid rgba(224,160,172,.18)}
+.rsos-root .Header{background:linear-gradient(90deg,#3D121E,#2A0D14 68%,#211015)!important}
+.rsos-root .Header-button:hover,.rsos-root .Header-button:focus-visible{background:rgba(181,74,96,.24)!important}
+.rsos-root .Taskbar::after{background:#12070A!important;opacity:.88!important}.rsos-root .Taskbar::before{backdrop-filter:blur(18px)}
+.rsos-root .Taskbar button:hover,.rsos-root .Taskbar button:focus-visible{background:rgba(181,74,96,.14)!important}
+.rsos-root .Desktop .Item p{color:#FFF3F5!important}.rsos-root .Desktop .Item svg{filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}
+.rsos-portfolio-window{padding:2rem;max-width:64rem;font-family:Inter,ui-sans-serif,system-ui,sans-serif}.rsos-portfolio-heading span{font-size:.68rem;letter-spacing:.2em;color:#D98B99;font-weight:800}.rsos-portfolio-heading h1{margin:.5rem 0;font-size:2rem;color:#F8EFEC}.rsos-portfolio-heading p{max-width:52rem;color:#C8B4BA;line-height:1.8}.rsos-portfolio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.75rem;margin-top:1.5rem}.rsos-portfolio-card{padding:1.1rem;border:1px solid rgba(224,160,172,.12);border-radius:.55rem;background:linear-gradient(145deg,rgba(143,38,56,.16),rgba(255,255,255,.025));display:grid;gap:.5rem}.rsos-portfolio-card small{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#D98B99}
+@media(max-width:800px){.rsos-root .Window-inner{min-width:280px!important}.rsos-portfolio-window{padding:1.2rem}.rsos-root .Taskbar .Apps{overflow-x:auto}}
