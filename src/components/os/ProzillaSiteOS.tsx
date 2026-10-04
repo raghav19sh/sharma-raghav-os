@@ -8,8 +8,6 @@ import {
   ModalsView,
   ProzillaOS,
   Taskbar,
-  type WindowProps,
-  type VirtualRoot,
   WindowsView,
   fileExplorer,
   mediaViewer,
@@ -24,7 +22,7 @@ import { minesweeper } from "@prozilla-os/minesweeper";
 import { wordle } from "@prozilla-os/wordle";
 import { Skin, Theme } from "@prozilla-os/skins";
 
-type PortfolioAppProps = WindowProps & {
+type PortfolioAppProps = Record<string, unknown> & {
   section: keyof typeof SECTIONS;
 };
 
@@ -138,7 +136,7 @@ function PortfolioWindow({ section }: PortfolioAppProps): ReactElement {
 }
 
 function AppLink(name: string, id: string, icon: string, section?: keyof typeof SECTIONS) {
-  return new App<PortfolioAppProps>(name, id, PortfolioWindow, section ? { section } : undefined)
+  return new App(name, id, PortfolioWindow, section ? { section } : undefined)
     .setIconUrl(icon)
     .setShowDesktopIcon(true);
 }
@@ -266,7 +264,7 @@ function makeSkin() {
 const apps = configureApps();
 const skin = makeSkin();
 
-const loadData = (root: VirtualRoot) => {
+const loadData = (root: any) => {
   const home = root.navigateToFolder("~/") ?? root;
   const createFolder = (name: string, files: Array<[string, string]>) => {
     let folder = home.findSubFolder(name);
