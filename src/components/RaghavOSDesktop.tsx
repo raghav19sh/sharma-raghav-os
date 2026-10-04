@@ -11,19 +11,15 @@ import {
   Maximize2,
   Menu,
   Minimize2,
-  Music2,
   Network,
-  Pause,
-  Play,
   Search,
   Settings,
   Shield,
   UserRound,
-  Volume2,
   Wifi,
   X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import SecurityTools from "@/components/security/SecurityTools";
 
 type Profile = {
@@ -62,7 +58,7 @@ type Research = {
   published_at: string | null;
 };
 
-type AppId = "about" | "research" | "projects" | "security" | "settings" | "music";
+type AppId = "about" | "research" | "projects" | "security" | "settings";
 
 type WindowState = {
   id: AppId;
@@ -81,17 +77,11 @@ const APP_META: Record<AppId, { label: string; icon: string }> = {
   research: { label: "Research", icon: "/os/research.svg" },
   projects: { label: "Projects", icon: "/os/projects.svg" },
   security: { label: "Security Lab", icon: "/os/security.svg" },
-  music: { label: "Music", icon: "/os/music.svg" },
   settings: { label: "Settings", icon: "/os/settings.svg" },
 };
 
-const APPS: AppId[] = ["about", "research", "projects", "security", "music", "settings"];
+const APPS: AppId[] = ["about", "research", "projects", "security", "settings"];
 
-const TRACKS = [
-  { title: "Soundtrack", file: "/music/soundtrack.mp3", note: "Sharma-Raghav OS" },
-  { title: "Für Elise", file: "/music/Fu╠êr Elise.mp3", note: "Classical" },
-  { title: "Rain Ambient", file: "/music/rain-ambient.mp3", note: "Ambient" },
-];
 
 export default function RaghavOSDesktop({
   profile,
@@ -230,7 +220,6 @@ export default function RaghavOSDesktop({
       case "projects": return <ProjectsWindow projects={projects} />;
       case "security": return <SecurityTools />;
       case "settings": return <SettingsWindow />;
-      case "music": return <MusicWindow />;
     }
   }
 
@@ -260,7 +249,6 @@ export default function RaghavOSDesktop({
 
           <div className="os-status">
             {online ? <Wifi size={14} /> : <span className="status-offline"><Wifi size={14} /></span>}
-            <Volume2 size={14} />
             <span className="os-date">{stamp}</span>
             <Search size={14} className="os-search-button" onClick={() => openWindow("about")} />
           </div>
@@ -573,63 +561,3 @@ function SettingsWindow() {
   );
 }
 
-function MusicWindow() {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [track, setTrack] = useState(0);
-  const [playing, setPlaying] = useState(false);
-  const [time, setTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-
-  const current = TRACKS[track] ?? TRACKS[0] ?? { title: "Soundtrack", file: "/music/soundtrack.mp3", note: "Sharma-Raghav OS" };
-
-  function playIndex(index: number) {
-    setTrack(index);
-    setTime(0);
-    setPlaying(true);
-    window.setTimeout(() => void audioRef.current?.play().catch(() => setPlaying(false)), 0);
-  }
-
-  function step(delta: number) {
-    playIndex((track + delta + TRACKS.length) % TRACKS.length);
-  }
-
-  return (
-    <div className="music-window content-scroll">
-      <audio
-        ref={audioRef}
-        key={current.file}
-        src={current.file}
-        preload="metadata"
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onLoadedMetadata={(event) => setDuration(event.currentTarget.duration || 0)}
-        onTimeUpdate={(event) => setTime(event.currentTarget.currentTime)}
-        onEnded={() => step(1)}
-      />
-      <div className="music-art"><Music2 size={38} /></div>
-      <span className="section-label">LOCAL AUDIO</span>
-      <h2>{current.title}</h2>
-      <p>{current.note}</p>
-      <input className="music-seek" type="range" min="0" max={duration || 0} step="0.1" value={Math.min(time, duration || 0)} onChange={(event) => { const value = Number(event.target.value); setTime(value); if (audioRef.current) audioRef.current.currentTime = value; }} aria-label="Track progress" />
-      <div className="music-time"><span>{formatSeconds(time)}</span><span>{formatSeconds(duration)}</span></div>
-      <div className="music-controls">
-        <button type="button" onClick={() => step(-1)} aria-label="Previous"><ChevronLeft size={18} /></button>
-        <button type="button" className="music-play" onClick={() => { if (!audioRef.current) return; if (playing) audioRef.current.pause(); else void audioRef.current.play().catch(() => setPlaying(false)); }} aria-label={playing ? "Pause" : "Play"}>{playing ? <Pause size={18} /> : <Play size={18} />}</button>
-        <button type="button" onClick={() => step(1)} aria-label="Next"><ChevronRight size={18} /></button>
-      </div>
-      <div className="playlist">
-        {TRACKS.map((item, index) => (
-          <button key={item.file} type="button" className={index === track ? "playlist-item is-current" : "playlist-item"} onClick={() => playIndex(index)}>
-            <span><Music2 size={14} />{item.title}</span>
-            {index === track && <i>{playing ? "PLAYING" : "PAUSED"}</i>}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function formatSeconds(value: number) {
-  if (!Number.isFinite(value)) return "0:00";
-  return Math.floor(value / 60) + ":" + String(Math.floor(value % 60)).padStart(2, "0");
-}
