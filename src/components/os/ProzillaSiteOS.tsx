@@ -22,7 +22,6 @@ import { ballMaze } from "@prozilla-os/ball-maze";
 import { minesweeper } from "@prozilla-os/minesweeper";
 import { wordle } from "@prozilla-os/wordle";
 import { Skin, Theme } from "@prozilla-os/skins";
-import "./prozilla-site.css";
 
 type PortfolioAppProps = WindowProps & {
   section: keyof typeof SECTIONS;
