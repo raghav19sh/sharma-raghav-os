@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import SecurityTools from "@/components/security/SecurityTools";
+import AdminWindow from "@/components/admin/AdminWindow";
 
 type Profile = {
   display_name: string;
@@ -58,7 +59,7 @@ type Research = {
   published_at: string | null;
 };
 
-type AppId = "about" | "research" | "projects" | "security" | "settings";
+type AppId = "about" | "research" | "projects" | "security" | "settings" | "admin";
 
 type WindowState = {
   id: AppId;
@@ -78,9 +79,10 @@ const APP_META: Record<AppId, { label: string; icon: string }> = {
   projects: { label: "Projects", icon: "/os/projects.svg" },
   security: { label: "Security Lab", icon: "/os/security.svg" },
   settings: { label: "Settings", icon: "/os/settings.svg" },
+  admin: { label: "Admin", icon: "/os/admin.svg" },
 };
 
-const APPS: AppId[] = ["about", "research", "projects", "security", "settings"];
+const APPS: AppId[] = ["about", "research", "projects", "security", "settings", "admin"];
 
 
 export default function RaghavOSDesktop({
@@ -88,11 +90,13 @@ export default function RaghavOSDesktop({
   projects,
   research,
   databaseOnline,
+  wallpaperUrl,
 }: {
   profile: Profile | null;
   projects: Project[];
   research: Research[];
   databaseOnline: boolean;
+  wallpaperUrl: string;
 }) {
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [menu, setMenu] = useState<"system" | "File" | "Edit" | "View" | "Go" | "Window" | "Help" | null>(null);
@@ -154,8 +158,8 @@ export default function RaghavOSDesktop({
       const offset = Math.min(current.length, 5) * 26;
       const wide = id === "security" || id === "projects" || id === "research";
       const size = {
-        width: wide ? 850 : 650,
-        height: id === "security" ? 610 : 500,
+        width: wide || id === "admin" ? 850 : 650,
+        height: id === "security" || id === "admin" ? 610 : 500,
       };
       return [
         ...current,
@@ -220,12 +224,13 @@ export default function RaghavOSDesktop({
       case "projects": return <ProjectsWindow projects={projects} />;
       case "security": return <SecurityTools />;
       case "settings": return <SettingsWindow />;
+      case "admin": return <AdminWindow />;
     }
   }
 
   return (
     <main className="os-root" onClick={() => menu && setMenu(null)}>
-      <div className="os-wallpaper">
+      <div className="os-wallpaper" style={{ backgroundImage: "url(" + JSON.stringify(wallpaperUrl) + ")" }}>
         <div className="os-overlay" aria-hidden="true" />
 
         <header className="os-topbar" onClick={(event) => event.stopPropagation()}>
@@ -251,6 +256,7 @@ export default function RaghavOSDesktop({
             {online ? <Wifi size={14} /> : <span className="status-offline"><Wifi size={14} /></span>}
             <span className="os-date">{stamp}</span>
             <Search size={14} className="os-search-button" onClick={() => openWindow("about")} />
+            <button className="os-admin-trigger" type="button" onClick={(event) => { event.stopPropagation(); openWindow("admin"); }} aria-label="Open admin console" title="Admin Console"><LockKeyhole size={14} /></button>
           </div>
 
           {menu && (
