@@ -44,6 +44,7 @@ export default async function PortfolioOSPage() {
   let projects: Project[] = [];
   let research: Research[] = [];
   let databaseOnline = false;
+  let wallpaperUrl = "/wallpaper.svg";
 
   try {
     const supabase = await createServerSupabaseClient();
@@ -72,6 +73,14 @@ export default async function PortfolioOSPage() {
     projects = (projectsResult.data as Project[] | null) ?? [];
     research = (researchResult.data as Research[] | null) ?? [];
     databaseOnline = !profileResult.error && !projectsResult.error && !researchResult.error;
+    try {
+      const wallpaperResult = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "wallpaper_url")
+        .maybeSingle();
+      wallpaperUrl = wallpaperResult.data?.value || "/wallpaper.svg";
+    } catch {}
   } catch {
     databaseOnline = false;
   }
@@ -82,6 +91,7 @@ export default async function PortfolioOSPage() {
       projects={projects}
       research={research}
       databaseOnline={databaseOnline}
+      wallpaperUrl={wallpaperUrl}
     />
   );
 }
