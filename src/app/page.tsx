@@ -24,6 +24,14 @@ const options = [
       "Use browser-based utilities for images, PDFs, calculations, developer tasks, conversions, and more.",
     action: "Open Tools",
   },
+  {
+    href: "https://digitrust.sharma-raghav.com",
+    eyebrow: "03 / DIGITAL TRUST",
+    title: "DigiTrust",
+    description:
+      "Analyze online claims with transparent trust signals across fact checks, coverage, domain reputation, and language.",
+    action: "Open DigiTrust",
+  },
 ];
 
 export default function HomePage() {
@@ -72,6 +80,10 @@ export default function HomePage() {
           <div>
             <span>TOOLS</span>
             <strong>Images · PDFs · Calculators · Developer</strong>
+          </div>
+          <div>
+            <span>DIGITRUST</span>
+            <strong>Trust Signals · Fact Checks · Coverage</strong>
           </div>
         </div>
 
