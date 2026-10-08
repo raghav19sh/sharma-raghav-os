@@ -41,11 +41,15 @@ export default function HomePage() {
       <div className="entry-glow entry-glow-one" aria-hidden="true" />
       <div className="entry-glow entry-glow-two" aria-hidden="true" />
 
-      <a className="entry-contact-widget" href="tel:+918605532112" aria-label="Call Raghav Sharma">
-        <span className="entry-contact-label">DIRECT CONTACT</span>
-        <strong>+91 86055 32112</strong>
-        <span className="entry-contact-action">CALL ↗</span>
-      </a>
+      <Link className="entry-resume-widget" href="/resume" aria-label="Open Raghav Sharma resume">
+        <div className="entry-resume-widget-top">
+          <span>RESUME / 2026</span>
+          <span className="entry-resume-arrow">↗</span>
+        </div>
+        <strong>Raghav Sharma</strong>
+        <span className="entry-resume-role">CYBERSECURITY · VAPT · MALWARE</span>
+        <span className="entry-resume-action">VIEW RESUME</span>
+      </Link>
 
       <section className="entry-shell">
         <div className="entry-brand">
