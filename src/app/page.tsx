@@ -41,16 +41,6 @@ export default function HomePage() {
       <div className="entry-glow entry-glow-one" aria-hidden="true" />
       <div className="entry-glow entry-glow-two" aria-hidden="true" />
 
-      <Link className="entry-resume-widget" href="/resume" aria-label="Open Raghav Sharma resume">
-        <div className="entry-resume-widget-top">
-          <span>RESUME / 2026</span>
-          <span className="entry-resume-arrow">↗</span>
-        </div>
-        <strong>Raghav Sharma</strong>
-        <span className="entry-resume-role">CYBERSECURITY · VAPT · MALWARE</span>
-        <span className="entry-resume-action">VIEW RESUME</span>
-      </Link>
-
       <section className="entry-shell">
         <div className="entry-brand">
           <span className="entry-mark">RS</span>
