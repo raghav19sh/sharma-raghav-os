@@ -204,6 +204,7 @@ export default function OSFeatureLayer() {
           const visible = current.filter(win => !win.minimized).sort((a,b) => b.z-a.z);
           if (visible.length < 2) return current;
           const next = visible[1];
+          if (!next) return current;
           const top = Math.max(20, ...current.map(win => win.z));
           setFocused(next.id);
           return current.map(win => win.id === next.id ? { ...win, z: top + 1 } : win);
