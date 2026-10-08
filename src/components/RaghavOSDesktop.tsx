@@ -329,6 +329,16 @@ export default function RaghavOSDesktop({
             </div>
           </section>
 
+          <a className="os-resume-widget" href="/resume" onClick={(event) => event.stopPropagation()} aria-label="Open Raghav Sharma resume">
+            <div className="os-resume-widget-top">
+              <span>RESUME / 2026</span>
+              <span className="os-resume-arrow">↗</span>
+            </div>
+            <strong>Raghav Sharma</strong>
+            <span className="os-resume-role">CYBERSECURITY · VAPT · MALWARE</span>
+            <span className="os-resume-action">VIEW RESUME</span>
+          </a>
+
           <aside className="os-quiet-status" aria-label="System status">
             <div className="os-quiet-head">
               <span>SYSTEM</span>
