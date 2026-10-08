@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type FeatureApp =
   | "files" | "terminal" | "monitor" | "system" | "notes" | "calculator"
@@ -114,9 +114,6 @@ function nowStamp() {
   return new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
 }
 
-function uid() {
-  return Math.random().toString(36).slice(2, 9);
-}
 
 export default function OSFeatureLayer() {
   const [windows, setWindows] = useState<FeatureWindow[]>(INITIAL_WINDOWS);
@@ -229,8 +226,9 @@ export default function OSFeatureLayer() {
   }
 
   function bringToFront(id: FeatureApp) {
-    setZ(current => current + 1);
-    setWindows(current => current.map(win => win.id === id ? { ...win, z: z + 1, minimized: false } : win));
+    const nextZ = z + 1;
+    setZ(nextZ);
+    setWindows(current => current.map(win => win.id === id ? { ...win, z: nextZ, minimized: false } : win));
     setFocused(id);
   }
 
@@ -238,14 +236,15 @@ export default function OSFeatureLayer() {
     setMenuOpen(false);
     setContext(null);
     setNotificationsOpen(false);
+    const nextZ = z + 1;
     setWindows(current => {
       const existing = current.find(win => win.id === id);
-      if (existing) return current.map(win => win.id === id ? { ...win, minimized: false, z: z + 1 } : win);
+      if (existing) return current.map(win => win.id === id ? { ...win, minimized: false, z: nextZ } : win);
       const offset = Math.min(current.length, 5) * 24;
       const size = id === "terminal" || id === "files" ? { width: 760, height: 500 } : { width: 620, height: 440 };
-      return [...current, { id, title: APP_INFO[id].label, x: Math.max(28, 180 + offset), y: Math.max(56, 80 + offset), width: size.width, height: size.height, minimized: false, maximized: false, z: z + 1 }];
+      return [...current, { id, title: APP_INFO[id].label, x: Math.max(28, 180 + offset), y: Math.max(56, 80 + offset), width: size.width, height: size.height, minimized: false, maximized: false, z: nextZ }];
     });
-    setZ(current => current + 1);
+    setZ(nextZ);
     setFocused(id);
     log(`Opened ${APP_INFO[id].label}`);
   }
@@ -508,7 +507,7 @@ function WallpaperManager() {
     ["Carbon", "radial-gradient(circle at 30% 10%,rgba(255,255,255,.06),transparent 25%),linear-gradient(145deg,#050607,#111315 55%,#070809)"],
     ["Midnight Blue", "radial-gradient(circle at 70% 15%,rgba(49,112,190,.2),transparent 30%),linear-gradient(145deg,#03070d,#081221 55%,#05070c)"],
   ];
-  const [selected,setSelected]=useState(()=>window.localStorage.getItem("sr-os-wallpaper")||presets[0][0]);
+  const [selected,setSelected]=useState(() => typeof window !== "undefined" ? (window.localStorage.getItem("sr-os-wallpaper") || presets[0]![0]) : presets[0]![0]);
   function choose(name:string, background:string){setSelected(name);window.localStorage.setItem("sr-os-wallpaper",name);document.documentElement.style.setProperty("--sr-os-wallpaper",background);}
   useEffect(()=>{const name=window.localStorage.getItem("sr-os-wallpaper");const p=presets.find(x=>x[0]===name);if(p)document.documentElement.style.setProperty("--sr-os-wallpaper",p[1]);},[]);
   return <div><div className="osx-section-title">WORKSTATION PRESETS</div>{presets.map(([name,bg])=><button key={name} className="osx-file" style={{width:"100%",marginBottom:7,textAlign:"left",background:bg}} onClick={()=>choose(name,bg)}><strong>{name}</strong><span>{selected===name?"ACTIVE":"Apply preset"}</span></button>)}<p className="osx-snap-hint">The selected preset is stored locally. It overlays the workstation and does not change server-side wallpaper settings.</p></div>;
@@ -559,24 +558,30 @@ function SystemMonitor({ now }: { now: Date }) {
     }, 1500);
     return () => window.clearInterval(timer);
   }, []);
-  const perf = (performance as Performance & { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+  const perf = typeof performance !== "undefined"
+    ? (performance as Performance & { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory
+    : undefined;
   const heap = perf ? Math.round(perf.usedJSHeapSize / 1048576) + " MB" : "Browser API unavailable";
-  return <div><div className="osx-stat-grid"><div className="osx-stat"><span>CPU</span><strong>{cpu}%</strong><div className="osx-bar"><i style={{width: cpu + "%"}}/></div></div><div className="osx-stat"><span>MEMORY</span><strong>{mem}%</strong><div className="osx-bar"><i style={{width: mem + "%"}}/></div></div><div className="osx-stat"><span>JS HEAP</span><strong style={{fontSize:13}}>{heap}</strong></div></div><div className="osx-section-title">SESSION</div><div className="osx-kv"><span>Clock</span><b>{now.toLocaleString("en-IN")}</b></div><div className="osx-kv"><span>Visibility</span><b>{document.visibilityState}</b></div><div className="osx-kv"><span>Screen</span><b>{window.screen.width} × {window.screen.height}</b></div><p className="osx-snap-hint">CPU and memory percentages are browser-side visual telemetry, not host OS measurements.</p></div>;
+  const visibility = typeof document !== "undefined" ? document.visibilityState : "Unknown";
+  const screenSize = typeof window !== "undefined" ? window.screen.width + " × " + window.screen.height : "Unknown";
+  return <div><div className="osx-stat-grid"><div className="osx-stat"><span>CPU</span><strong>{cpu}%</strong><div className="osx-bar"><i style={{width: cpu + "%"}}/></div></div><div className="osx-stat"><span>MEMORY</span><strong>{mem}%</strong><div className="osx-bar"><i style={{width: mem + "%"}}/></div></div><div className="osx-stat"><span>JS HEAP</span><strong style={{fontSize:13}}>{heap}</strong></div></div><div className="osx-section-title">SESSION</div><div className="osx-kv"><span>Clock</span><b>{now.toLocaleString("en-IN")}</b></div><div className="osx-kv"><span>Visibility</span><b>{visibility}</b></div><div className="osx-kv"><span>Screen</span><b>{screenSize}</b></div><p className="osx-snap-hint">CPU and memory percentages are browser-side visual telemetry, not host OS measurements.</p></div>;
 }
 
 function SystemInfo() {
-  const nav = navigator as Navigator & { deviceMemory?: number; hardwareConcurrency?: number; userAgentData?: { platform?: string } };
+  const nav = typeof navigator !== "undefined"
+    ? navigator as Navigator & { deviceMemory?: number; hardwareConcurrency?: number; userAgentData?: { platform?: string } }
+    : null;
   const rows = [
-    ["Platform", nav.userAgentData?.platform || nav.platform || "Unknown"],
-    ["CPU threads", String(nav.hardwareConcurrency || "Unknown")],
-    ["Device memory", nav.deviceMemory ? nav.deviceMemory + " GB (approx.)" : "Unavailable"],
-    ["Browser", navigator.userAgent],
-    ["Language", navigator.language],
-    ["Timezone", Intl.DateTimeFormat().resolvedOptions().timeZone],
-    ["Viewport", window.innerWidth + " × " + window.innerHeight],
-    ["Screen", window.screen.width + " × " + window.screen.height],
-    ["Secure context", String(window.isSecureContext)],
-    ["Storage", "localStorage available"],
+    ["Platform", nav?.userAgentData?.platform || nav?.platform || "Unknown"],
+    ["CPU threads", String(nav?.hardwareConcurrency || "Unknown")],
+    ["Device memory", nav?.deviceMemory ? nav.deviceMemory + " GB (approx.)" : "Unavailable"],
+    ["Browser", nav?.userAgent || "Unknown"],
+    ["Language", nav?.language || "Unknown"],
+    ["Timezone", typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "Unknown"],
+    ["Viewport", typeof window !== "undefined" ? window.innerWidth + " × " + window.innerHeight : "Unknown"],
+    ["Screen", typeof window !== "undefined" ? window.screen.width + " × " + window.screen.height : "Unknown"],
+    ["Secure context", typeof window !== "undefined" ? String(window.isSecureContext) : "Unknown"],
+    ["Storage", typeof window !== "undefined" ? "localStorage available" : "Browser storage unavailable"],
   ];
   return <div><div className="osx-section-title">RUNTIME</div>{rows.map(([k,v]) => <div className="osx-kv" key={k}><span>{k}</span><b>{v}</b></div>)}</div>;
 }
@@ -597,7 +602,9 @@ function Calculator() {
 }
 
 function NetworkAnalyzer({ online }: { online: boolean }) {
-  const connection = (navigator as Navigator & { connection?: { effectiveType?: string; downlink?: number; rtt?: number; saveData?: boolean } }).connection;
+  const connection = typeof navigator !== "undefined"
+    ? (navigator as Navigator & { connection?: { effectiveType?: string; downlink?: number; rtt?: number; saveData?: boolean } }).connection
+    : undefined;
   return <div><div className="osx-security-grid"><div className="osx-security-row"><span>Connectivity</span><b className={online ? "osx-pass" : "osx-warn"}>{online ? "ONLINE" : "OFFLINE"}</b></div><div className="osx-security-row"><span>Effective type</span><b>{connection?.effectiveType || "Unavailable"}</b></div><div className="osx-security-row"><span>Downlink</span><b>{connection?.downlink ? connection.downlink + " Mbps" : "Unavailable"}</b></div><div className="osx-security-row"><span>RTT</span><b>{connection?.rtt ? connection.rtt + " ms" : "Unavailable"}</b></div><div className="osx-security-row"><span>Save data</span><b>{connection?.saveData ? "Enabled" : "Disabled / unavailable"}</b></div></div><p className="osx-snap-hint" style={{marginTop:10}}>No packets are captured or transmitted by this tool. It only reads browser-exposed connection metadata.</p></div>;
 }
 
@@ -635,7 +642,7 @@ function BrowserLinks() {
     ["Tools", "https://tools.sharma-raghav.com/"],
     ["Resume", "https://sharma-raghav.com/resume"],
   ];
-  return <div><div className="osx-toolbar"><input className="osx-input" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://..." /><button className="osx-btn" onClick={() => { if (/^https?:\\/\\//i.test(url)) window.open(url, "_blank", "noopener,noreferrer"); }}>Go</button></div><div className="osx-browser-links">{links.map(([name,href]) => <a href={href} target="_blank" rel="noreferrer" key={name}>{name}</a>)}</div></div>;
+  return <div><div className="osx-toolbar"><input className="osx-input" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://..." /><button className="osx-btn" onClick={() => { if (/^https?:\/\//i.test(url)) window.open(url, "_blank", "noopener,noreferrer"); }}>Go</button></div><div className="osx-browser-links">{links.map(([name,href]) => <a href={href} target="_blank" rel="noreferrer" key={name}>{name}</a>)}</div></div>;
 }
 
 function MusicPlayer({ musicUrl, setMusicUrl }: { musicUrl: string; setMusicUrl: (value: string) => void }) {
@@ -643,11 +650,12 @@ function MusicPlayer({ musicUrl, setMusicUrl }: { musicUrl: string; setMusicUrl:
 }
 
 function SecurityCenter({ online }: { online: boolean }) {
+  const secureContext = typeof window !== "undefined" ? window.isSecureContext : false;
   const checks = [
-    ["Secure context", window.isSecureContext, "HTTPS/secure browser context"],
+    ["Secure context", secureContext, "HTTPS/secure browser context"],
     ["Storage isolation", true, "Local visitor state uses browser storage"],
     ["Network", online, "Browser reports network connectivity"],
-    ["Referrer policy", document.referrer ? true : true, "No server-side inspection performed"],
+    ["Referrer policy", true, "No server-side inspection performed"],
     ["Filesystem access", true, "No host filesystem access is requested"],
     ["Input processing", true, "Hash/hex tools process data locally"],
   ];
