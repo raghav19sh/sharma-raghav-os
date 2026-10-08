@@ -104,6 +104,16 @@ export default function RaghavOSDesktop({
   const [now, setNow] = useState(() => new Date());
   const [sessionStart] = useState(() => Date.now());
   const [drag, setDrag] = useState<{ id: AppId; offsetX: number; offsetY: number } | null>(null);
+  const [resize, setResize] = useState<{
+    id: AppId;
+    direction: string;
+    startX: number;
+    startY: number;
+    startWidth: number;
+    startHeight: number;
+    startLeft: number;
+    startTop: number;
+  } | null>(null);
 
   useEffect(() => {
     const tick = () => setNow(new Date());
@@ -121,25 +131,71 @@ export default function RaghavOSDesktop({
   }, []);
 
   useEffect(() => {
-    if (!drag) return;
+    if (!drag && !resize) return;
+
     const move = (event: PointerEvent) => {
-      setWindows((current) =>
-        current.map((win) => {
-          if (win.id !== drag.id || win.maximized) return win;
-          const nextX = Math.max(8, Math.min(window.innerWidth - 160, event.clientX - drag.offsetX));
-          const nextY = Math.max(42, Math.min(window.innerHeight - 120, event.clientY - drag.offsetY));
-          return { ...win, x: nextX, y: nextY };
-        }),
-      );
+      if (drag) {
+        setWindows((current) =>
+          current.map((win) => {
+            if (win.id !== drag.id || win.maximized) return win;
+            const nextX = Math.max(8, Math.min(window.innerWidth - 160, event.clientX - drag.offsetX));
+            const nextY = Math.max(42, Math.min(window.innerHeight - 120, event.clientY - drag.offsetY));
+            return { ...win, x: nextX, y: nextY };
+          }),
+        );
+      }
+
+      if (resize) {
+        const minWidth = 320;
+        const minHeight = 220;
+        const dx = event.clientX - resize.startX;
+        const dy = event.clientY - resize.startY;
+
+        setWindows((current) =>
+          current.map((win) => {
+            if (win.id !== resize.id || win.maximized) return win;
+
+            let width = resize.startWidth;
+            let height = resize.startHeight;
+            let x = resize.startLeft;
+            let y = resize.startTop;
+
+            if (resize.direction.includes("e")) width = Math.max(minWidth, resize.startWidth + dx);
+            if (resize.direction.includes("s")) height = Math.max(minHeight, resize.startHeight + dy);
+
+            if (resize.direction.includes("w")) {
+              width = Math.max(minWidth, resize.startWidth - dx);
+              x = resize.startLeft + (resize.startWidth - width);
+            }
+
+            if (resize.direction.includes("n")) {
+              height = Math.max(minHeight, resize.startHeight - dy);
+              y = resize.startTop + (resize.startHeight - height);
+            }
+
+            const maxRight = window.innerWidth - 8;
+            const maxBottom = window.innerHeight - 42;
+            if (x + width > maxRight) width = Math.max(minWidth, maxRight - x);
+            if (y + height > maxBottom) height = Math.max(minHeight, maxBottom - y);
+
+            return { ...win, x, y, width, height };
+          }),
+        );
+      }
     };
-    const up = () => setDrag(null);
+
+    const up = () => {
+      setDrag(null);
+      setResize(null);
+    };
+
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
     return () => {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
     };
-  }, [drag]);
+  }, [drag, resize]);
 
   function focus(id: AppId) {
     setWindows((current) => {
@@ -201,6 +257,25 @@ export default function RaghavOSDesktop({
     if (!target || target.maximized || event.button !== 0) return;
     focus(id);
     setDrag({ id, offsetX: event.clientX - target.x, offsetY: event.clientY - target.y });
+  }
+
+  function startResize(id: AppId, direction: string, event: React.PointerEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    const target = windows.find((win) => win.id === id);
+    if (!target || target.maximized || event.button !== 0) return;
+
+    focus(id);
+    setResize({
+      id,
+      direction,
+      startX: event.clientX,
+      startY: event.clientY,
+      startWidth: target.width,
+      startHeight: target.height,
+      startLeft: target.x,
+      startTop: target.y,
+    });
   }
 
   const elapsed = Math.floor((now.getTime() - sessionStart) / 1000);
@@ -373,6 +448,18 @@ export default function RaghavOSDesktop({
                   </div>
                 </div>
                 <div className="os-window-body">{renderWindow(win.id)}</div>
+                {!win.maximized && (
+                  <>
+                    {["n", "s", "e", "w", "ne", "nw", "se", "sw"].map((direction) => (
+                      <div
+                        key={direction}
+                        className={`os-window-resize-handle resize-${direction}`}
+                        onPointerDown={(event) => startResize(win.id, direction, event)}
+                        aria-hidden="true"
+                      />
+                    ))}
+                  </>
+                )}
               </section>
             );
           })}
