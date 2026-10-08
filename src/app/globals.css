@@ -480,3 +480,13 @@ a{-webkit-tap-highlight-color:transparent}
 .os-resume-role{color:#a99caf;font:700 8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em}
 .os-resume-action{justify-self:start;margin-top:2px;padding:7px 9px;border:1px solid rgba(224,201,255,.1);border-radius:7px;color:#c8b9d1;background:rgba(255,255,255,.025);font:800 8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em}
 @media (max-width:760px){.os-resume-widget{left:10px;bottom:82px;width:220px}.os-resume-widget strong{font-size:16px}}
+
+.os-window-resize-handle{position:absolute;z-index:5;touch-action:none}
+.os-window-resize-handle.resize-n{top:-3px;left:10px;right:10px;height:7px;cursor:ns-resize}
+.os-window-resize-handle.resize-s{bottom:-3px;left:10px;right:10px;height:7px;cursor:ns-resize}
+.os-window-resize-handle.resize-e{top:10px;right:-3px;bottom:10px;width:7px;cursor:ew-resize}
+.os-window-resize-handle.resize-w{top:10px;left:-3px;bottom:10px;width:7px;cursor:ew-resize}
+.os-window-resize-handle.resize-ne{top:-4px;right:-4px;width:12px;height:12px;cursor:nesw-resize}
+.os-window-resize-handle.resize-nw{top:-4px;left:-4px;width:12px;height:12px;cursor:nwse-resize}
+.os-window-resize-handle.resize-se{right:-4px;bottom:-4px;width:12px;height:12px;cursor:nwse-resize}
+.os-window-resize-handle.resize-sw{left:-4px;bottom:-4px;width:12px;height:12px;cursor:nesw-resize}
