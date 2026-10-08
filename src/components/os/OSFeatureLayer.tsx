@@ -118,6 +118,7 @@ function nowStamp() {
 export default function OSFeatureLayer() {
   const [windows, setWindows] = useState<FeatureWindow[]>(INITIAL_WINDOWS);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [appSearch, setAppSearch] = useState("");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [context, setContext] = useState<{ x: number; y: number } | null>(null);
   const [online, setOnline] = useState(true);
@@ -131,19 +132,30 @@ export default function OSFeatureLayer() {
     { title: "Raghav OS ready", body: "Start menu, terminal and workstation tools are available." },
     { title: "Privacy mode", body: "Feature apps process their inputs locally in this browser." },
   ]);
-  const [theme, setTheme] = useState<"violet" | "mono">("violet");
+  const [theme, setTheme] = useState<"violet" | "mono" | "amber" | "green">("violet");
   const [focused, setFocused] = useState<FeatureApp | null>(null);
   const [musicUrl, setMusicUrl] = useState("");
   const [sessionStart] = useState(() => Date.now());
 
   useEffect(() => {
+    const onContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+      setMenuOpen(false);
+      setNotificationsOpen(false);
+      setContext({
+        x: Math.min(event.clientX, window.innerWidth - 224),
+        y: Math.min(event.clientY, window.innerHeight - 320),
+      });
+    };
+    window.addEventListener("contextmenu", onContextMenu);
+
     const saved = window.localStorage.getItem("sr-os-feature-state");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed.windows)) setWindows(parsed.windows);
         if (typeof parsed.notes === "string") setNotes(parsed.notes);
-        if (parsed.theme === "violet" || parsed.theme === "mono") setTheme(parsed.theme);
+        if (parsed.theme === "violet" || parsed.theme === "mono" || parsed.theme === "amber" || parsed.theme === "green") setTheme(parsed.theme);
       } catch {}
     }
     const onOnline = () => setOnline(true);
@@ -156,6 +168,7 @@ export default function OSFeatureLayer() {
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
       window.clearInterval(timer);
+      window.removeEventListener("contextmenu", onContextMenu);
     };
   }, []);
 
@@ -197,6 +210,10 @@ export default function OSFeatureLayer() {
   }, [drag, resize]);
 
   useEffect(() => {
+    const openWallpaper = () => openApp("wallpaper");
+    const openNetwork = () => openApp("network");
+    window.addEventListener("sr-open-wallpaper", openWallpaper as EventListener);
+    window.addEventListener("sr-open-network", openNetwork as EventListener);
     const key = (event: KeyboardEvent) => {
       if (event.altKey && event.key === "Tab") {
         event.preventDefault();
@@ -219,7 +236,11 @@ export default function OSFeatureLayer() {
       }
     };
     window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
+    return () => {
+      window.removeEventListener("keydown", key);
+      window.removeEventListener("sr-open-wallpaper", openWallpaper as EventListener);
+      window.removeEventListener("sr-open-network", openNetwork as EventListener);
+    };
   }, [focused, windows]);
 
   function log(message: string) {
@@ -358,18 +379,33 @@ export default function OSFeatureLayer() {
   }
 
   return (
-    <div className={`osx-layer ${theme === "mono" ? "osx-mono" : ""}`} style={{background:"var(--sr-os-wallpaper,transparent)"}} onContextMenu={e => {
-      e.preventDefault();
-      setMenuOpen(false); setNotificationsOpen(false);
-      setContext({ x: Math.min(e.clientX, window.innerWidth - 215), y: Math.min(e.clientY, window.innerHeight - 230) });
-    }}>
+    <div className={`osx-layer osx-theme-${theme}`} style={{background:"var(--sr-os-wallpaper,transparent)"}}>
       <style>{styles}</style>
+
+      <div className="osx-controlbar osx-ui">
+        <button className="osx-brand-btn" onClick={() => { setMenuOpen(v => !v); setNotificationsOpen(false); setContext(null); }}>
+          <span className="osx-brand-mark">SR</span><span><b>RAGHAV OS</b><small>WORKSTATION</small></span>
+        </button>
+        <span className="osx-control-sep" />
+        <button onClick={() => openApp("files")}>FILES</button>
+        <button onClick={() => openApp("terminal")}>TERMINAL</button>
+        <button onClick={() => openApp("security")}>SECURITY</button>
+        <button onClick={() => openApp("system")}>SYSTEM</button>
+        <button onClick={() => openApp("settings")}>SETTINGS</button>
+        <span className="osx-control-spacer" />
+        <span className="osx-control-status"><i className={online ? "" : "off"} />{online ? "ONLINE" : "OFFLINE"}</span>
+      </div>
 
       {context && (
         <div className="osx-context osx-ui" style={{ left: context.x, top: context.y }} onClick={e => e.stopPropagation()}>
           <button onClick={() => openApp("files")}>Open File Manager</button>
           <button onClick={() => openApp("terminal")}>Open Terminal</button>
           <button onClick={() => openApp("system")}>System Information</button>
+          <button onClick={() => openApp("monitor")}>System Monitor</button>
+          <hr />
+          <button onClick={() => { setContext(null); openApp("files"); }}>New Folder</button>
+          <button onClick={() => { setContext(null); setNotificationsOpen(true); }}>Refresh</button>
+          <button onClick={() => { setContext(null); openApp("settings"); }}>Display Settings</button>
           <hr />
           <button onClick={() => { setWindows(current => current.map(w => ({ ...w, minimized: true }))); setContext(null); }}>Minimize all</button>
           <button onClick={() => { setWindows(current => current.map(w => ({ ...w, maximized: true, minimized: false }))); setContext(null); }}>Maximize all</button>
@@ -384,9 +420,13 @@ export default function OSFeatureLayer() {
           <div className="osx-menu-head">
             <strong>RAGHAV SHARMA OS</strong>
             <span>APPLICATION LAUNCHER · VISITOR MODE</span>
+            <input className="osx-launch-search" value={appSearch} onChange={e => setAppSearch(e.target.value)} placeholder="Search applications..." autoFocus />
           </div>
           <div className="osx-app-grid">
-            {APP_ORDER.map(id => (
+            {APP_ORDER.filter(id => {
+              const q = appSearch.trim().toLowerCase();
+              return !q || APP_INFO[id].label.toLowerCase().includes(q) || APP_INFO[id].description.toLowerCase().includes(q);
+            }).map(id => (
               <button className="osx-app" key={id} onClick={() => openApp(id)}>
                 <span className="osx-glyph">{APP_INFO[id].glyph}</span>
                 <span><b>{APP_INFO[id].label}</b><small>{APP_INFO[id].description}</small></span>
@@ -402,7 +442,16 @@ export default function OSFeatureLayer() {
 
       {notificationsOpen && (
         <div className="osx-notice-panel osx-ui" onClick={e => e.stopPropagation()}>
-          <header><strong>Notifications</strong><button onClick={() => setNotificationsOpen(false)}>×</button></header>
+          <header><strong>CONTROL CENTER</strong><button onClick={() => setNotificationsOpen(false)}>×</button></header>
+          <div className="osx-control-grid">
+            <div><span>Wi-Fi</span><b>{online ? "Connected" : "Offline"}</b></div>
+            <div><span>Volume</span><b>72%</b></div>
+            <div><span>Battery</span><b>86%</b></div>
+            <div><span>Lock</span><b>Visitor</b></div>
+            <div><span>Do Not Disturb</span><b>OFF</b></div>
+            <div><span>Mode</span><b>Local</b></div>
+          </div>
+          <div className="osx-section-title">NOTIFICATIONS</div>
           {notifications.map((item,i) => <div className="osx-notice" key={`${item.title}-${i}`}><b>{item.title}</b><span>{item.body}</span></div>)}
         </div>
       )}
@@ -515,39 +564,178 @@ function WallpaperManager() {
   return <div><div className="osx-section-title">WORKSTATION PRESETS</div>{presets.map(([name,bg])=><button key={name} className="osx-file" style={{width:"100%",marginBottom:7,textAlign:"left",background:bg}} onClick={()=>choose(name,bg)}><strong>{name}</strong><span>{selected===name?"ACTIVE":"Apply preset"}</span></button>)}<p className="osx-snap-hint">The selected preset is stored locally. It overlays the workstation and does not change server-side wallpaper settings.</p></div>;
 }
 
+type VfsItem = {
+  name: string;
+  type: "folder" | "file";
+  size: string;
+  modified: string;
+  content?: string;
+};
+
+const VFS: Record<string, VfsItem[]> = {
+  "/home/raghav": [
+    { name: "Projects", type: "folder", size: "—", modified: "Today" },
+    { name: "Research", type: "folder", size: "—", modified: "Today" },
+    { name: "Security", type: "folder", size: "—", modified: "Today" },
+    { name: "Documents", type: "folder", size: "—", modified: "Today" },
+    { name: "Downloads", type: "folder", size: "—", modified: "Today" },
+    { name: "README.md", type: "file", size: "2 KB", modified: "Today", content: "# Raghav OS\n\nCybersecurity workstation." },
+    { name: "Resume.pdf", type: "file", size: "PDF", modified: "Today" },
+  ],
+  "/home/raghav/Projects": [
+    { name: "DigiTrust", type: "folder", size: "—", modified: "Today" },
+    { name: "SR-Journal", type: "folder", size: "—", modified: "Today" },
+    { name: "sharma-raghav-os", type: "folder", size: "—", modified: "Today" },
+  ],
+  "/home/raghav/Research": [
+    { name: "Security Research", type: "folder", size: "—", modified: "Today" },
+    { name: "Publications.md", type: "file", size: "6 KB", modified: "Today", content: "Research index for Raghav Sharma." },
+  ],
+  "/home/raghav/Security": [
+    { name: "Malware Workbench", type: "folder", size: "—", modified: "Today" },
+    { name: "Forensics", type: "folder", size: "—", modified: "Today" },
+    { name: "SOC", type: "folder", size: "—", modified: "Today" },
+    { name: "Hashes.txt", type: "file", size: "1 KB", modified: "Today", content: "Local hash workspace." },
+  ],
+  "/home/raghav/Documents": [
+    { name: "Notes.txt", type: "file", size: "3 KB", modified: "Today", content: "Visitor notes." },
+    { name: "Case-Template.md", type: "file", size: "2 KB", modified: "Today", content: "# Case\n\nEvidence:\nTimeline:\n" },
+  ],
+  "/home/raghav/Downloads": [],
+  "/home/raghav/Projects/DigiTrust": [],
+  "/home/raghav/Projects/SR-Journal": [],
+  "/home/raghav/Projects/sharma-raghav-os": [],
+  "/home/raghav/Research/Security Research": [],
+  "/home/raghav/Security/Malware Workbench": [],
+  "/home/raghav/Security/Forensics": [],
+  "/home/raghav/Security/SOC": [],
+};
+
 function FileManager({ openApp }: { openApp: (id: FeatureApp) => void }) {
-  const files = [
-    { name: "Desktop", type: "folder", action: () => openApp("system") },
-    { name: "Documents", type: "folder", action: () => openApp("notes") },
-    { name: "Projects", type: "folder", action: () => { window.location.hash = "projects"; } },
-    { name: "Research", type: "folder", action: () => { window.location.hash = "research"; } },
-    { name: "Security", type: "folder", action: () => openApp("security") },
-    { name: "Resume.pdf", type: "PDF", action: () => { window.location.href = "/resume"; } },
-    { name: "README.md", type: "Markdown", action: () => openApp("notes") },
-    { name: "Hash Analyzer", type: "Tool", action: () => openApp("hash") },
-  ];
-  return <div><div className="osx-toolbar"><span className="osx-input">/home/raghav</span><button className="osx-btn" onClick={() => window.location.reload()}>Refresh</button></div><div className="osx-files">{files.map(file => <button className="osx-file" key={file.name} onClick={file.action}><span className="osx-file-icon">{file.type === "folder" ? "▰" : "▤"}</span><strong>{file.name}</strong><span>{file.type}</span></button>)}</div><div className="osx-snap-hint" style={{marginTop:10}}>Tip: double-click a window title to maximize. Use ⌘/Ctrl + Alt + ←/→ to snap it.</div></div>;
+  const [path, setPath] = useState("/home/raghav");
+  const [items, setItems] = useState<Record<string, VfsItem[]>>(VFS);
+  const [query, setQuery] = useState("");
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const [selected, setSelected] = useState<VfsItem | null>(null);
+  const [context, setContext] = useState<{ x:number; y:number; item:VfsItem } | null>(null);
+  const [properties, setProperties] = useState<VfsItem | null>(null);
+
+  const current = (items[path] ?? []).filter(item => item.name.toLowerCase().includes(query.trim().toLowerCase()));
+  const crumbs = path.split("/").filter(Boolean);
+  function navigate(name: string) {
+    const next = path + "/" + name;
+    if (items[next]) setPath(next);
+  }
+  function goUp() {
+    if (path === "/home/raghav") return;
+    setPath(path.slice(0, path.lastIndexOf("/")) || "/home/raghav");
+  }
+  function openItem(item: VfsItem) {
+    if (item.type === "folder") navigate(item.name);
+    else if (item.name === "Resume.pdf") window.location.href = "/resume";
+    else if (item.name.endsWith(".md") || item.name.endsWith(".txt")) setSelected(item);
+    else if (item.name === "DigiTrust") window.location.hash = "projects";
+  }
+  function renameItem(item: VfsItem) {
+    const nextName = window.prompt("Rename item", item.name);
+    if (!nextName?.trim() || nextName === item.name) return;
+    setItems(currentItems => ({ ...currentItems, [path]: (currentItems[path] ?? []).map(x => x === item ? { ...x, name: nextName.trim() } : x) }));
+  }
+  function deleteItem(item: VfsItem) {
+    if (!window.confirm(`Delete ${item.name}? This only changes the visitor workspace.`)) return;
+    setItems(currentItems => ({ ...currentItems, [path]: (currentItems[path] ?? []).filter(x => x !== item) }));
+    setSelected(null);
+  }
+  function createFolder() {
+    const name = window.prompt("New folder name", "New Folder")?.trim();
+    if (!name) return;
+    const nextPath = path + "/" + name;
+    setItems(currentItems => ({ ...currentItems, [path]: [...(currentItems[path] ?? []), { name, type:"folder", size:"—", modified:"Just now" }], [nextPath]: [] }));
+  }
+
+  return <div className="osx-filemanager">
+    <div className="osx-toolbar">
+      <button className="osx-btn" onClick={goUp}>←</button>
+      <div className="osx-breadcrumbs"><button onClick={() => setPath("/home/raghav")}>Home</button>{crumbs.slice(1).map((crumb,index) => <span key={crumb}><i>/</i><button onClick={() => setPath("/home/raghav/" + crumbs.slice(1,index+2).join("/"))}>{crumb}</button></span>)}</div>
+      <button className="osx-btn" onClick={createFolder}>+ Folder</button>
+      <button className={view==="grid"?"osx-btn active":"osx-btn"} onClick={() => setView("grid")}>▦</button>
+      <button className={view==="list"?"osx-btn active":"osx-btn"} onClick={() => setView("list")}>☷</button>
+    </div>
+    <div className="osx-file-search"><input className="osx-input" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search this folder..." /><span>{current.length} item{current.length===1?"":"s"}</span></div>
+    <div className={view==="grid"?"osx-files":"osx-files osx-list-view"}>
+      {current.map(item => <button className={selected===item?"osx-file selected":"osx-file"} key={item.name} onClick={() => setSelected(item)} onDoubleClick={() => openItem(item)} onContextMenu={e => { e.preventDefault(); e.stopPropagation(); setContext({x:e.clientX,y:e.clientY,item}); }}>
+        <span className="osx-file-icon">{item.type === "folder" ? "▰" : "▤"}</span><strong>{item.name}</strong><span>{item.type === "folder" ? "Folder" : item.size} · {item.modified}</span>
+      </button>)}
+      {!current.length && <div className="osx-empty">No matching items.</div>}
+    </div>
+    {selected && selected.type === "file" && <div className="osx-file-preview"><b>{selected.name}</b><pre>{selected.content || "Binary/public document. Use Open to launch it."}</pre><button className="osx-btn" onClick={() => openItem(selected)}>Open</button></div>}
+    {context && <div className="osx-file-context osx-ui" style={{left:context.x,top:context.y}} onClick={e=>e.stopPropagation()}>
+      <button onClick={()=>{openItem(context.item);setContext(null);}}>Open</button>
+      <button onClick={()=>{renameItem(context.item);setContext(null);}}>Rename</button>
+      <button onClick={()=>{setProperties(context.item);setContext(null);}}>Properties</button>
+      <button onClick={()=>{deleteItem(context.item);setContext(null);}}>Delete</button>
+    </div>}
+    {properties && <div className="osx-properties osx-ui"><div><b>{properties.name}</b><button onClick={()=>setProperties(null)}>×</button></div><p>Type: {properties.type}</p><p>Size: {properties.size}</p><p>Modified: {properties.modified}</p><p>Location: {path}</p></div>}
+  </div>;
 }
 
 function Terminal({ run }: { run: (raw: string, append: (s: string) => void) => void }) {
   const [lines, setLines] = useState<string[]>([
-    "RAGHAV SHARMA OS [visitor shell]",
-    "Type 'help' for commands. This shell has no server or filesystem access.",
+    "RAGHAV SHARMA OS",
+    "Rain Shell · visitor workspace",
+    "Type 'help' for commands.",
   ]);
   const [input, setInput] = useState("");
+  const [cwd, setCwd] = useState("/home/raghav");
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
   const ref = useRef<HTMLInputElement>(null);
+  function localCommand(raw: string): string | null {
+    const parts = raw.trim().split(/\s+/);
+    const command = parts[0] ?? "";
+    const arg = parts.slice(1).join(" ");
+    if (command === "pwd") return cwd;
+    if (command === "ls") return (VFS[cwd] ?? []).map(x => x.type === "folder" ? x.name + "/" : x.name).join("  ") || "(empty)";
+    if (command === "cd") {
+      const target = arg.trim() || "/home/raghav";
+      const next = target === "~" ? "/home/raghav" : target.startsWith("/") ? target : cwd + "/" + target;
+      const normalized = next.split("/").filter(Boolean);
+      const stack:string[]=[];
+      for (const part of normalized) { if (part==="..") stack.pop(); else stack.push(part); }
+      const finalPath = "/" + stack.join("/");
+      if (VFS[finalPath]) { setCwd(finalPath); return finalPath; }
+      return "cd: no such directory: " + target;
+    }
+    if (command === "cat") {
+      const item=(VFS[cwd]??[]).find(x=>x.name===arg);
+      return item?.type === "file" ? (item.content || "[binary file]") : "cat: file not found: " + arg;
+    }
+    if (command === "projects") { window.location.hash="projects"; return "Opening Projects…"; }
+    if (command === "research") { window.location.hash="research"; return "Opening Research…"; }
+    if (command === "security") { run("open security", () => {}); return "Opening Security Lab…"; }
+    if (command === "whoami") return "visitor@sharma-os";
+    if (command === "neofetch") return "RAGHAV OS\n────────────\nKernel: Web Runtime\nShell: Rain Shell\nMode: Visitor / read-only\nStorage: Browser workspace";
+    if (command === "help") return "ls  cd  cat  pwd  clear  whoami  neofetch  open  projects  research  security  help";
+    return null;
+  }
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const command = input;
+    const command = input.trim();
+    if (!command) return;
+    setHistory(h => [...h, command]);
+    setHistoryIndex(-1);
     setInput("");
-    if (command.trim().toLowerCase() === "clear") { setLines([]); return; }
-    setLines(current => [...current, `visitor@raghav-os:~$ ${command}`]);
-    run(command, output => {
-      if (output === "\u0000") setLines([]);
-      else setLines(current => [...current, output]);
-    });
+    setLines(current => [...current, `visitor@sharma-os:${cwd.replace("/home/raghav","~")}$ ${command}`]);
+    if (command.toLowerCase() === "clear") { setLines([]); return; }
+    const local = localCommand(command);
+    if (local !== null) { setLines(current => [...current, local]); return; }
+    run(command, output => setLines(current => [...current, output]));
   }
-  return <div className="osx-terminal" onClick={() => ref.current?.focus()}><div className="osx-terminal-out">{lines.map((line,i) => <div key={`${line}-${i}`}>{line}</div>)}</div><form className="osx-terminal-form" onSubmit={submit}><span>visitor@raghav-os:~$</span><input ref={ref} value={input} onChange={e => setInput(e.target.value)} autoFocus aria-label="Terminal command" /></form></div>;
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "ArrowUp") { e.preventDefault(); const next=history[history.length-1] ?? ""; setInput(next); }
+    if (e.key === "ArrowDown") { e.preventDefault(); setInput(""); }
+  }
+  return <div className="osx-terminal" onClick={() => ref.current?.focus()}><div className="osx-terminal-out">{lines.map((line,i)=><div key={i}>{line}</div>)}</div><form className="osx-terminal-form" onSubmit={submit}><span>visitor@sharma-os:{cwd.replace("/home/raghav","~")}$</span><input ref={ref} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={onKeyDown} autoFocus aria-label="Terminal command" /></form></div>;
 }
 
 function SystemMonitor({ now }: { now: Date }) {
@@ -583,9 +771,17 @@ function SystemInfo() {
     ["Viewport", typeof window !== "undefined" ? window.innerWidth + " × " + window.innerHeight : "Unknown"],
     ["Screen", typeof window !== "undefined" ? window.screen.width + " × " + window.screen.height : "Unknown"],
     ["Secure context", typeof window !== "undefined" ? String(window.isSecureContext) : "Unknown"],
-    ["Storage", typeof window !== "undefined" ? "localStorage available" : "Browser storage unavailable"],
   ];
-  return <div><div className="osx-section-title">RUNTIME</div>{rows.map(([k,v]) => <div className="osx-kv" key={k}><span>{k}</span><b>{v}</b></div>)}</div>;
+  return <div className="osx-system-info">
+    <div className="osx-neofetch">
+      <pre>{`██████╗ ███████╗\n██╔══██╗██╔════╝\n██████╔╝███████╗\n██╔══██╗╚════██║\n██████╔╝███████║\n╚═════╝ ╚══════╝`}</pre>
+      <div><strong>RAGHAV OS</strong><span>CYBERSECURITY WORKSTATION</span><small>SR / SYSTEM INFORMATION</small></div>
+    </div>
+    <div className="osx-system-lines" />
+    <div className="osx-system-grid"><div><span>OS</span><b>Raghav OS</b></div><div><span>KERNEL</span><b>Web Runtime</b></div><div><span>SHELL</span><b>Rain Shell</b></div><div><span>STORAGE</span><b>Browser Local</b></div><div><span>NETWORK</span><b>Browser Connected</b></div><div><span>MODE</span><b>Visitor / Read-only</b></div></div>
+    <div className="osx-section-title">RUNTIME</div>
+    {rows.map(([k,v]) => <div className="osx-kv" key={k}><span>{k}</span><b>{v}</b></div>)}
+  </div>;
 }
 
 function Calculator() {
@@ -604,10 +800,39 @@ function Calculator() {
 }
 
 function NetworkAnalyzer({ online }: { online: boolean }) {
+  const [latency, setLatency] = useState<number | null>(null);
+  const [checkedAt, setCheckedAt] = useState("");
+  const [status, setStatus] = useState("Not tested");
+  const [bytes, setBytes] = useState<number | null>(null);
+  const [duration, setDuration] = useState<number | null>(null);
   const connection = typeof navigator !== "undefined"
     ? (navigator as Navigator & { connection?: { effectiveType?: string; downlink?: number; rtt?: number; saveData?: boolean } }).connection
     : undefined;
-  return <div><div className="osx-security-grid"><div className="osx-security-row"><span>Connectivity</span><b className={online ? "osx-pass" : "osx-warn"}>{online ? "ONLINE" : "OFFLINE"}</b></div><div className="osx-security-row"><span>Effective type</span><b>{connection?.effectiveType || "Unavailable"}</b></div><div className="osx-security-row"><span>Downlink</span><b>{connection?.downlink ? connection.downlink + " Mbps" : "Unavailable"}</b></div><div className="osx-security-row"><span>RTT</span><b>{connection?.rtt ? connection.rtt + " ms" : "Unavailable"}</b></div><div className="osx-security-row"><span>Save data</span><b>{connection?.saveData ? "Enabled" : "Disabled / unavailable"}</b></div></div><p className="osx-snap-hint" style={{marginTop:10}}>No packets are captured or transmitted by this tool. It only reads browser-exposed connection metadata.</p></div>;
+  async function test() {
+    if (!navigator.onLine) { setStatus("Offline"); setLatency(null); return; }
+    const started = performance.now();
+    setStatus("Testing…");
+    try {
+      const response = await fetch(window.location.pathname + "?network_probe=1", { cache:"no-store", headers:{ "x-os-network-probe":"1" } });
+      const body = await response.text();
+      const elapsed = Math.round(performance.now() - started);
+      setLatency(elapsed); setDuration(elapsed); setBytes(new Blob([body]).size); setCheckedAt(new Date().toLocaleTimeString("en-IN",{hour12:false})); setStatus(response.ok ? "Reachable" : "HTTP error");
+    } catch { setStatus("Probe failed"); setLatency(null); }
+  }
+  useEffect(() => { test(); }, []);
+  return <div>
+    <div className="osx-network-hero"><div><span>LIVE LINK TEST</span><strong>{latency === null ? "—" : latency + " ms"}</strong></div><button className="osx-btn" onClick={test}>Run test</button></div>
+    <div className="osx-security-grid">
+      <div className="osx-security-row"><span>Connectivity</span><b className={online ? "osx-pass" : "osx-warn"}>{online ? "ONLINE" : "OFFLINE"}</b></div>
+      <div className="osx-security-row"><span>Probe status</span><b>{status}</b></div>
+      <div className="osx-security-row"><span>Effective type</span><b>{connection?.effectiveType || "Unavailable"}</b></div>
+      <div className="osx-security-row"><span>Downlink hint</span><b>{connection?.downlink ? connection.downlink + " Mbps" : "Unavailable"}</b></div>
+      <div className="osx-security-row"><span>Browser RTT hint</span><b>{connection?.rtt ? connection.rtt + " ms" : "Unavailable"}</b></div>
+      <div className="osx-security-row"><span>Probe payload</span><b>{bytes === null ? "—" : bytes + " B"}</b></div>
+      <div className="osx-security-row"><span>Checked</span><b>{checkedAt || "—"}</b></div>
+    </div>
+    <p className="osx-snap-hint" style={{marginTop:10}}>This is a real browser-to-site reachability/latency test plus Network Information API data. Browsers cannot expose raw packets, interfaces, or host routing tables.</p>
+  </div>;
 }
 
 function HashAnalyzer() {
@@ -664,6 +889,20 @@ function SecurityCenter({ online }: { online: boolean }) {
   return <div><div className="osx-security-grid">{checks.map(([label,pass,detail]) => <div className="osx-security-row" key={String(label)}><span><b style={{display:"block",fontWeight:600,color:"#c9bdcf"}}>{String(label)}</b><small style={{display:"block",marginTop:3,color:"#6f6477"}}>{String(detail)}</small></span><b className={pass ? "osx-pass" : "osx-warn"}>{pass ? "PASS" : "CHECK"}</b></div>)}</div><p className="osx-snap-hint" style={{marginTop:10}}>This is a client-side posture summary, not a penetration test or server security audit.</p></div>;
 }
 
-function SettingsPanel({ theme, setTheme, resetSession }: { theme: "violet" | "mono"; setTheme: (theme: "violet" | "mono") => void; resetSession: () => void }) {
-  return <div><div className="osx-section-title">APPEARANCE</div><div className="osx-security-row"><span>Accent theme</span><div style={{display:"flex",gap:5}}><button className="osx-btn" onClick={() => setTheme("violet")} aria-pressed={theme==="violet"}>Violet</button><button className="osx-btn" onClick={() => setTheme("mono")} aria-pressed={theme==="mono"}>Mono</button></div></div><div className="osx-section-title">WINDOWS</div><div className="osx-snap-hint">Double-click title bars to maximize. Alt+Tab cycles feature windows. Ctrl/⌘ + Alt + ←/→ snaps the focused window.</div><div className="osx-section-title">SESSION</div><button className="osx-btn" onClick={resetSession}>Reset saved session</button></div>;
+function SettingsPanel({ theme, setTheme, resetSession }: { theme: "violet" | "mono" | "amber" | "green"; setTheme: (theme: "violet" | "mono" | "amber" | "green") => void; resetSession: () => void }) {
+  const [animations, setAnimations] = useState(true);
+  return <div className="osx-settings">
+    <div className="osx-settings-hero"><div className="osx-settings-icon">⚙</div><div><strong>OS SETTINGS</strong><span>RAGHAV SHARMA WORKSTATION</span></div></div>
+    <div className="osx-section-title">APPEARANCE</div>
+    <div className="osx-setting-card"><span><b>Accent / theme</b><small>Changes the entire feature layer immediately.</small></span><div className="osx-theme-buttons">
+      {(["violet","mono","amber","green"] as const).map(name => <button key={name} className={theme===name?"is-active":""} onClick={()=>setTheme(name)}>{name}</button>)}
+    </div></div>
+    <div className="osx-setting-card"><span><b>Animations</b><small>Window and hover motion.</small></span><button className={animations?"osx-toggle on":"osx-toggle"} onClick={()=>setAnimations(v=>!v)}>{animations?"ON":"OFF"}</button></div>
+    <div className="osx-section-title">DESKTOP</div>
+    <div className="osx-setting-card"><span><b>Wallpaper</b><small>Open Wallpaper Manager to change workstation background.</small></span><button className="osx-btn" onClick={()=>window.dispatchEvent(new CustomEvent("sr-open-wallpaper"))}>Open</button></div>
+    <div className="osx-section-title">SYSTEM</div>
+    <div className="osx-setting-card"><span><b>Network</b><small>Open Network Analyzer for a live site reachability test.</small></span><button className="osx-btn" onClick={()=>window.dispatchEvent(new CustomEvent("sr-open-network"))}>Inspect</button></div>
+    <div className="osx-setting-card"><span><b>Privacy</b><small>Feature tools run in this browser; no host filesystem access is requested.</small></span><button className="osx-btn" onClick={resetSession}>Clear session</button></div>
+    <div className="osx-snap-hint">Persistent OS state is intentionally deferred for now. Current workspace controls affect this session.</div>
+  </div>;
 }
