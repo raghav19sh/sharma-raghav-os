@@ -41,6 +41,12 @@ export default function HomePage() {
       <div className="entry-glow entry-glow-one" aria-hidden="true" />
       <div className="entry-glow entry-glow-two" aria-hidden="true" />
 
+      <a className="entry-contact-widget" href="tel:+918605532112" aria-label="Call Raghav Sharma">
+        <span className="entry-contact-label">DIRECT CONTACT</span>
+        <strong>+91 86055 32112</strong>
+        <span className="entry-contact-action">CALL ↗</span>
+      </a>
+
       <section className="entry-shell">
         <div className="entry-brand">
           <span className="entry-mark">RS</span>
