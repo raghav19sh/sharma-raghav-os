@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import RaghavOSDesktop from "@/components/RaghavOSDesktop";
+import OSFeatureLayer from "@/components/os/OSFeatureLayer";
 
 type Profile = {
   display_name: string;
@@ -73,6 +74,7 @@ export default async function PortfolioOSPage() {
     projects = (projectsResult.data as Project[] | null) ?? [];
     research = (researchResult.data as Research[] | null) ?? [];
     databaseOnline = !profileResult.error && !projectsResult.error && !researchResult.error;
+
     try {
       const wallpaperResult = await supabase
         .from("site_settings")
@@ -86,12 +88,15 @@ export default async function PortfolioOSPage() {
   }
 
   return (
-    <RaghavOSDesktop
-      profile={profile}
-      projects={projects}
-      research={research}
-      databaseOnline={databaseOnline}
-      wallpaperUrl={wallpaperUrl}
-    />
+    <>
+      <RaghavOSDesktop
+        profile={profile}
+        projects={projects}
+        research={research}
+        databaseOnline={databaseOnline}
+        wallpaperUrl={wallpaperUrl}
+      />
+      <OSFeatureLayer />
+    </>
   );
 }
