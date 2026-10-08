@@ -306,8 +306,9 @@ export default function OSFeatureLayer() {
   function terminalCommand(raw: string, append: (s: string) => void) {
     const cmd = raw.trim();
     if (!cmd) return;
-    const [name, ...args] = cmd.split(/\s+/);
-    const arg = args.join(" ");
+    const parts = cmd.split(/\s+/);
+    const name = parts[0] ?? "";
+    const arg = parts.slice(1).join(" ");
     switch (name.toLowerCase()) {
       case "help":
         append("help  ls  pwd  whoami  date  uptime  neofetch  apps  open <app>  clear  echo <text>  status");
@@ -471,7 +472,7 @@ function MalwareWorkbench() {
 }
 
 function SOCDashboard() {
-  const alerts = [
+  const alerts: Array<[string, string, string, string]> = [
     ["CRITICAL", "Suspicious PowerShell chain", "T1059.001", "Needs triage"],
     ["HIGH", "Credential access pattern", "T1003", "Investigate"],
     ["MEDIUM", "Unexpected archive execution", "T1560", "Contained"],
@@ -503,7 +504,7 @@ function ForensicsToolkit() {
 }
 
 function WallpaperManager() {
-  const presets = [
+  const presets: Array<[string, string]> = [
     ["Deep Violet", "radial-gradient(circle at 70% 20%,rgba(132,62,232,.24),transparent 32%),linear-gradient(145deg,#07030c,#12071c 55%,#09040f)"],
     ["Carbon", "radial-gradient(circle at 30% 10%,rgba(255,255,255,.06),transparent 25%),linear-gradient(145deg,#050607,#111315 55%,#070809)"],
     ["Midnight Blue", "radial-gradient(circle at 70% 15%,rgba(49,112,190,.2),transparent 30%),linear-gradient(145deg,#03070d,#081221 55%,#05070c)"],
@@ -572,7 +573,7 @@ function SystemInfo() {
   const nav = typeof navigator !== "undefined"
     ? navigator as Navigator & { deviceMemory?: number; hardwareConcurrency?: number; userAgentData?: { platform?: string } }
     : null;
-  const rows = [
+  const rows: Array<[string, string]> = [
     ["Platform", nav?.userAgentData?.platform || nav?.platform || "Unknown"],
     ["CPU threads", String(nav?.hardwareConcurrency || "Unknown")],
     ["Device memory", nav?.deviceMemory ? nav.deviceMemory + " GB (approx.)" : "Unavailable"],
@@ -635,7 +636,7 @@ function HexViewer() {
 
 function BrowserLinks() {
   const [url, setUrl] = useState("");
-  const links = [
+  const links: Array<[string, string]> = [
     ["Portfolio", "https://sharma-raghav.com/"],
     ["OS", "https://sharma-raghav.com/os"],
     ["GitHub", "https://github.com/raghav19sh"],
@@ -652,7 +653,7 @@ function MusicPlayer({ musicUrl, setMusicUrl }: { musicUrl: string; setMusicUrl:
 
 function SecurityCenter({ online }: { online: boolean }) {
   const secureContext = typeof window !== "undefined" ? window.isSecureContext : false;
-  const checks = [
+  const checks: Array<[string, boolean, string]> = [
     ["Secure context", secureContext, "HTTPS/secure browser context"],
     ["Storage isolation", true, "Local visitor state uses browser storage"],
     ["Network", online, "Browser reports network connectivity"],
