@@ -310,12 +310,11 @@ export default function RaghavOSDesktop({
 
         <header className="os-topbar" onClick={(event) => event.stopPropagation()}>
           <button className="os-system" type="button" onClick={() => setMenu(menu === "system" ? null : "system")} aria-label="Open system menu">
-            <span className="os-logo">RS</span>
-            <strong>RAGHAV SHARMA OS</strong>
+            <span className="os-logo" aria-hidden="true">▲</span>
           </button>
 
           <nav className="os-menus" aria-label="System menus">
-            {(["File", "Edit", "View", "Go", "Window", "Help"] as const).map((label) => (
+            {(["Apps", "Files", "System"] as const).map((label) => (
               <button
                 className={menu === label ? "os-menu is-open" : "os-menu"}
                 type="button"
@@ -327,52 +326,30 @@ export default function RaghavOSDesktop({
             ))}
           </nav>
 
+          <button type="button" className="os-search-pill" onClick={() => openWindow("about")} aria-label="Search applications">
+            <Search size={14} /><span>Search...</span><kbd>⌘ K</kbd>
+          </button>
+
           <div className="os-status">
-            {online ? <Wifi size={14} /> : <span className="status-offline"><Wifi size={14} /></span>}
-            <span className="os-date">{stamp}</span>
-            <Search size={14} className="os-search-button" onClick={() => openWindow("about")} />
+            <span className="os-status-icon" aria-label={online ? "Online" : "Offline"}><Wifi size={15} /></span>
+            <span className="os-status-icon"><span className="os-battery" /></span>
+            <span className="os-date">{now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true })}</span>
             <button className="os-admin-trigger" type="button" onClick={(event) => { event.stopPropagation(); openWindow("admin"); }} aria-label="Open admin console" title="Admin Console"><LockKeyhole size={14} /></button>
           </div>
 
           {menu && (
             <div className="os-dropdown" onClick={(event) => event.stopPropagation()}>
-              {menu === "system" && (
+              {(menu === "system" || menu === "System") && (
                 <>
                   <button type="button" onClick={() => openWindow("settings")}>System Settings</button>
                   <button type="button" onClick={resetDesktop}>Clear desktop</button>
+                  <button type="button" onClick={() => openWindow("admin")}>Admin Console</button>
                 </>
               )}
-              {menu === "File" && (
+              {(menu === "Apps" || menu === "Files") && (
                 <>
-                  <button type="button" onClick={() => openWindow("about")}>Open About</button>
-                  <button type="button" onClick={() => openWindow("projects")}>Open Projects</button>
-                </>
-              )}
-              {menu === "Edit" && (
-                <>
-                  <button type="button" onClick={() => navigator.clipboard?.writeText("Raghav Sharma OS")}>Copy system name</button>
-                  <button type="button" onClick={() => navigator.clipboard?.writeText(window.location.href)}>Copy URL</button>
-                </>
-              )}
-              {menu === "View" && (
-                <>
-                  <button type="button" onClick={resetDesktop}>Reset desktop</button>
-                  <button type="button" onClick={() => setWindows((current) => current.map((win) => ({ ...win, minimized: true })))}>Minimize all</button>
-                </>
-              )}
-              {menu === "Go" && APPS.map((id) => (
-                <button key={id} type="button" onClick={() => openWindow(id)}>{APP_META[id].label}</button>
-              ))}
-              {menu === "Window" && (
-                <>
-                  <button type="button" onClick={() => setWindows((current) => current.map((win) => ({ ...win, maximized: true, minimized: false })))}>Maximize all</button>
-                  <button type="button" onClick={() => setWindows((current) => current.map((win) => ({ ...win, minimized: true })))}>Minimize all</button>
-                </>
-              )}
-              {menu === "Help" && (
-                <>
-                  <button type="button" onClick={() => openWindow("about")}>About this OS</button>
-                  <button type="button" onClick={() => openWindow("security")}>Security Lab</button>
+                  {APPS.map((id) => <button key={id} type="button" onClick={() => openWindow(id)}>{APP_META[id].label}</button>)}
+                  {menu === "Files" && <button type="button" onClick={() => openWindow("projects")}>Projects folder</button>}
                 </>
               )}
             </div>
@@ -380,49 +357,11 @@ export default function RaghavOSDesktop({
         </header>
 
         <section className="os-desktop" onClick={(event) => event.stopPropagation()}>
-          <aside className="os-desktop-icons" aria-label="Applications">
-            {APPS.map((id) => (
-              <button className="os-desktop-icon" type="button" key={id} onClick={() => openWindow(id)} title={APP_META[id].label}>
-                <img src={APP_META[id].icon} alt="" />
-                <span>{APP_META[id].label}</span>
-              </button>
-            ))}
-          </aside>
-
-          <section className="os-center">
-            <div className="os-hero">
-              <span className="os-kicker">&gt;_ SECURITY WORKSTATION</span>
-              <h1>RAGHAV <em>SHARMA</em></h1>
-              <p>Cybersecurity &amp; Forensics</p>
-              <span className="os-rule" />
-              <div className="os-keywords">
-                <span>SECURITY RESEARCH</span>
-                <span>ENGINEERING</span>
-                <span>DETECTION</span>
-                <span>DOCUMENTATION</span>
-              </div>
-            </div>
+          <section className="os-clock" aria-label="Desktop clock">
+            <div className="os-clock-label">RAGHAV SHARMA</div>
+            <time>{now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false })}</time>
+            <div className="os-clock-date">{now.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long" })}</div>
           </section>
-
-          <a className="os-resume-widget" href="/resume" onClick={(event) => event.stopPropagation()} aria-label="Open Raghav Sharma resume">
-            <div className="os-resume-widget-top">
-              <span>RESUME / 2026</span>
-              <span className="os-resume-arrow">↗</span>
-            </div>
-            <strong>Raghav Sharma</strong>
-            <span className="os-resume-role">CYBERSECURITY · VAPT · MALWARE</span>
-            <span className="os-resume-action">VIEW RESUME</span>
-          </a>
-
-          <aside className="os-quiet-status" aria-label="System status">
-            <div className="os-quiet-head">
-              <span>SYSTEM</span>
-              <b className={online ? "is-online" : "is-offline"}>{online ? "ONLINE" : "OFFLINE"}</b>
-            </div>
-            <div><Wifi size={13} /><span>Network</span><b>{online ? "Connected" : "Offline"}</b></div>
-            <div><HardDrive size={13} /><span>Database</span><b>{databaseOnline ? "Connected" : "Unavailable"}</b></div>
-            <div><span className="mini-dot" /><span>Session</span><b>{uptime}</b></div>
-          </aside>
 
           {windows.map((win) => {
             if (win.minimized) return null;
@@ -465,9 +404,6 @@ export default function RaghavOSDesktop({
           })}
 
           <nav className="os-dock" aria-label="Dock">
-            <button type="button" className="os-dock-launch" onClick={() => openWindow("about")} title="About">
-              <Menu size={18} />
-            </button>
             {APPS.map((id) => {
               const active = windows.some((win) => win.id === id && !win.minimized);
               return (
@@ -478,23 +414,17 @@ export default function RaghavOSDesktop({
                   onClick={() => openWindow(id)}
                   title={APP_META[id].label}
                 >
-                  <img src={APP_META[id].icon} alt="" />
+                  <img src={APP_META[id].icon} alt={APP_META[id].label} />
                   {active && <i />}
                 </button>
               );
             })}
           </nav>
-
-          <div className="os-bottom">
-            <span><i className={online ? "status-dot" : "status-dot is-offline"} />{online ? "Connected" : "Offline"}</span>
-            <span>RAGHAV-OS / HOME</span>
-            <span>Visitor mode · read-only</span>
-          </div>
         </section>
       </div>
     </main>
   );
-}
+}}
 
 function WindowHeader({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle: string }) {
   return (
