@@ -5,8 +5,7 @@ import {
   ChevronRight,
   Code2,
   Github,
-  HardDrive,
-  LockKeyhole,
+    LockKeyhole,
   Mail,
   Maximize2,
   Menu,
@@ -89,7 +88,6 @@ export default function RaghavOSDesktop({
   profile,
   projects,
   research,
-  databaseOnline,
   wallpaperUrl,
 }: {
   profile: Profile | null;
@@ -99,7 +97,7 @@ export default function RaghavOSDesktop({
   wallpaperUrl: string;
 }) {
   const [windows, setWindows] = useState<WindowState[]>([]);
-  const [menu, setMenu] = useState<"system" | "File" | "Edit" | "View" | "Go" | "Window" | "Help" | null>(null);
+  const [menu, setMenu] = useState<"system" | "Apps" | "Files" | "System" | null>(null);
   const [online, setOnline] = useState(true);
   const [now, setNow] = useState(() => new Date());
   const [sessionStart] = useState(() => Date.now());
@@ -283,15 +281,6 @@ export default function RaghavOSDesktop({
     .map((value) => String(value).padStart(2, "0"))
     .join(":");
 
-  const stamp = now.toLocaleString("en-IN", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-
   function renderWindow(id: AppId) {
     switch (id) {
       case "about": return <AboutWindow profile={profile} />;
@@ -304,7 +293,7 @@ export default function RaghavOSDesktop({
   }
 
   return (
-    <main className="os-root" onClick={() => menu && setMenu(null)}>
+    <main className="os-root" data-session={uptime} onClick={() => menu && setMenu(null)}>
       <div className="os-wallpaper" style={{ backgroundImage: "url(" + JSON.stringify(wallpaperUrl) + ")" }}>
         <div className="os-overlay" aria-hidden="true" />
 
@@ -331,6 +320,8 @@ export default function RaghavOSDesktop({
           </button>
 
           <div className="os-status">
+            <span className="os-status-icon os-moon" aria-hidden="true">☾</span>
+            <span className="os-status-icon os-volume" aria-hidden="true">◖))</span>
             <span className="os-status-icon" aria-label={online ? "Online" : "Offline"}><Wifi size={15} /></span>
             <span className="os-status-icon"><span className="os-battery" /></span>
             <span className="os-date">{now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true })}</span>
@@ -346,10 +337,21 @@ export default function RaghavOSDesktop({
                   <button type="button" onClick={() => openWindow("admin")}>Admin Console</button>
                 </>
               )}
-              {(menu === "Apps" || menu === "Files") && (
+              {menu === "Apps" && (
                 <>
                   {APPS.map((id) => <button key={id} type="button" onClick={() => openWindow(id)}>{APP_META[id].label}</button>)}
-                  {menu === "Files" && <button type="button" onClick={() => openWindow("projects")}>Projects folder</button>}
+                  {(["terminal", "files", "browser", "music", "monitor", "calculator", "network", "hash", "logs", "hex", "notes", "malware", "soc", "forensics", "wallpaper"] as const).map((id) => (
+                    <button key={id} type="button" onClick={() => window.dispatchEvent(new CustomEvent("sr-open-app", { detail: id }))}>
+                      {{terminal:"Terminal",files:"File Manager",browser:"Browser",music:"Music Player",monitor:"System Monitor",calculator:"Calculator",network:"Network Analyzer",hash:"Hash Analyzer",logs:"Log Viewer",hex:"Hex Viewer",notes:"Text Editor",malware:"Malware Workbench",soc:"SOC Dashboard",forensics:"Forensics Toolkit",wallpaper:"Wallpaper"}[id]}
+                    </button>
+                  ))}
+                </>
+              )}
+              {menu === "Files" && (
+                <>
+                  <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("sr-open-app", { detail: "files" }))}>File Manager</button>
+                  <button type="button" onClick={() => openWindow("projects")}>Projects</button>
+                  <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("sr-open-app", { detail: "notes" }))}>Documents / Notes</button>
                 </>
               )}
             </div>
@@ -404,17 +406,31 @@ export default function RaghavOSDesktop({
           })}
 
           <nav className="os-dock" aria-label="Dock">
-            {APPS.map((id) => {
-              const active = windows.some((win) => win.id === id && !win.minimized);
+            {([
+              { id: "about", label: "About", icon: "/os/about.svg", native: true },
+              { id: "terminal", label: "Terminal", glyph: ">_", native: false },
+              { id: "projects", label: "Projects", icon: "/os/projects.svg", native: true },
+              { id: "files", label: "Files", glyph: "▣", native: false },
+              { id: "research", label: "Research", icon: "/os/research.svg", native: true },
+              { id: "browser", label: "Browser", glyph: "◎", native: false },
+              { id: "music", label: "Music", glyph: "♫", native: false },
+              { id: "security", label: "Security", icon: "/os/security.svg", native: true },
+              { id: "settings", label: "Settings", icon: "/os/settings.svg", native: true },
+              { id: "admin", label: "Admin", icon: "/os/admin.svg", native: true },
+            ] as const).map((item) => {
+              const active = item.native
+                ? windows.some((win) => win.id === item.id && !win.minimized)
+                : false;
               return (
                 <button
                   type="button"
-                  key={id}
+                  key={item.id}
                   className={active ? "os-dock-item is-active" : "os-dock-item"}
-                  onClick={() => openWindow(id)}
-                  title={APP_META[id].label}
+                  onClick={() => item.native ? openWindow(item.id as AppId) : window.dispatchEvent(new CustomEvent("sr-open-app", { detail: item.id }))}
+                  title={item.label}
+                  aria-label={item.label}
                 >
-                  <img src={APP_META[id].icon} alt={APP_META[id].label} />
+                  {"icon" in item ? <img src={item.icon} alt="" /> : <span className="os-dock-glyph">{item.glyph}</span>}
                   {active && <i />}
                 </button>
               );
@@ -424,7 +440,7 @@ export default function RaghavOSDesktop({
       </div>
     </main>
   );
-}}
+}
 
 function WindowHeader({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle: string }) {
   return (
