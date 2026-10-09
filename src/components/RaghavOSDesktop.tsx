@@ -5,6 +5,7 @@ import {
   ChevronRight,
   Code2,
   Github,
+  HardDrive,
     LockKeyhole,
   Mail,
   Maximize2,
