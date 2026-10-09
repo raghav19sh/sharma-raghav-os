@@ -212,8 +212,15 @@ export default function OSFeatureLayer() {
   useEffect(() => {
     const openWallpaper = () => openApp("wallpaper");
     const openNetwork = () => openApp("network");
+    const openRequestedApp = (event: Event) => {
+      const requested = (event as CustomEvent<string>).detail;
+      if (typeof requested === "string" && Object.prototype.hasOwnProperty.call(APP_INFO, requested)) {
+        openApp(requested as FeatureApp);
+      }
+    };
     window.addEventListener("sr-open-wallpaper", openWallpaper as EventListener);
     window.addEventListener("sr-open-network", openNetwork as EventListener);
+    window.addEventListener("sr-open-app", openRequestedApp);
     const key = (event: KeyboardEvent) => {
       if (event.altKey && event.key === "Tab") {
         event.preventDefault();
@@ -240,6 +247,7 @@ export default function OSFeatureLayer() {
       window.removeEventListener("keydown", key);
       window.removeEventListener("sr-open-wallpaper", openWallpaper as EventListener);
       window.removeEventListener("sr-open-network", openNetwork as EventListener);
+      window.removeEventListener("sr-open-app", openRequestedApp);
     };
   }, [focused, windows]);
 
