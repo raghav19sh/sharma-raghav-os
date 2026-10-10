@@ -5,106 +5,110 @@ import { useMemo, useState } from "react";
 import {
   ArrowUpRight, ChevronRight, Clock3, FileText, FlaskConical, Folder,
   FolderOpen, Grid2X2, HardDrive, Home, LayoutList, Search, ShieldCheck,
-  UserRound, Wrench, Globe, Github, Mail, ExternalLink, ArrowLeft,
+  UserRound, Wrench, Globe, Github, Mail, ExternalLink, Terminal, Activity,
+  Command, Cpu, Radio, BriefcaseBusiness, Code2,
 } from "lucide-react";
 
 type Entry = {
   name: string;
-  type: "folder" | "link" | "file";
+  type: "DIR" | "WEB" | "DOC";
   description: string;
   href: string;
   icon: typeof Folder;
   external?: boolean;
   category: string;
+  status: string;
+  id: string;
 };
 
 const entries: Entry[] = [
-  { name: "Projects", type: "folder", description: "Applications, experiments and source code", href: "/os", icon: Folder, category: "Work" },
-  { name: "Research", type: "folder", description: "Security research, notes and write-ups", href: "/os", icon: FlaskConical, category: "Work" },
-  { name: "Security Lab", type: "folder", description: "Cybersecurity projects and lab workspace", href: "/os", icon: ShieldCheck, category: "Work" },
-  { name: "Tools", type: "link", description: "Image, PDF and developer utilities", href: "https://tools.sharma-raghav.com", icon: Wrench, external: true, category: "Web" },
-  { name: "DigiTrust", type: "link", description: "Digital trust and media analysis project", href: "https://digitrust.sharma-raghav.com", icon: Globe, external: true, category: "Web" },
-  { name: "About Me", type: "file", description: "Profile, skills and contact information", href: "/os", icon: UserRound, category: "Personal" },
-  { name: "Resume.pdf", type: "file", description: "View professional experience and skills", href: "/resume", icon: FileText, category: "Personal" },
-  { name: "GitHub", type: "link", description: "Repositories and open-source work", href: "https://github.com/raghav19sh", icon: Github, external: true, category: "Web" },
-  { name: "Contact", type: "link", description: "Send an email", href: "mailto:contact@sharma-raghav.com", icon: Mail, external: true, category: "Personal" },
+  { id: "01", name: "PROJECTS", type: "DIR", description: "Applications, experiments and source repositories", href: "/os", icon: Code2, category: "WORKSPACE", status: "ACTIVE" },
+  { id: "02", name: "RESEARCH", type: "DIR", description: "Security research, technical notes and write-ups", href: "/os", icon: FlaskConical, category: "WORKSPACE", status: "ACTIVE" },
+  { id: "03", name: "SECURITY LAB", type: "DIR", description: "Cybersecurity tools, labs and investigations", href: "/os", icon: ShieldCheck, category: "WORKSPACE", status: "ACTIVE" },
+  { id: "04", name: "WEB TOOLS", type: "WEB", description: "Image, PDF and browser-based utilities", href: "https://tools.sharma-raghav.com", icon: Wrench, external: true, category: "ONLINE", status: "LIVE" },
+  { id: "05", name: "DIGITRUST", type: "WEB", description: "Digital trust, media analysis and source signals", href: "https://digitrust.sharma-raghav.com", icon: Radio, external: true, category: "ONLINE", status: "LIVE" },
+  { id: "06", name: "PROFILE", type: "DOC", description: "Background, capabilities and contact information", href: "/os", icon: UserRound, category: "PERSONAL", status: "OPEN" },
+  { id: "07", name: "RESUME", type: "DOC", description: "Professional profile and experience", href: "/resume", icon: FileText, category: "PERSONAL", status: "PDF / WEB" },
+  { id: "08", name: "GITHUB", type: "WEB", description: "Source code, repositories and open-source work", href: "https://github.com/raghav19sh", icon: Github, external: true, category: "ONLINE", status: "LIVE" },
+  { id: "09", name: "CONTACT", type: "WEB", description: "Direct email for projects and collaboration", href: "mailto:contact@sharma-raghav.com", icon: Mail, external: true, category: "PERSONAL", status: "EMAIL" },
 ];
+
+const sections = ["ALL SYSTEMS", "WORKSPACE", "ONLINE", "PERSONAL"];
 
 export default function HomePage() {
   const [search, setSearch] = useState("");
-  const [view, setView] = useState<"grid" | "list">("grid");
-  const [sort, setSort] = useState<"name" | "type">("name");
-  const [activeCategory, setActiveCategory] = useState("All files");
+  const [view, setView] = useState<"grid" | "list">("list");
+  const [activeSection, setActiveSection] = useState("ALL SYSTEMS");
+  const [now] = useState(() => new Date());
 
   const filtered = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return entries
-      .filter((entry) => activeCategory === "All files" || entry.category === activeCategory)
-      .filter((entry) => !term || [entry.name, entry.description, entry.category].some((s) => s.toLowerCase().includes(term)))
-      .sort((a, b) => sort === "name" ? a.name.localeCompare(b.name) : a.type.localeCompare(b.type) || a.name.localeCompare(b.name));
-  }, [search, sort, activeCategory]);
+    const q = search.trim().toLowerCase();
+    return entries.filter((entry) =>
+      (activeSection === "ALL SYSTEMS" || entry.category === activeSection) &&
+      (!q || [entry.name, entry.description, entry.category, entry.type].some((s) => s.toLowerCase().includes(q)))
+    );
+  }, [search, activeSection]);
 
   return (
-    <main className="fm-shell">
-      <header className="fm-topbar">
-        <Link href="/" className="fm-brand" aria-label="Home">
-          <span className="fm-brand-mark">r<span>.</span></span>
-          <span><strong>RAGHAV FILES</strong><small>sharma-raghav.com</small></span>
-        </Link>
-        <div className="fm-breadcrumb"><HardDrive size={15} /><span>This PC</span><ChevronRight size={14} /><FolderOpen size={15} /><strong>Home</strong></div>
-        <div className="fm-top-actions"><span className="fm-online-dot" /> <span>PERSONAL WORKSPACE</span></div>
+    <main className="fm-shell bloomberg-shell">
+      <header className="bb-topline">
+        <Link href="/" className="bb-brand"><span className="bb-brand-mark">SR</span><span><strong>SHARMA<span> / </span>TERMINAL</strong><small>PERSONAL INTELLIGENCE SYSTEM</small></span></Link>
+        <div className="bb-market-status"><i /> SYSTEM STATUS <b>OPERATIONAL</b></div>
+        <div className="bb-top-right"><span>IN / LOCAL</span><span className="bb-clock">{now.toLocaleTimeString("en-IN", {hour:"2-digit",minute:"2-digit",hour12:false})} IST</span></div>
       </header>
 
-      <div className="fm-layout">
-        <aside className="fm-sidebar">
-          <p className="fm-side-label">QUICK ACCESS</p>
-          {[
-            { label: "Home", icon: Home, category: "All files" },
-            { label: "Work", icon: Folder, category: "Work" },
-            { label: "Web projects", icon: Globe, category: "Web" },
-            { label: "Personal", icon: UserRound, category: "Personal" },
-          ].map((item) => {
-            const Icon = item.icon;
-            return <button key={item.label} className={activeCategory === item.category ? "fm-side-item active" : "fm-side-item"} onClick={() => setActiveCategory(item.category)}><Icon size={16} /><span>{item.label}</span></button>;
-          })}
-          <div className="fm-sidebar-divider" />
-          <p className="fm-side-label">LOCATIONS</p>
-          <Link className="fm-side-item" href="/os"><HardDrive size={16} /><span>Raghav OS</span><ArrowUpRight size={13} className="fm-side-arrow" /></Link>
-          <a className="fm-side-item" href="https://github.com/raghav19sh" target="_blank" rel="noreferrer"><Github size={16} /><span>GitHub</span><ArrowUpRight size={13} className="fm-side-arrow" /></a>
-          <div className="fm-sidebar-bottom">
-            <div className="fm-storage-icon"><HardDrive size={17} /></div>
-            <div><strong>Personal workspace</strong><small>Online directory</small></div>
-            <span className="fm-storage-status" />
-          </div>
+      <div className="bb-commandbar">
+        <div className="bb-command-label"><Command size={13} /> WORKSPACE DIRECTORY</div>
+        <div className="bb-command-path"><span>HOME</span><ChevronRight size={12}/><strong>FILE INDEX</strong></div>
+        <Link href="/os" className="bb-command-link">LAUNCH OS <ArrowUpRight size={13}/></Link>
+      </div>
+
+      <section className="bb-ticker" aria-label="System overview">
+        <div><span>SR TERMINAL</span><b>PERSONAL WORKSPACE</b></div>
+        <div><span>MODULES</span><b>{String(entries.length).padStart(2,"0")}</b></div>
+        <div><span>ONLINE LINKS</span><b className="bb-green">03 LIVE</b></div>
+        <div><span>MODE</span><b>DIRECTORY / 001</b></div>
+        <div><span>DATE</span><b>{now.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase()}</b></div>
+      </section>
+
+      <div className="bb-layout">
+        <aside className="bb-sidebar">
+          <div className="bb-side-heading">NAVIGATION <span>F1</span></div>
+          {sections.map((section, index) => <button key={section} onClick={() => setActiveSection(section)} className={activeSection === section ? "bb-nav-item selected" : "bb-nav-item"}><span className="bb-nav-num">{String(index+1).padStart(2,"0")}</span><span>{section}</span>{activeSection === section && <ChevronRight size={13}/>}</button>)}
+          <div className="bb-side-rule"/>
+          <div className="bb-side-heading">QUICK LAUNCH</div>
+          <Link href="/os" className="bb-quick-link"><Terminal size={14}/> RAGHAV OS <ArrowUpRight size={12}/></Link>
+          <a href="https://github.com/raghav19sh" target="_blank" rel="noreferrer" className="bb-quick-link"><Github size={14}/> SOURCE CODE <ArrowUpRight size={12}/></a>
+          <div className="bb-side-status"><Activity size={14}/><div><b>DIRECTORY SERVICE</b><span>Responding normally</span></div><i/></div>
         </aside>
 
-        <section className="fm-main">
-          <div className="fm-page-heading">
-            <div><p className="fm-eyebrow">DIRECTORY / HOME</p><h1>Home<span>.</span></h1><p className="fm-subtitle">A file-manager view of my projects, research, tools and profile.</p></div>
-            <Link href="/os" className="fm-launch-button">Open workspace <ArrowUpRight size={15} /></Link>
+        <section className="bb-main">
+          <div className="bb-title-row">
+            <div><div className="bb-eyebrow"><span>HOME</span> / <span>FILE INDEX</span> / 00{sections.indexOf(activeSection)+1}</div><h1>PERSONAL <em>DIRECTORY</em></h1><p>Projects, research, digital utilities and professional information. Select an entry to open its destination.</p></div>
+            <div className="bb-title-stamp"><span>TERMINAL ID</span><strong>SR-001</strong><span>ACCESS / PUBLIC</span></div>
           </div>
 
-          <div className="fm-toolbar">
-            <label className="fm-search"><Search size={16} /><input aria-label="Search files" placeholder="Search files and folders..." value={search} onChange={(event) => setSearch(event.target.value)} /><kbd>⌘ K</kbd></label>
-            <div className="fm-toolbar-actions">
-              <label className="fm-sort">Sort: <select value={sort} onChange={(event) => setSort(event.target.value as "name" | "type")}><option value="name">Name</option><option value="type">Type</option></select></label>
-              <button className={view === "grid" ? "fm-view-button selected" : "fm-view-button"} onClick={() => setView("grid")} aria-label="Grid view"><Grid2X2 size={16} /></button>
-              <button className={view === "list" ? "fm-view-button selected" : "fm-view-button"} onClick={() => setView("list")} aria-label="List view"><LayoutList size={16} /></button>
-            </div>
+          <div className="bb-toolbar">
+            <label className="bb-search"><Search size={15}/><input aria-label="Search directory" placeholder="SEARCH DIRECTORY..." value={search} onChange={(e)=>setSearch(e.target.value)}/><kbd>⌘ K</kbd></label>
+            <div className="bb-view-controls"><span>DISPLAY</span><button className={view==="list"?"active":""} onClick={()=>setView("list")} aria-label="List view"><LayoutList size={15}/></button><button className={view==="grid"?"active":""} onClick={()=>setView("grid")} aria-label="Grid view"><Grid2X2 size={15}/></button></div>
           </div>
 
-          <div className="fm-section-row"><h2>{activeCategory}</h2><span>{filtered.length} items</span></div>
-          {filtered.length ? (
-            <div className={view === "grid" ? "fm-file-grid" : "fm-file-list"}>
-              {filtered.map((entry) => {
-                const Icon = entry.icon;
-                const body = <><div className="fm-file-icon"><Icon size={25} strokeWidth={1.65} /></div><div className="fm-file-copy"><strong>{entry.name}</strong><span>{entry.description}</span></div><div className="fm-file-meta"><span>{entry.type === "folder" ? "Folder" : entry.type === "file" ? "Document" : "Web link"}</span>{entry.external ? <ExternalLink size={14} /> : <ChevronRight size={15} />}</div></>;
-                return entry.external ? <a key={entry.name} href={entry.href} target={entry.href.startsWith("mailto:") ? undefined : "_blank"} rel="noreferrer" className="fm-entry">{body}</a> : <Link key={entry.name} href={entry.href} className="fm-entry">{body}</Link>;
-              })}
-            </div>
-          ) : <div className="fm-empty"><Search size={25} /><strong>No matching files</strong><span>Try another name or choose a different location.</span></div>}
+          <div className="bb-table-head"><span>IDX</span><span>NAME / RESOURCE</span><span>TYPE</span><span>STATUS</span><span>OPEN</span></div>
+          <div className={view==="grid"?"bb-resource-grid":"bb-resource-list"}>
+            {filtered.map((entry)=>{
+              const Icon=entry.icon;
+              const contents=<><span className="bb-entry-index">{entry.id}</span><div className="bb-entry-name"><span className="bb-entry-icon"><Icon size={17}/></span><span><strong>{entry.name}</strong><small>{entry.description}</small></span></div><span className="bb-entry-type">{entry.type}</span><span className={entry.status==="LIVE"||entry.status==="ACTIVE"?"bb-entry-status live":"bb-entry-status"}><i/>{entry.status}</span><span className="bb-entry-open"><ArrowUpRight size={15}/></span></>;
+              return entry.external ? <a key={entry.id} className="bb-resource" href={entry.href} target={entry.href.startsWith("mailto:")?undefined:"_blank"} rel="noreferrer">{contents}</a> : <Link key={entry.id} className="bb-resource" href={entry.href}>{contents}</Link>;
+            })}
+          </div>
+          {filtered.length===0&&<div className="bb-empty">NO MATCHING RECORDS — MODIFY SEARCH QUERY</div>}
 
-          <footer className="fm-footer"><span><span className="fm-online-dot" /> All directories ready</span><span><Clock3 size={13} /> Built to explore</span><span>© {new Date().getFullYear()} Raghav Sharma</span></footer>
+          <div className="bb-bottom-panels">
+            <div className="bb-info-panel"><div className="bb-panel-title"><span><Cpu size={13}/> WORKSPACE SUMMARY</span><b>SYS / 01</b></div><div className="bb-summary-row"><span>Primary focus</span><strong>CYBERSECURITY + SOFTWARE</strong></div><div className="bb-summary-row"><span>Interface</span><strong>WEB DIRECTORY</strong></div><div className="bb-summary-row"><span>Navigation</span><strong>LINK / WINDOW</strong></div></div>
+            <div className="bb-info-panel bb-status-panel"><div className="bb-panel-title"><span><BriefcaseBusiness size={13}/> ACCESS POINTS</span><b>NET / 02</b></div><div className="bb-access-row"><span className="bb-access-dot"/> <span>TOOLS PLATFORM</span><a href="https://tools.sharma-raghav.com" target="_blank" rel="noreferrer">OPEN <ArrowUpRight size={11}/></a></div><div className="bb-access-row"><span className="bb-access-dot"/> <span>DIGITRUST PLATFORM</span><a href="https://digitrust.sharma-raghav.com" target="_blank" rel="noreferrer">OPEN <ArrowUpRight size={11}/></a></div><div className="bb-access-row"><span className="bb-access-dot"/> <span>GITHUB PROFILE</span><a href="https://github.com/raghav19sh" target="_blank" rel="noreferrer">OPEN <ArrowUpRight size={11}/></a></div></div>
+          </div>
+
+          <footer className="bb-footer"><span>SHARMA / TERMINAL <b>v1.0</b></span><span><i/> ALL SYSTEMS NOMINAL</span><span>© {now.getFullYear()} RAGHAV SHARMA</span></footer>
         </section>
       </div>
     </main>
