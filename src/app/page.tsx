@@ -1,144 +1,112 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  ArrowUpRight, ChevronRight, Clock3, FileText, FlaskConical, Folder,
+  FolderOpen, Grid2X2, HardDrive, Home, LayoutList, Search, ShieldCheck,
+  UserRound, Wrench, Globe, Github, Mail, ExternalLink, ArrowLeft,
+} from "lucide-react";
 
-const destinations = [
-  {
-    number: "01",
-    label: "PERSONAL WORKSTATION",
-    title: "Portfolio",
-    description: "Projects, security research, experiments, and the systems behind them.",
-    href: "/os",
-    action: "Launch workspace",
-    mark: "↗",
-    className: "arch-card-work",
-  },
-  {
-    number: "02",
-    label: "SMALL UTILITIES · BIG USE",
-    title: "Tools",
-    description: "Browser-based utilities for images, PDFs, conversions, and developer tasks.",
-    href: "https://tools.sharma-raghav.com",
-    action: "Browse tools",
-    mark: "⌘",
-    className: "arch-card-tools",
-  },
-  {
-    number: "03",
-    label: "DIGITAL TRUST",
-    title: "DigiTrust",
-    description: "Explore signals that help evaluate online claims, sources, and domains.",
-    href: "https://digitrust.sharma-raghav.com",
-    action: "Explore project",
-    mark: "◎",
-    className: "arch-card-trust",
-  },
+type Entry = {
+  name: string;
+  type: "folder" | "link" | "file";
+  description: string;
+  href: string;
+  icon: typeof Folder;
+  external?: boolean;
+  category: string;
+};
+
+const entries: Entry[] = [
+  { name: "Projects", type: "folder", description: "Applications, experiments and source code", href: "/os", icon: Folder, category: "Work" },
+  { name: "Research", type: "folder", description: "Security research, notes and write-ups", href: "/os", icon: FlaskConical, category: "Work" },
+  { name: "Security Lab", type: "folder", description: "Cybersecurity projects and lab workspace", href: "/os", icon: ShieldCheck, category: "Work" },
+  { name: "Tools", type: "link", description: "Image, PDF and developer utilities", href: "https://tools.sharma-raghav.com", icon: Wrench, external: true, category: "Web" },
+  { name: "DigiTrust", type: "link", description: "Digital trust and media analysis project", href: "https://digitrust.sharma-raghav.com", icon: Globe, external: true, category: "Web" },
+  { name: "About Me", type: "file", description: "Profile, skills and contact information", href: "/os", icon: UserRound, category: "Personal" },
+  { name: "Resume.pdf", type: "file", description: "View professional experience and skills", href: "/resume", icon: FileText, category: "Personal" },
+  { name: "GitHub", type: "link", description: "Repositories and open-source work", href: "https://github.com/raghav19sh", icon: Github, external: true, category: "Web" },
+  { name: "Contact", type: "link", description: "Send an email", href: "mailto:contact@sharma-raghav.com", icon: Mail, external: true, category: "Personal" },
 ];
 
 export default function HomePage() {
-  const [now, setNow] = useState<Date | null>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [search, setSearch] = useState("");
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const [sort, setSort] = useState<"name" | "type">("name");
+  const [activeCategory, setActiveCategory] = useState("All files");
 
-  useEffect(() => {
-    const update = () => setNow(new Date());
-    update();
-    const timer = window.setInterval(update, 1000);
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(media.matches);
-    const onMotionChange = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
-    media.addEventListener("change", onMotionChange);
-    return () => {
-      window.clearInterval(timer);
-      media.removeEventListener("change", onMotionChange);
-    };
-  }, []);
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return entries
+      .filter((entry) => activeCategory === "All files" || entry.category === activeCategory)
+      .filter((entry) => !term || [entry.name, entry.description, entry.category].some((s) => s.toLowerCase().includes(term)))
+      .sort((a, b) => sort === "name" ? a.name.localeCompare(b.name) : a.type.localeCompare(b.type) || a.name.localeCompare(b.name));
+  }, [search, sort, activeCategory]);
 
   return (
-    <main className={`arch-home${reducedMotion ? " arch-reduced-motion" : ""}`}>
-      <div className="arch-noise" aria-hidden="true" />
-      <header className="arch-nav">
-        <Link className="arch-brand" href="/" aria-label="Raghav Sharma home">
-          <span className="arch-logo">r<span>.</span></span>
-          <span className="arch-brand-copy">
-            <strong>RAGHAV SHARMA</strong>
-            <small>INDEPENDENT / SECURITY + SOFTWARE</small>
-          </span>
+    <main className="fm-shell">
+      <header className="fm-topbar">
+        <Link href="/" className="fm-brand" aria-label="Home">
+          <span className="fm-brand-mark">r<span>.</span></span>
+          <span><strong>RAGHAV FILES</strong><small>sharma-raghav.com</small></span>
         </Link>
-        <nav className="arch-nav-links" aria-label="Main navigation">
-          <Link href="/os">Workspace <span>↗</span></Link>
-          <a href="https://tools.sharma-raghav.com">Tools <span>↗</span></a>
-          <a href="https://digitrust.sharma-raghav.com">DigiTrust <span>↗</span></a>
-        </nav>
-        <div className="arch-clock" aria-label="Local time">
-          <span className="arch-clock-dot" />
-          <span>{now ? now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "--:--:--"}</span>
-        </div>
+        <div className="fm-breadcrumb"><HardDrive size={15} /><span>This PC</span><ChevronRight size={14} /><FolderOpen size={15} /><strong>Home</strong></div>
+        <div className="fm-top-actions"><span className="fm-online-dot" /> <span>PERSONAL WORKSPACE</span></div>
       </header>
 
-      <section className="arch-hero">
-        <div className="arch-hero-copy">
-          <div className="arch-prompt"><span>raghav@sharma-raghav</span><b>:</b><i>~</i><em>$ whoami</em></div>
-          <p className="arch-eyebrow">CYBERSECURITY <span>✳</span> ENGINEERING <span>✳</span> OPEN WEB</p>
-          <h1>Curious by nature.<br /><span>Secure by design.</span></h1>
-          <p className="arch-intro">
-            I build practical tools, explore how systems break, and work on ideas that make the digital world more trustworthy.
-          </p>
-          <div className="arch-hero-actions">
-            <Link className="arch-button-primary" href="/os">Enter workspace <span>↗</span></Link>
-            <a className="arch-button-secondary" href="#projects">Explore projects <span>↓</span></a>
+      <div className="fm-layout">
+        <aside className="fm-sidebar">
+          <p className="fm-side-label">QUICK ACCESS</p>
+          {[
+            { label: "Home", icon: Home, category: "All files" },
+            { label: "Work", icon: Folder, category: "Work" },
+            { label: "Web projects", icon: Globe, category: "Web" },
+            { label: "Personal", icon: UserRound, category: "Personal" },
+          ].map((item) => {
+            const Icon = item.icon;
+            return <button key={item.label} className={activeCategory === item.category ? "fm-side-item active" : "fm-side-item"} onClick={() => setActiveCategory(item.category)}><Icon size={16} /><span>{item.label}</span></button>;
+          })}
+          <div className="fm-sidebar-divider" />
+          <p className="fm-side-label">LOCATIONS</p>
+          <Link className="fm-side-item" href="/os"><HardDrive size={16} /><span>Raghav OS</span><ArrowUpRight size={13} className="fm-side-arrow" /></Link>
+          <a className="fm-side-item" href="https://github.com/raghav19sh" target="_blank" rel="noreferrer"><Github size={16} /><span>GitHub</span><ArrowUpRight size={13} className="fm-side-arrow" /></a>
+          <div className="fm-sidebar-bottom">
+            <div className="fm-storage-icon"><HardDrive size={17} /></div>
+            <div><strong>Personal workspace</strong><small>Online directory</small></div>
+            <span className="fm-storage-status" />
           </div>
-          <div className="arch-terminal-line">
-            <span className="arch-terminal-check">✓</span>
-            <span>Building, breaking, learning — one system at a time.</span>
-            <span className="arch-cursor" aria-hidden="true" />
+        </aside>
+
+        <section className="fm-main">
+          <div className="fm-page-heading">
+            <div><p className="fm-eyebrow">DIRECTORY / HOME</p><h1>Home<span>.</span></h1><p className="fm-subtitle">A file-manager view of my projects, research, tools and profile.</p></div>
+            <Link href="/os" className="fm-launch-button">Open workspace <ArrowUpRight size={15} /></Link>
           </div>
-        </div>
 
-        <div className="arch-visual" aria-label="Abstract animated orbital system">
-          <div className="arch-visual-label arch-label-top"><span>FIG. 01</span> SYSTEMS IN MOTION</div>
-          <div className="arch-orbit arch-orbit-one"><span className="arch-node arch-node-cyan" /></div>
-          <div className="arch-orbit arch-orbit-two"><span className="arch-node arch-node-lime" /></div>
-          <div className="arch-orbit arch-orbit-three"><span className="arch-node arch-node-white" /></div>
-          <div className="arch-core"><span>SR</span></div>
-          <div className="arch-crosshair arch-crosshair-h" />
-          <div className="arch-crosshair arch-crosshair-v" />
-          <div className="arch-coordinate arch-coordinate-left">37° 46' 49.2"N</div>
-          <div className="arch-coordinate arch-coordinate-right">SYSTEM / 001</div>
-          <div className="arch-visual-label arch-label-bottom"><span className="arch-signal" /> IDEAS → EXPERIMENTS → IMPACT</div>
-        </div>
-      </section>
-
-      <section className="arch-section" id="projects">
-        <div className="arch-section-heading">
-          <div>
-            <p className="arch-eyebrow">DIRECTORIES / 01—03</p>
-            <h2>Pick a direction<span>.</span></h2>
+          <div className="fm-toolbar">
+            <label className="fm-search"><Search size={16} /><input aria-label="Search files" placeholder="Search files and folders..." value={search} onChange={(event) => setSearch(event.target.value)} /><kbd>⌘ K</kbd></label>
+            <div className="fm-toolbar-actions">
+              <label className="fm-sort">Sort: <select value={sort} onChange={(event) => setSort(event.target.value as "name" | "type")}><option value="name">Name</option><option value="type">Type</option></select></label>
+              <button className={view === "grid" ? "fm-view-button selected" : "fm-view-button"} onClick={() => setView("grid")} aria-label="Grid view"><Grid2X2 size={16} /></button>
+              <button className={view === "list" ? "fm-view-button selected" : "fm-view-button"} onClick={() => setView("list")} aria-label="List view"><LayoutList size={16} /></button>
+            </div>
           </div>
-          <p className="arch-section-note">A few corners of my digital workspace.<br />Choose one to explore.</p>
-        </div>
-        <div className="arch-cards">
-          {destinations.map((item) => (
-            <Link className={`arch-card ${item.className}`} href={item.href} key={item.number}>
-              <div className="arch-card-meta"><span>{item.number} / {item.label}</span><span className="arch-card-mark">{item.mark}</span></div>
-              <div className="arch-card-art" aria-hidden="true">
-                {item.number === "01" ? <div className="arch-art-terminal"><span>~/workspace</span><b>$</b><i /><i /><i /></div> : item.number === "02" ? <div className="arch-art-tools"><span>▧</span><span>⌁</span><span>↔</span><span>▤</span></div> : <div className="arch-art-trust"><span>◎</span><i /><b /></div>}
-              </div>
-              <div className="arch-card-content">
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </div>
-              <div className="arch-card-action">{item.action}<span>↗</span></div>
-            </Link>
-          ))}
-        </div>
-      </section>
 
-      <footer className="arch-footer">
-        <span>© {now ? now.getFullYear() : "2026"} RAGHAV SHARMA</span>
-        <span className="arch-footer-center"><i /> DESIGNED TO KEEP EXPLORING</span>
-        <a href="mailto:contact@sharma-raghav.com">GET IN TOUCH ↗</a>
-      </footer>
+          <div className="fm-section-row"><h2>{activeCategory}</h2><span>{filtered.length} items</span></div>
+          {filtered.length ? (
+            <div className={view === "grid" ? "fm-file-grid" : "fm-file-list"}>
+              {filtered.map((entry) => {
+                const Icon = entry.icon;
+                const body = <><div className="fm-file-icon"><Icon size={25} strokeWidth={1.65} /></div><div className="fm-file-copy"><strong>{entry.name}</strong><span>{entry.description}</span></div><div className="fm-file-meta"><span>{entry.type === "folder" ? "Folder" : entry.type === "file" ? "Document" : "Web link"}</span>{entry.external ? <ExternalLink size={14} /> : <ChevronRight size={15} />}</div></>;
+                return entry.external ? <a key={entry.name} href={entry.href} target={entry.href.startsWith("mailto:") ? undefined : "_blank"} rel="noreferrer" className="fm-entry">{body}</a> : <Link key={entry.name} href={entry.href} className="fm-entry">{body}</Link>;
+              })}
+            </div>
+          ) : <div className="fm-empty"><Search size={25} /><strong>No matching files</strong><span>Try another name or choose a different location.</span></div>}
+
+          <footer className="fm-footer"><span><span className="fm-online-dot" /> All directories ready</span><span><Clock3 size={13} /> Built to explore</span><span>© {new Date().getFullYear()} Raghav Sharma</span></footer>
+        </section>
+      </div>
     </main>
   );
 }
