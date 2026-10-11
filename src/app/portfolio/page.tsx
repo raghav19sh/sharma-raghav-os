@@ -21,6 +21,9 @@ const projects = [
   { name: "Android Studio", category: "Android Development", detail: "Android development experiments and related project work.", href: "https://github.com/raghav19sh/androidstudio" },
   { name: "GitHub Profile README", category: "Developer Profile", detail: "Profile documentation and public developer presence.", href: "https://github.com/raghav19sh/raghav19sh" },
   { name: "First Contributions", category: "Open Source", detail: "Repository associated with learning and making open-source contributions.", href: "https://github.com/raghav19sh/first-contributions" },
+  { name: "RAIN Voice Assistant", category: "AI / Voice", detail: "Voice-assistant experiments, including custom wake-word detection and speech tooling.", href: "https://github.com/raghav19sh" },
+  { name: "Voice Command Operator", category: "Automation", detail: "A voice-command project for triggering desktop or system actions.", href: "https://github.com/raghav19sh" },
+  { name: "Web Scraper", category: "Python / Automation", detail: "A web-scraping project for collecting and processing web content.", href: "https://github.com/raghav19sh" },
 ];
 
 export default function PortfolioPage() {
@@ -59,7 +62,7 @@ export default function PortfolioPage() {
             <p className="ec-detail">Exposure to process analysis, business workflows, and data-driven improvement.</p>
           </section>
           <section className="ec-section ec-work-section">
-            <p className="ec-label"><span>03</span> PROJECTS & REPOSITORIES <span className="ec-count">13</span></p>
+            <p className="ec-label"><span>03</span> PROJECTS & REPOSITORIES <span className="ec-count">16</span></p>
             <div className="ec-project-list">
               {projects.map((project, index) => <a className="ec-project" key={project.name} href={project.href} target="_blank" rel="noreferrer"><span className="ec-project-index">{String(index + 1).padStart(2, "0")}</span><span className="ec-project-copy"><span className="ec-project-meta">{project.category}</span><strong>{project.name}</strong><small>{project.detail}</small></span><ArrowUpRight size={15} /></a>)}
             </div>
