@@ -3,85 +3,132 @@
 import { useEffect, useRef } from "react";
 
 export default function PlasmaVoid() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: true });
-    if (!ctx) return;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let width = 0;
-    let height = 0;
-    let frame = 0;
-    let raf = 0;
-    let particles: { angle: number; radius: number; speed: number; size: number; phase: number }[] = [];
+    const host = hostRef.current;
+    if (!host) return;
 
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = Math.min(1100, Math.max(420, Math.floor((width * height) / 1800)));
-      particles = Array.from({ length: count }, (_, i) => ({
-        angle: Math.random() * Math.PI * 2,
-        radius: 35 + Math.random() * Math.min(width, height) * 0.46,
-        speed: (0.003 + Math.random() * 0.008) * (Math.random() > 0.5 ? 1 : -1),
-        size: 0.35 + Math.random() * 1.3,
-        phase: i * 0.17 + Math.random() * 6,
-      }));
-    };
+    const canvas = document.createElement("canvas");
+    canvas.className = "plasma-void-webgl";
+    canvas.setAttribute("aria-hidden", "true");
+    host.appendChild(canvas);
 
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-      const cx = width * 0.69;
-      const cy = height * 0.37;
-      const scale = Math.min(width, height);
-      const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, scale * 0.55);
-      halo.addColorStop(0, "rgba(116,31,57,0.12)");
-      halo.addColorStop(0.35, "rgba(72,20,40,0.09)");
-      halo.addColorStop(1, "rgba(10,9,10,0)");
-      ctx.fillStyle = halo;
-      ctx.fillRect(0, 0, width, height);
-      ctx.globalCompositeOperation = "lighter";
-      for (const p of particles) {
-        const t = frame * p.speed;
-        const wave = Math.sin(t * 2 + p.phase) * 13 + Math.cos(t + p.phase * 0.7) * 8;
-        const r = p.radius + wave;
-        const a = p.angle + t * 0.9 + Math.sin(t + p.phase) * 0.12;
-        const x = cx + Math.cos(a) * r * 1.14;
-        const y = cy + Math.sin(a) * r * 0.72;
-        const alpha = 0.12 + (0.5 + 0.5 * Math.sin(a * 3 + p.phase)) * 0.5;
-        ctx.fillStyle = `rgba(${170 + Math.floor(35 * Math.sin(p.phase))},${50 + Math.floor(24 * Math.sin(p.phase * 0.6))},${78 + Math.floor(30 * Math.cos(p.phase))},${alpha})`;
-        ctx.beginPath();
-        ctx.arc(x, y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalCompositeOperation = "source-over";
-      const voidGradient = ctx.createRadialGradient(cx, cy, 4, cx, cy, scale * 0.22);
-      voidGradient.addColorStop(0, "rgba(4,3,5,0.92)");
-      voidGradient.addColorStop(0.55, "rgba(7,5,8,0.66)");
-      voidGradient.addColorStop(1, "rgba(7,5,8,0)");
-      ctx.fillStyle = voidGradient;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, scale * 0.23, scale * 0.16, -0.22, 0, Math.PI * 2);
-      ctx.fill();
-      frame += 1;
-      if (!reduceMotion) raf = window.requestAnimationFrame(draw);
-    };
+    // Use the same Three.js version as the supplied export. The module script is
+    // intentionally isolated from Next's server bundle because Three.js runs only in the browser.
+    const script = document.createElement("script");
+    script.type = "module";
+    script.textContent = `
+      import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+      import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+      import { EffectComposer } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/EffectComposer.js";
+      import { RenderPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/RenderPass.js";
+      import { UnrealBloomPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/UnrealBloomPass.js";
 
-    resize();
-    draw();
-    window.addEventListener("resize", resize);
+      const canvas = document.querySelector(".plasma-void-webgl");
+      if (!canvas || !canvas.isConnected) throw new Error("Particle canvas unavailable");
+      const COUNT = window.innerWidth < 700 ? 9000 : 20000;
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x000000, 0.01);
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+      camera.position.set(0, 0, 100);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.enablePan = false;
+      controls.enableZoom = false;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.35;
+
+      const composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+      bloom.strength = 1.8;
+      bloom.radius = 0.4;
+      bloom.threshold = 0;
+      composer.addPass(bloom);
+
+      const dummy = new THREE.Object3D();
+      const color = new THREE.Color();
+      const target = new THREE.Vector3();
+      const geometry = new THREE.TetrahedronGeometry(0.25);
+      const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const mesh = new THREE.InstancedMesh(geometry, material, COUNT);
+      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      scene.add(mesh);
+
+      const positions = Array.from({ length: COUNT }, () => new THREE.Vector3(
+        (Math.random() - 0.5) * 100,
+        (Math.random() - 0.5) * 100,
+        (Math.random() - 0.5) * 100
+      ));
+      for (let i = 0; i < COUNT; i++) mesh.setColorAt(i, new THREE.Color(0x00ff88));
+
+      const clock = new THREE.Clock();
+      let raf = 0;
+      let disposed = false;
+      const animate = () => {
+        if (disposed || !canvas.isConnected) return;
+        raf = requestAnimationFrame(animate);
+        const time = clock.getElapsedTime();
+        const scale = 90, spread = 1, flow = 0.8, morph = 0.45;
+        for (let i = 0; i < COUNT; i++) {
+          const t = i / COUNT;
+          const theta = t * Math.PI * 40;
+          const r0 = 0.35 + 0.65 * Math.sqrt(t);
+          const w1 = Math.sin(theta * 0.7 + time * 0.25);
+          const w2 = Math.sin(theta * 1.9 - time * 0.17);
+          const w3 = Math.cos(theta * 3.3 + time * 0.11);
+          const attract = r0 * (1 + 0.25 * w1 + 0.12 * w2 * w3);
+          const bend = 0.8 * Math.sin(theta * 0.5 + time * 0.2) + 0.3 * Math.sin(theta * 2.7 - time * 0.13);
+          const x = scale * attract * Math.cos(theta + bend * spread);
+          const y = scale * attract * Math.sin(theta + bend * spread);
+          const z = scale * (0.55 * Math.sin(theta * 0.55) + 0.28 * Math.sin(theta * 1.73 + time * 0.22) + 0.15 * Math.cos(theta * 4.1));
+          const swirl = flow * Math.sin(Math.sqrt(x * x + y * y) * 0.06 - time * 0.8);
+          target.set(x + swirl * y * 0.12, y - swirl * x * 0.12, z + scale * morph * 0.18 * Math.sin(theta * 0.9 + time * 0.35));
+          color.setHSL(0.58 + 0.1 * Math.sin(theta * 0.08 + time * 0.03), 0.55 + 0.35 * (0.5 + 0.5 * Math.sin(theta * 0.31)), 0.35 + 0.28 * Math.exp(-Math.abs(attract - 0.75)));
+          positions[i].lerp(target, 0.1);
+          dummy.position.copy(positions[i]);
+          dummy.updateMatrix();
+          mesh.setMatrixAt(i, dummy.matrix);
+          mesh.setColorAt(i, color);
+        }
+        mesh.instanceMatrix.needsUpdate = true;
+        if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+        controls.update();
+        composer.render();
+      };
+      animate();
+
+      const onResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        composer.setSize(window.innerWidth, window.innerHeight);
+      };
+      window.addEventListener("resize", onResize);
+      window.addEventListener("pagehide", () => {
+        disposed = true;
+        cancelAnimationFrame(raf);
+        window.removeEventListener("resize", onResize);
+        controls.dispose();
+        geometry.dispose();
+        material.dispose();
+        renderer.dispose();
+        composer.dispose();
+      }, { once: true });
+    `;
+    document.body.appendChild(script);
+
     return () => {
-      window.cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
+      script.remove();
+      canvas.remove();
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="plasma-void-canvas" aria-hidden="true" />;
+  return <div ref={hostRef} className="plasma-void-host" aria-hidden="true" />;
 }
