@@ -1,53 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Globe2, Mail, Github, Code2, FileText, ShieldCheck, Wrench } from "lucide-react";
+import { ArrowUpRight, Code2, FileText, Wrench, ShieldCheck, Github, Mail, Moon } from "lucide-react";
 
 const destinations = [
-  { name: "OS", host: "sharma-raghav.com/os", description: "Interactive personal operating system", href: "/os", icon: Code2, type: "INTERNAL" },
-  { name: "PORTFOLIO", host: "sharma-raghav.com/portfolio", description: "CV, skills and selected work", href: "/portfolio", icon: FileText, type: "INTERNAL" },
-  { name: "TOOLS", host: "tools.sharma-raghav.com", description: "Browser-based utilities", href: "https://tools.sharma-raghav.com", icon: Wrench, type: "SUBDOMAIN" },
-  { name: "DIGITRUST", host: "digitrust.sharma-raghav.com", description: "Digital trust and media analysis", href: "https://digitrust.sharma-raghav.com", icon: ShieldCheck, type: "SUBDOMAIN" },
-  { name: "GITHUB", host: "github.com/raghav19sh", description: "Repositories and open-source projects", href: "https://github.com/raghav19sh", icon: Github, type: "EXTERNAL" },
+  { name: "OS", path: "/os", domain: "sharma-raghav.com/os", icon: Code2 },
+  { name: "Portfolio", path: "/portfolio", domain: "sharma-raghav.com/portfolio", icon: FileText },
+  { name: "Tools", path: "https://tools.sharma-raghav.com", domain: "tools.sharma-raghav.com", icon: Wrench },
+  { name: "DigiTrust", path: "https://digitrust.sharma-raghav.com", domain: "digitrust.sharma-raghav.com", icon: ShieldCheck },
+  { name: "GitHub", path: "https://github.com/raghav19sh", domain: "github.com/raghav19sh", icon: Github },
+  { name: "Contact", path: "mailto:contact@sharma-raghav.com", domain: "contact@sharma-raghav.com", icon: Mail },
 ];
 
 export default function HomePage() {
   return (
-    <main className="directory-home">
-      <header className="directory-header">
-        <Link href="/" className="directory-wordmark">R<span>.</span>S</Link>
-        <span className="directory-header-note">PERSONAL WEB DIRECTORY</span>
-        <a className="directory-contact" href="mailto:contact@sharma-raghav.com">CONTACT <ArrowUpRight size={14} /></a>
+    <main className="dark-minimal-home">
+      <div className="dm-orb" aria-hidden="true"><div className="dm-orb-glow" /></div>
+      <header className="dm-header">
+        <Link href="/" className="dm-brand">RAGHAV SHARMA</Link>
+        <nav aria-label="Main navigation">
+          <Link href="/">Home</Link>
+          <Link href="/os">OS</Link>
+          <Link href="/portfolio">Portfolio</Link>
+          <a href="mailto:contact@sharma-raghav.com">Contact</a>
+          <span className="dm-theme-mark" aria-label="Dark theme"><Moon size={14} /></span>
+        </nav>
       </header>
 
-      <section className="directory-intro">
-        <p className="directory-kicker">RAGHAV SHARMA <span>·</span> DIGITAL SPACE</p>
-        <h1>One place.<br /><span>Every destination.</span></h1>
-        <p className="directory-subtitle">A simple index of my work, tools and projects across the web.</p>
+      <section className="dm-hero">
+        <p className="dm-index">PERSONAL WEBSPACE <span>/ 01</span></p>
+        <div className="dm-hero-copy">
+          <p className="dm-kicker">CYBERSECURITY · DIGITAL TRUST · SOFTWARE</p>
+          <h1>Build.<br />Explore.<br /><em>Secure.</em></h1>
+          <p className="dm-description">A collection of tools, experiments, and projects at the intersection of security and technology.</p>
+        </div>
+        <p className="dm-orb-caption">SYSTEMS / RESEARCH / OPEN SOURCE</p>
       </section>
 
-      <section className="directory-list-section" aria-label="Domains and websites">
-        <div className="directory-list-heading"><span>DESTINATION</span><span>DESCRIPTION</span><span>TYPE</span><span /></div>
+      <section className="dm-destinations" aria-label="Websites and projects">
         {destinations.map((item, index) => {
           const Icon = item.icon;
-          const external = item.href.startsWith("http");
-          const content = <>
-            <span className="directory-index">{String(index + 1).padStart(2, "0")}</span>
-            <span className="directory-name"><span className="directory-icon"><Icon size={17} strokeWidth={1.7} /></span><span><strong>{item.name}</strong><small>{item.host}</small></span></span>
-            <span className="directory-description">{item.description}</span>
-            <span className="directory-type">{item.type}</span>
-            <span className="directory-arrow"><ArrowUpRight size={16} /></span>
-          </>;
+          const external = item.path.startsWith("http") || item.path.startsWith("mailto:");
+          const inner = <><span className="dm-card-index">0{index + 1}</span><span className="dm-card-icon"><Icon size={18} strokeWidth={1.5} /></span><span className="dm-card-copy"><strong>{item.name}</strong><small>{item.domain}</small></span><ArrowUpRight className="dm-card-arrow" size={16} /></>;
           return external
-            ? <a className="directory-row" href={item.href} key={item.name} target="_blank" rel="noreferrer">{content}</a>
-            : <Link className="directory-row" href={item.href} key={item.name}>{content}</Link>;
+            ? <a className="dm-card" key={item.name} href={item.path} target={item.path.startsWith("http") ? "_blank" : undefined} rel={item.path.startsWith("http") ? "noreferrer" : undefined}>{inner}</a>
+            : <Link className="dm-card" key={item.name} href={item.path}>{inner}</Link>;
         })}
       </section>
 
-      <footer className="directory-footer">
-        <span>SHARMA-RAGHAV.COM</span>
-        <span><Globe2 size={13} /> INDEPENDENT WEB PROJECTS</span>
-        <a href="mailto:contact@sharma-raghav.com"><Mail size={13} /> CONTACT</a>
+      <footer className="dm-footer">
+        <span><i /> INDIA · INDEPENDENT PROJECTS</span>
+        <span>© {new Date().getFullYear()} RAGHAV SHARMA</span>
       </footer>
     </main>
   );
