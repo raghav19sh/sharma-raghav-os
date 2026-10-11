@@ -1023,3 +1023,110 @@ a{-webkit-tap-highlight-color:transparent}
 .editorial-cv .ec-intro h1{font-family:"Caveat",cursive!important;font-weight:600;letter-spacing:-.025em}
 .editorial-cv .ec-kicker,.editorial-cv .ec-label,.editorial-cv .ec-aside p{font-weight:600}
 .editorial-cv .ec-project-index,.editorial-cv .ec-count{font-family:"Caveat",cursive!important}
+
+
+/* Creative homepage art direction: oversized type, floating glass tiles, vivid contrast */
+.dark-minimal-home{
+  --dm-line:rgba(255,255,255,.12);
+  padding-inline:clamp(24px,6.3vw,112px);
+  background:
+    radial-gradient(ellipse at 74% 33%,rgba(43,23,70,.22),transparent 43%),
+    linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.36))!important;
+}
+.dm-header{
+  height:88px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+.dm-brand{font-size:12px;letter-spacing:.16em}
+.dm-header nav{gap:clamp(18px,2.7vw,38px)}
+.dm-header nav a{font-size:12px;color:#d0cbd6}
+.dm-header nav a:hover{color:#fff}
+.dm-hero{min-height:clamp(480px,58vh,650px);padding:clamp(30px,4vh,52px) 0 54px}
+.dm-index{max-width:100%;color:#d0c8d3;font-size:11px}
+.dm-index span{color:#c28ca4}
+.dm-hero-copy{margin-top:clamp(44px,7vh,80px);max-width:620px}
+.dm-kicker{font-size:11px;letter-spacing:.19em;color:#ff91b1;text-shadow:0 0 22px rgba(255,92,151,.18)}
+.dm-hero h1{
+  margin:25px 0 24px;
+  font-size:clamp(76px,10.2vw,144px);
+  font-weight:500;
+  letter-spacing:-.095em;
+  line-height:.82;
+  text-shadow:0 10px 60px rgba(0,0,0,.35);
+}
+.dm-hero h1 em{
+  color:#ff6f9b;
+  text-shadow:0 0 36px rgba(255,69,126,.22);
+}
+.dm-description{max-width:420px;color:#d0c8d3;font-size:16px;line-height:1.75}
+.dm-void-caption{font-size:10px;color:#d6c6d7;letter-spacing:.16em;text-shadow:0 2px 16px #000}
+.dm-destinations{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  border:0;
+}
+.dm-card{
+  min-height:142px;
+  padding:20px 20px 22px;
+  grid-template-columns:34px minmax(0,1fr) 22px;
+  column-gap:14px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:15px;
+  overflow:hidden;
+  background:linear-gradient(145deg,rgba(26,19,34,.78),rgba(8,7,12,.6));
+  backdrop-filter:blur(18px) saturate(125%);
+  -webkit-backdrop-filter:blur(18px) saturate(125%);
+  box-shadow:0 12px 35px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.045);
+  transition:transform .25s ease,border-color .25s ease,background .25s ease,box-shadow .25s ease;
+}
+.dm-card::before{
+  content:"";
+  position:absolute;
+  width:115px;height:115px;right:-58px;top:-64px;border-radius:50%;
+  background:rgba(236,74,130,.11);filter:blur(5px);pointer-events:none;
+}
+.dm-card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(255,121,166,.48);
+  background:linear-gradient(145deg,rgba(53,24,49,.88),rgba(12,8,17,.78));
+  box-shadow:0 20px 46px rgba(0,0,0,.3),0 0 28px rgba(190,47,105,.08);
+}
+.dm-card-index{font-size:11px;color:#c1b3c7;margin-bottom:18px}
+.dm-card-icon{color:#ff85ac}
+.dm-card-icon svg{width:21px;height:21px}
+.dm-card-copy{gap:7px}
+.dm-card-copy strong{font-size:16px;font-weight:650;letter-spacing:-.025em;color:#fff}
+.dm-card-copy small{font-size:12px;line-height:1.45;color:#c4b9c9}
+.dm-card-arrow{color:#c5b1c7;width:19px;height:19px}
+.dm-card:hover .dm-card-arrow{color:#ff8db3}
+.dm-footer{min-height:88px;color:#b8adbd;font-size:10px}
+.dm-footer i{width:6px;height:6px;background:#ff6f9b;box-shadow:0 0 14px rgba(255,111,155,.65)}
+@media(max-width:900px){
+  .dm-hero{min-height:490px}
+  .dm-hero h1{font-size:clamp(76px,12vw,112px)}
+  .dm-destinations{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+}
+@media(max-width:600px){
+  .dark-minimal-home{padding:0 18px}
+  .dm-header{height:70px}
+  .dm-brand{font-size:10px}
+  .dm-header nav{gap:12px}
+  .dm-header nav a{font-size:10px}
+  .dm-hero{min-height:450px;padding-top:25px}
+  .dm-hero-copy{margin-top:54px}
+  .dm-kicker{font-size:9px;letter-spacing:.12em}
+  .dm-hero h1{font-size:clamp(65px,15vw,90px);line-height:.86}
+  .dm-description{font-size:14px;max-width:320px}
+  .dm-void-caption{bottom:16px;font-size:7px;max-width:52%;text-align:right}
+  .dm-destinations{grid-template-columns:1fr;gap:10px}
+  .dm-card{min-height:112px;padding:16px;border-radius:13px}
+  .dm-card-index{margin-bottom:12px}
+  .dm-card-copy strong{font-size:16px}
+  .dm-card-copy small{font-size:11px}
+  .dm-footer{padding:20px 0;gap:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .dm-card{transition:none}
+  .dm-card:hover{transform:none}
+}
