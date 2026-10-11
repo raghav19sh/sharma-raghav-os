@@ -973,3 +973,38 @@ a{-webkit-tap-highlight-color:transparent}
 .ec-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:72px;border-top:1px solid var(--ec-rule);color:#928b82;font:8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}
 .ec-footer a{display:flex;align-items:center;gap:5px;color:var(--ec-burgundy);text-decoration:none}
 @media(max-width:650px){.editorial-cv{padding:0 20px}.ec-header{height:63px}.ec-intro{padding:58px 0 30px}.ec-intro h1{font-size:66px}.ec-summary{font-size:14px}.ec-body{grid-template-columns:1fr;gap:0}.ec-aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 15px;padding-top:23px}.ec-aside p{margin-bottom:7px}.ec-aside strong,.ec-aside a{margin-bottom:15px;font-size:9px}.ec-section{padding:22px 0}.ec-footer{align-items:flex-start;flex-direction:column;justify-content:center;padding:17px 0;gap:9px}}
+
+
+/* Plasmatic void canvas background — replaces the orb/sphere */
+.plasma-void-canvas{position:absolute;inset:0;z-index:-1;display:block;pointer-events:none;opacity:.9}
+.dm-void-caption{position:absolute;right:0;bottom:38px;color:#83797b;font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em}
+.dm-orb,.dm-orb-glow{display:none!important}
+
+/* Cursive editorial portfolio typography */
+.editorial-cv,.editorial-cv *{font-family:"Caveat",cursive!important}
+.ec-header{font-size:16px;letter-spacing:.04em}
+.ec-monogram{font-size:29px}
+.ec-header-label,.ec-back{font-size:16px}
+.ec-kicker,.ec-label{font-size:17px;letter-spacing:.02em}
+.ec-intro h1{font-size:clamp(76px,10vw,124px);line-height:.82}
+.ec-summary{font-size:24px;line-height:1.35}
+.ec-contact a{font-size:18px}
+.ec-aside p{font-size:15px;letter-spacing:.03em}
+.ec-aside strong,.ec-aside a{font-size:19px}
+.ec-section h2{font-size:27px}
+.ec-meta{font-size:19px}
+.ec-detail{font-size:19px;line-height:1.4}
+.ec-project strong{font-size:24px}
+.ec-project small{font-size:18px;line-height:1.25}
+.ec-project-meta{display:block;color:#8a5b67;font-size:15px;line-height:1.2}
+.ec-project-index{align-self:flex-start;color:#a59a90;font-size:17px;min-width:22px}
+.ec-project-copy{display:grid;gap:2px;flex:1;min-width:0}
+.ec-project{justify-content:flex-start;gap:13px;padding:15px 0}
+.ec-project>svg{margin-left:auto}
+.ec-project-list{display:grid}
+.ec-count{margin-left:auto;border:1px solid #ded9d0;padding:1px 8px;border-radius:20px;color:#7c3046;font-size:15px}
+.ec-label{width:100%}
+.ec-skills span{font-size:17px;padding:5px 9px}
+.ec-footer{font-size:15px}
+.ec-footer a{font-size:16px}
+@media(max-width:650px){.dm-void-caption{font-size:7px}.ec-intro h1{font-size:78px}.ec-summary{font-size:22px}.ec-section h2{font-size:25px}.ec-project strong{font-size:23px}.ec-project small{font-size:17px}.ec-aside strong,.ec-aside a{font-size:17px}}
