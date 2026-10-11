@@ -976,7 +976,8 @@ a{-webkit-tap-highlight-color:transparent}
 
 
 /* Plasmatic void canvas background — replaces the orb/sphere */
-.plasma-void-canvas{position:absolute;inset:0;z-index:-1;display:block;pointer-events:none;opacity:.9}
+.plasma-void-canvas{position:absolute;inset:0;z-index:0;display:block;pointer-events:none;opacity:.9}
+.dm-header,.dm-hero,.dm-destinations,.dm-footer{position:relative;z-index:1}
 .dm-void-caption{position:absolute;right:0;bottom:38px;color:#83797b;font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em}
 .dm-orb,.dm-orb-glow{display:none!important}
 
