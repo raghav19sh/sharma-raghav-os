@@ -1130,3 +1130,42 @@ a{-webkit-tap-highlight-color:transparent}
   .dm-card{transition:none}
   .dm-card:hover{transform:none}
 }
+
+
+/* White homepage with a pure black animated particle swarm */
+.plasma-void-host{background:#fff!important}
+.plasma-void-webgl{opacity:1!important}
+.dark-minimal-home{
+  background:#fff!important;
+  color:#111!important;
+  --dm-line:rgba(0,0,0,.15);
+}
+.dm-header{border-bottom-color:rgba(0,0,0,.14)}
+.dm-brand{color:#111!important}
+.dm-header nav a{color:#4b4b4b}
+.dm-header nav a:hover{color:#000}
+.dm-index{color:#333}
+.dm-index span,.dm-kicker{color:#555;text-shadow:none}
+.dm-hero h1{color:#111;text-shadow:none}
+.dm-hero h1 em{color:#000;text-shadow:none}
+.dm-description{color:#444}
+.dm-void-caption{color:#555;text-shadow:none}
+.dm-destinations{border-color:rgba(0,0,0,.14)}
+.dm-card{
+  color:#111;
+  border-color:rgba(0,0,0,.15);
+  background:rgba(255,255,255,.82);
+  box-shadow:0 8px 24px rgba(0,0,0,.045);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.dm-card::before{background:rgba(0,0,0,.035)}
+.dm-card:hover{background:#f5f5f5;border-color:rgba(0,0,0,.38);box-shadow:0 14px 30px rgba(0,0,0,.08)}
+.dm-card-index{color:#777}
+.dm-card-icon,.dm-card-arrow{color:#222}
+.dm-card-copy strong{color:#111}
+.dm-card-copy small{color:#666}
+.dm-card:hover .dm-card-arrow{color:#000}
+.dm-footer{color:#666}
+.dm-footer i{background:#111;box-shadow:none}
+@media(prefers-reduced-motion:reduce){.dm-card{transition:none}}
