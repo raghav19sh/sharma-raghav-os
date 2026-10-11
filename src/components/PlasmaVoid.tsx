@@ -14,112 +14,100 @@ export default function PlasmaVoid() {
     canvas.setAttribute("aria-hidden", "true");
     host.appendChild(canvas);
 
-    // Use the same Three.js version as the supplied export. The module script is
-    // intentionally isolated from Next's server bundle because Three.js runs only in the browser.
     const script = document.createElement("script");
     script.type = "module";
     script.textContent = `
       import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
       import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
-      import { EffectComposer } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/EffectComposer.js";
-      import { RenderPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/RenderPass.js";
-      import { UnrealBloomPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/UnrealBloomPass.js";
 
       const canvas = document.querySelector(".plasma-void-webgl");
       if (!canvas || !canvas.isConnected) throw new Error("Particle canvas unavailable");
-      const COUNT = window.innerWidth < 700 ? 9000 : 20000;
-      const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0xffffff, 0.01);
-      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-      camera.position.set(0, 0, 100);
 
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xffffff);
+      const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 2000);
+      camera.position.set(0, 0, 150);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setClearColor(0xffffff, 1);
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.enablePan = false;
-      controls.enableZoom = false;
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.35;
 
-      const composer = new EffectComposer(renderer);
-      composer.addPass(new RenderPass(scene, camera));
-      const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-      bloom.strength = 1.8;
-      bloom.radius = 0.4;
-      bloom.threshold = 0;
-      composer.addPass(bloom);
+      const world = new THREE.Group();
+      scene.add(world);
 
-      const dummy = new THREE.Object3D();
-      const color = new THREE.Color();
-      const target = new THREE.Vector3();
-      const geometry = new THREE.TetrahedronGeometry(0.25);
-      const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
-      const mesh = new THREE.InstancedMesh(geometry, material, COUNT);
-      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      scene.add(mesh);
+      // Many long, clearly visible black strands — not tiny dots or tetrahedrons.
+      const strandCount = window.innerWidth < 700 ? 34 : 58;
+      const pointsPerStrand = 220;
+      const strandGeometries = [];
+      const strandMaterials = [];
+      const strands = [];
 
-      const positions = Array.from({ length: COUNT }, () => new THREE.Vector3(
-        (Math.random() - 0.5) * 100,
-        (Math.random() - 0.5) * 100,
-        (Math.random() - 0.5) * 100
-      ));
-      for (let i = 0; i < COUNT; i++) mesh.setColorAt(i, new THREE.Color(0x000000));
+      for (let s = 0; s < strandCount; s++) {
+        const positions = new Float32Array(pointsPerStrand * 3);
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+        const material = new THREE.LineBasicMaterial({
+          color: 0x000000,
+          transparent: true,
+          opacity: 0.72 + (s % 4) * 0.07
+        });
+        const line = new THREE.Line(geometry, material);
+        line.frustumCulled = false;
+        world.add(line);
+        strandGeometries.push(geometry);
+        strandMaterials.push(material);
+        strands.push({ positions, phase: (s / strandCount) * Math.PI * 2, radius: 24 + (s % 13) * 3.5 });
+      }
 
       const clock = new THREE.Clock();
       let raf = 0;
       let disposed = false;
-      const animate = () => {
+
+      function animate() {
         if (disposed || !canvas.isConnected) return;
         raf = requestAnimationFrame(animate);
-        const time = clock.getElapsedTime();
-        const scale = 90, spread = 1, flow = 0.8, morph = 0.45;
-        for (let i = 0; i < COUNT; i++) {
-          const t = i / COUNT;
-          const theta = t * Math.PI * 40;
-          const r0 = 0.35 + 0.65 * Math.sqrt(t);
-          const w1 = Math.sin(theta * 0.7 + time * 0.25);
-          const w2 = Math.sin(theta * 1.9 - time * 0.17);
-          const w3 = Math.cos(theta * 3.3 + time * 0.11);
-          const attract = r0 * (1 + 0.25 * w1 + 0.12 * w2 * w3);
-          const bend = 0.8 * Math.sin(theta * 0.5 + time * 0.2) + 0.3 * Math.sin(theta * 2.7 - time * 0.13);
-          const x = scale * attract * Math.cos(theta + bend * spread);
-          const y = scale * attract * Math.sin(theta + bend * spread);
-          const z = scale * (0.55 * Math.sin(theta * 0.55) + 0.28 * Math.sin(theta * 1.73 + time * 0.22) + 0.15 * Math.cos(theta * 4.1));
-          const swirl = flow * Math.sin(Math.sqrt(x * x + y * y) * 0.06 - time * 0.8);
-          target.set(x + swirl * y * 0.12, y - swirl * x * 0.12, z + scale * morph * 0.18 * Math.sin(theta * 0.9 + time * 0.35));
-          color.setHex(0x000000);
-          positions[i].lerp(target, 0.1);
-          dummy.position.copy(positions[i]);
-          dummy.updateMatrix();
-          mesh.setMatrixAt(i, dummy.matrix);
-          mesh.setColorAt(i, color);
-        }
-        mesh.instanceMatrix.needsUpdate = true;
-        if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-        controls.update();
-        composer.render();
-      };
-      animate();
+        const t = clock.getElapsedTime();
 
-      const onResize = () => {
+        strands.forEach((strand, s) => {
+          const { positions, phase, radius } = strand;
+          for (let i = 0; i < pointsPerStrand; i++) {
+            const u = i / (pointsPerStrand - 1);
+            const angle = u * Math.PI * 4.5 + phase;
+            const envelope = 0.55 + 0.45 * Math.sin(u * Math.PI);
+            const waveA = Math.sin(angle * 1.15 + t * (0.55 + s * 0.003) + phase) * (8 + s % 7);
+            const waveB = Math.cos(angle * 0.72 - t * 0.38 + phase * 1.7) * (7 + s % 5);
+            const x = Math.cos(angle + Math.sin(t * 0.18 + phase) * 0.45) * radius + waveA;
+            const y = Math.sin(angle * 0.82 + phase * 0.18) * radius * 0.68 + waveB;
+            const z = Math.sin(angle * 0.56 + t * 0.24 + phase) * 35 * envelope;
+            const idx = i * 3;
+            positions[idx] = x;
+            positions[idx + 1] = y;
+            positions[idx + 2] = z;
+          }
+          strandGeometries[s].attributes.position.needsUpdate = true;
+        });
+
+        world.rotation.z = Math.sin(t * 0.12) * 0.08;
+        world.rotation.y = Math.sin(t * 0.09) * 0.22;
+        renderer.render(scene, camera);
+      }
+
+      function onResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        composer.setSize(window.innerWidth, window.innerHeight);
-      };
+      }
       window.addEventListener("resize", onResize);
+      animate();
+
       window.addEventListener("pagehide", () => {
         disposed = true;
         cancelAnimationFrame(raf);
         window.removeEventListener("resize", onResize);
-        controls.dispose();
-        geometry.dispose();
-        material.dispose();
+        strandGeometries.forEach((geometry) => geometry.dispose());
+        strandMaterials.forEach((material) => material.dispose());
         renderer.dispose();
-        composer.dispose();
       }, { once: true });
     `;
     document.body.appendChild(script);
