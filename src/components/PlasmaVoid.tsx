@@ -29,14 +29,14 @@ export default function PlasmaVoid() {
       if (!canvas || !canvas.isConnected) throw new Error("Particle canvas unavailable");
       const COUNT = window.innerWidth < 700 ? 9000 : 20000;
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x000000, 0.01);
+      scene.fog = new THREE.FogExp2(0xffffff, 0.01);
       const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
       camera.position.set(0, 0, 100);
 
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setClearColor(0x000000, 0);
+      renderer.setClearColor(0xffffff, 1);
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.enablePan = false;
@@ -56,7 +56,7 @@ export default function PlasmaVoid() {
       const color = new THREE.Color();
       const target = new THREE.Vector3();
       const geometry = new THREE.TetrahedronGeometry(0.25);
-      const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
       const mesh = new THREE.InstancedMesh(geometry, material, COUNT);
       mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       scene.add(mesh);
@@ -66,7 +66,7 @@ export default function PlasmaVoid() {
         (Math.random() - 0.5) * 100,
         (Math.random() - 0.5) * 100
       ));
-      for (let i = 0; i < COUNT; i++) mesh.setColorAt(i, new THREE.Color(0x00ff88));
+      for (let i = 0; i < COUNT; i++) mesh.setColorAt(i, new THREE.Color(0x000000));
 
       const clock = new THREE.Clock();
       let raf = 0;
@@ -90,7 +90,7 @@ export default function PlasmaVoid() {
           const z = scale * (0.55 * Math.sin(theta * 0.55) + 0.28 * Math.sin(theta * 1.73 + time * 0.22) + 0.15 * Math.cos(theta * 4.1));
           const swirl = flow * Math.sin(Math.sqrt(x * x + y * y) * 0.06 - time * 0.8);
           target.set(x + swirl * y * 0.12, y - swirl * x * 0.12, z + scale * morph * 0.18 * Math.sin(theta * 0.9 + time * 0.35));
-          color.setHSL(0.58 + 0.1 * Math.sin(theta * 0.08 + time * 0.03), 0.55 + 0.35 * (0.5 + 0.5 * Math.sin(theta * 0.31)), 0.35 + 0.28 * Math.exp(-Math.abs(attract - 0.75)));
+          color.setHex(0x000000);
           positions[i].lerp(target, 0.1);
           dummy.position.copy(positions[i]);
           dummy.updateMatrix();
