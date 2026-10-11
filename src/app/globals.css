@@ -816,3 +816,41 @@ a{-webkit-tap-highlight-color:transparent}
 .bb-footer>span:nth-child(2){display:flex;align-items:center;gap:7px;color:var(--bb-green)}
 @media(max-width:900px){.bb-layout{grid-template-columns:165px minmax(0,1fr)}.bb-ticker>div{padding:0 9px}.bb-ticker span{font-size:7px}.bb-ticker b{font-size:8px}.bb-resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bb-brand{min-width:225px}}
 @media(max-width:640px){.bb-topline{height:49px;padding:0 11px;gap:8px}.bb-brand{min-width:0}.bb-brand-mark{width:28px;height:27px}.bb-brand strong{font-size:9px}.bb-brand small{font-size:7px}.bb-market-status{display:none}.bb-top-right{gap:7px;font-size:8px}.bb-commandbar{padding:0 11px;gap:10px}.bb-command-label{font-size:8px}.bb-ticker{grid-template-columns:repeat(3,minmax(0,1fr))}.bb-ticker>div{min-height:35px;padding:0 8px}.bb-ticker>div:nth-child(n+4){display:none}.bb-ticker span{font-size:7px}.bb-layout{display:block;min-height:calc(100% - 142px)}.bb-sidebar{flex-direction:row;overflow-x:auto;gap:4px;padding:8px;border-right:0;border-bottom:1px solid #303940}.bb-side-heading,.bb-side-rule,.bb-quick-link,.bb-side-status{display:none}.bb-nav-item{width:auto;flex:0 0 auto;gap:6px;padding:8px;border-color:#303940;font-size:8px}.bb-nav-num{display:none}.bb-nav-item svg{display:none}.bb-main{padding:20px 10px 10px}.bb-title-row{align-items:flex-start}.bb-title-row h1{font-size:24px}.bb-title-row p{font-size:10px}.bb-title-stamp{min-width:76px;padding:7px}.bb-title-stamp strong{font-size:15px}.bb-title-stamp span{font-size:6px}.bb-toolbar{padding:6px;gap:5px}.bb-search{padding:7px}.bb-search input{font-size:9px}.bb-search kbd{display:none}.bb-view-controls>span{display:none}.bb-table-head{grid-template-columns:26px minmax(0,1fr) 36px 18px;gap:6px;padding:9px 6px;font-size:7px}.bb-table-head span:nth-child(4){display:none}.bb-table-head span:nth-child(5){display:none}.bb-resource{grid-template-columns:26px minmax(0,1fr) 36px 18px;gap:6px;padding:9px 6px}.bb-entry-name{gap:7px}.bb-entry-icon{width:25px;height:25px;flex-basis:25px}.bb-entry-icon svg{width:14px;height:14px}.bb-entry-name strong{font-size:8px}.bb-entry-name small{font-size:8px;white-space:normal;line-height:1.35}.bb-entry-status{display:none}.bb-entry-type{font-size:7px}.bb-entry-open svg{width:13px}.bb-resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bb-resource-grid .bb-resource{grid-template-columns:18px minmax(0,1fr) 14px;padding:9px 6px;gap:5px}.bb-resource-grid .bb-entry-name strong{font-size:8px}.bb-resource-grid .bb-entry-name small{font-size:8px}.bb-bottom-panels{grid-template-columns:1fr}.bb-footer{font-size:7px}.bb-footer>span:last-child{display:none}}
+
+
+/* Minimal domain directory homepage */
+.directory-home{position:relative;min-height:100vh;background:#faf9f7;color:#20201f;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:0 clamp(22px,7vw,112px);--dir-muted:#777671;--dir-line:#e5e3df;--dir-accent:#7d2d49}
+.directory-home *{box-sizing:border-box}
+.directory-header{height:76px;display:flex;align-items:center;border-bottom:1px solid var(--dir-line)}
+.directory-wordmark{font-size:17px;letter-spacing:-.09em;font-weight:850;text-decoration:none;color:#242321}
+.directory-wordmark span{color:var(--dir-accent)}
+.directory-header-note{margin-left:18px;color:#8a8882;font:700 9px ui-monospace,monospace;letter-spacing:.13em}
+.directory-contact{margin-left:auto;display:flex;align-items:center;gap:6px;color:#44413e;text-decoration:none;font:700 9px ui-monospace,monospace;letter-spacing:.08em}
+.directory-contact:hover{color:var(--dir-accent)}
+.directory-intro{padding:clamp(58px,10vh,104px) 0 50px;max-width:700px}
+.directory-kicker{margin:0 0 22px;color:var(--dir-accent);font:750 10px ui-monospace,monospace;letter-spacing:.15em}
+.directory-kicker span{padding:0 5px;color:#aaa49e}
+.directory-intro h1{margin:0;font-size:clamp(42px,7vw,76px);line-height:1.03;letter-spacing:-.065em;font-weight:560;color:#252321}
+.directory-intro h1 span{color:#99958f}
+.directory-subtitle{margin:22px 0 0;max-width:440px;color:#74716b;font-size:14px;line-height:1.8}
+.directory-list-section{width:100%;border-top:1px solid #c9c6c0}
+.directory-list-heading,.directory-row{display:grid;grid-template-columns:36px minmax(220px,1.15fr) minmax(200px,1fr) 100px 22px;align-items:center;gap:14px}
+.directory-list-heading{min-height:42px;color:#8a8780;font:750 8px ui-monospace,monospace;letter-spacing:.12em;border-bottom:1px solid var(--dir-line)}
+.directory-list-heading span:first-child{grid-column:2}
+.directory-row{min-height:82px;border-bottom:1px solid var(--dir-line);color:inherit;text-decoration:none;transition:background .15s ease;padding:0 5px}
+.directory-row:hover{background:#f0eeeb}
+.directory-index{color:#aaa59d;font:10px ui-monospace,monospace}
+.directory-name{display:flex;align-items:center;gap:13px;min-width:0}
+.directory-icon{width:35px;height:35px;display:grid;place-items:center;border:1px solid #e2ded8;border-radius:8px;color:var(--dir-accent);background:#fff}
+.directory-name>span:last-child{display:grid;gap:5px;min-width:0}
+.directory-name strong{font-size:11px;font-weight:800;letter-spacing:.065em}
+.directory-name small{overflow-wrap:anywhere;color:#77736e;font:10px ui-monospace,monospace}
+.directory-description{color:#77736e;font-size:11px;line-height:1.5}
+.directory-type{color:#9b968e;font:750 8px ui-monospace,monospace;letter-spacing:.06em}
+.directory-arrow{display:grid;place-items:center;color:#a7a199}
+.directory-row:hover .directory-arrow{color:var(--dir-accent);transform:translate(2px,-2px)}
+.directory-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:76px;color:#969189;font:750 8px ui-monospace,monospace;letter-spacing:.08em}
+.directory-footer span,.directory-footer a{display:flex;align-items:center;gap:7px}
+.directory-footer a{color:#77736e;text-decoration:none}
+.directory-footer a:hover{color:var(--dir-accent)}
+@media(max-width:760px){.directory-home{padding:0 20px}.directory-header{height:64px}.directory-intro{padding:60px 0 38px}.directory-list-heading{display:none}.directory-row{grid-template-columns:24px minmax(0,1fr) 22px;gap:9px;padding:13px 2px;min-height:75px}.directory-index{grid-column:1;grid-row:1}.directory-name{grid-column:2;grid-row:1}.directory-description,.directory-type{display:none}.directory-arrow{grid-column:3;grid-row:1}.directory-footer{align-items:flex-start;flex-direction:column;justify-content:center;gap:10px;padding:18px 0}.directory-header-note{font-size:7px;margin-left:11px}}
