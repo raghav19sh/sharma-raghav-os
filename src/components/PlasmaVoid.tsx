@@ -30,7 +30,7 @@ export default function PlasmaVoid() {
       particles = Array.from({ length: count }, (_, i) => ({
         angle: Math.random() * Math.PI * 2,
         radius: 35 + Math.random() * Math.min(width, height) * 0.46,
-        speed: (0.00025 + Math.random() * 0.00085) * (Math.random() > 0.5 ? 1 : -1),
+        speed: (0.003 + Math.random() * 0.008) * (Math.random() > 0.5 ? 1 : -1),
         size: 0.35 + Math.random() * 1.3,
         phase: i * 0.17 + Math.random() * 6,
       }));
