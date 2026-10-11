@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowUpRight, Code2, FileText, Wrench, ShieldCheck, Github, Mail, Moon } from "lucide-react";
+import PlasmaVoid from "@/components/PlasmaVoid";
 
 const destinations = [
   { name: "OS", path: "/os", domain: "sharma-raghav.com/os", icon: Code2 },
@@ -15,7 +16,7 @@ const destinations = [
 export default function HomePage() {
   return (
     <main className="dark-minimal-home">
-      <div className="dm-orb" aria-hidden="true"><div className="dm-orb-glow" /></div>
+      <PlasmaVoid />
       <header className="dm-header">
         <Link href="/" className="dm-brand">RAGHAV SHARMA</Link>
         <nav aria-label="Main navigation">
@@ -34,7 +35,7 @@ export default function HomePage() {
           <h1>Build.<br />Explore.<br /><em>Secure.</em></h1>
           <p className="dm-description">A collection of tools, experiments, and projects at the intersection of security and technology.</p>
         </div>
-        <p className="dm-orb-caption">SYSTEMS / RESEARCH / OPEN SOURCE</p>
+        <p className="dm-void-caption">SYSTEMS / RESEARCH / OPEN SOURCE</p>
       </section>
 
       <section className="dm-destinations" aria-label="Websites and projects">
