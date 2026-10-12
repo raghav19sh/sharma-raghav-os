@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Code2, FileText, Wrench, ShieldCheck, Github, Mail, Moon } from "lucide-react";
+import { ArrowUpRight, Code2, FileText, Wrench, ShieldCheck, Github, Mail, Moon, Hand } from "lucide-react";
 import PlasmaVoid from "@/components/PlasmaVoid";
 
 const destinations = [
@@ -9,6 +9,7 @@ const destinations = [
   { name: "Portfolio", path: "/portfolio", domain: "sharma-raghav.com/portfolio", icon: FileText },
   { name: "Tools", path: "https://tools.sharma-raghav.com", domain: "tools.sharma-raghav.com", icon: Wrench },
   { name: "DigiTrust", path: "https://digitrust.sharma-raghav.com", domain: "digitrust.sharma-raghav.com", icon: ShieldCheck },
+  { name: "Sign Language Translator", path: "https://signtranslator.sharma-raghav.com", domain: "signtranslator.sharma-raghav.com", icon: Hand },
   { name: "GitHub", path: "https://github.com/raghav19sh", domain: "github.com/raghav19sh", icon: Github },
   { name: "Contact", path: "mailto:contact@sharma-raghav.com", domain: "contact@sharma-raghav.com", icon: Mail },
 ];
