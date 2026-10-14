@@ -1,0 +1,2 @@
+# Add the exact ads.txt declaration shown in your Google AdSense account.
+# Replace this comment with your real publisher line, e.g. google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
