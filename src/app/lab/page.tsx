@@ -19,6 +19,7 @@ const initialProcesses: Process[] = [
   { pid: 980, ppid: 412, name: "bash", state: "Running" },
   { pid: 1012, ppid: 980, name: "worker", state: "Sleeping" },
 ];
+const fallbackProcess: Process = { pid: 0, ppid: 0, name: "No process selected", state: "Terminated" };
 
 export default function LabPage() {
   const [active, setActive] = useState<ExperimentId>("pipes");
@@ -30,7 +31,7 @@ export default function LabPage() {
   const [busy, setBusy] = useState(false);
 
   const simulation = useMemo(() => simulatePipeline(command), [command]);
-  const selectedProcess = processes.find((process) => process.pid === selectedPid) ?? processes[0];
+  const selectedProcess = processes.find((process) => process.pid === selectedPid) ?? fallbackProcess;
 
   async function inspectFile(selected: File | null) {
     setFile(selected);
@@ -120,7 +121,9 @@ export default function LabPage() {
 function simulatePipeline(command: string) {
   const match = command.trim().match(/^printf\s+'((?:[^'\\]|\\.)*)'\s*\|\s*grep\s+([^\s>]+)\s*>\s*([a-zA-Z0-9._-]+)\s*$/);
   if (!match) return { file: "", output: "", stdin: "terminal (not modelled)", stdout: "terminal", stderr: "terminal", error: "Unsupported syntax. Use printf 'line\\nline' | grep pattern > filename" };
-  const [, source, pattern, filename] = match;
+  const source = match[1] ?? "";
+  const pattern = match[2] ?? "";
+  const filename = match[3] ?? "result.txt";
   const lines = source.replace(/\\n/g, "\n").replace(/\\t/g, "\t").split("\n");
   const matching = lines.filter((line) => line.includes(pattern));
   return { file: filename, output: matching.join("\n") || "(empty)", stdin: "printf reads its quoted argument", stdout: `printf → pipe → grep → ${filename}`, stderr: "terminal (no simulated errors)" };
