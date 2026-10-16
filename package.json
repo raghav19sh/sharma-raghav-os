@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:lab": "node --test tests/lab-*.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.1",
