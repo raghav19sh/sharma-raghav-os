@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Code2, FileText, Wrench, ShieldCheck, Github, Mail, Moon, Hand } from "lucide-react";
+import { ArrowUpRight, Code2, FileText, Wrench, ShieldCheck, Github, Mail, Moon, Hand, FolderKanban } from "lucide-react";
 import PlasmaVoid from "@/components/PlasmaVoid";
 
 const destinations = [
   { name: "OS", path: "/os", domain: "sharma-raghav.com/os", icon: Code2 },
   { name: "Portfolio", path: "/portfolio", domain: "sharma-raghav.com/portfolio", icon: FileText },
+  { name: "Projects", path: "/portfolio#projects", domain: "sharma-raghav.com/portfolio#projects", icon: FolderKanban },
   { name: "Tools", path: "https://tools.sharma-raghav.com", domain: "tools.sharma-raghav.com", icon: Wrench },
   { name: "DigiTrust", path: "https://digitrust.sharma-raghav.com", domain: "digitrust.sharma-raghav.com", icon: ShieldCheck },
   { name: "Sign Language Translator", path: "https://signtranslator.sharma-raghav.com", domain: "signtranslator.sharma-raghav.com", icon: Hand },
