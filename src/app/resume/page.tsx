@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function ResumePage() {
   return (
-    <main className="resume-page">
+    <main id="main-content" className="resume-page">
       <div className="resume-shell">
         <Link className="resume-back" href="/">← BACK</Link>
         <header className="resume-header">

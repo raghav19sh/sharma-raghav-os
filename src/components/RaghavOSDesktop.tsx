@@ -294,7 +294,7 @@ export default function RaghavOSDesktop({
   }
 
   return (
-    <main className="os-root" data-session={uptime} onClick={() => menu && setMenu(null)}>
+    <main id="main-content" className="os-root" data-session={uptime} onClick={() => menu && setMenu(null)}>
       <div className="os-wallpaper" style={{ backgroundImage: "url(" + JSON.stringify(wallpaperUrl) + ")" }}>
         <div className="os-overlay" aria-hidden="true" />
 

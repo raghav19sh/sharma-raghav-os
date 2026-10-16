@@ -28,7 +28,7 @@ const projects = [
 
 export default function PortfolioPage() {
   return (
-    <main className="editorial-cv">
+    <main id="main-content" className="editorial-cv">
       <header className="ec-header">
         <Link href="/" className="ec-monogram">R<span>.</span>S</Link>
         <span className="ec-header-label">CURRICULUM VITAE <i /> 2026</span>

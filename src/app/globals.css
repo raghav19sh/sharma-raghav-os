@@ -1190,3 +1190,7 @@ a{-webkit-tap-highlight-color:transparent}
 .dm-footer{color:#666}
 .dm-footer i{background:#111;box-shadow:none}
 @media(prefers-reduced-motion:reduce){.dm-card{transition:none}}
+.dark-minimal-home :is(a,button,input,textarea,select):focus-visible{outline:2px solid #5841a8;outline-offset:4px}
+.site-skip-link{position:absolute;z-index:1000;top:8px;left:8px;transform:translateY(-160%);padding:10px 12px;background:#111;color:#fff;border-radius:4px;font-size:13px}
+.site-skip-link:focus{transform:translateY(0)}
+:where(a,button,input,textarea,select,summary):focus-visible{outline:2px solid #7644d7;outline-offset:3px}

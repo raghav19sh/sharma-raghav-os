@@ -71,7 +71,7 @@ export default function LabPage() {
     if (signal === "CHLD") setProcesses((current) => current.map((process) => process.ppid === selectedPid && process.state === "Zombie" ? { ...process, state: "Terminated" } : process));
   }
 
-  return <main className="lab-site">
+  return <main id="main-content" className="lab-site">
     <header className="lab-site-header"><Link href="/" className="lab-back"><ArrowLeft size={14} /> SHARMA-RAGHAV.COM</Link><span>COMPUTING / SYSTEMS / SECURITY</span></header>
     <div className="lab-site-main">
       <p className="lab-eyebrow">AN INTERACTIVE COMPUTING LABORATORY <span>·</span> 001</p>

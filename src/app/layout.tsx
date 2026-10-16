@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sharma-Raghav OS",
-  description: "Raghav Sharma's cybersecurity workstation.",
+  title: "Raghav Sharma — Cybersecurity, Systems & Software",
+  description: "Raghav Sharma’s technical workspace: cybersecurity research, interactive systems experiments, software projects, and practical tools.",
   icons: { icon: "/favicon.svg" },
 };
 
@@ -21,7 +21,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="anonymous"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <a className="site-skip-link" href="#main-content">Skip to main content</a>
+        {children}
+      </body>
     </html>
   );
 }

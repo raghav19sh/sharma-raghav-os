@@ -17,7 +17,7 @@ const destinations = [
 
 export default function HomePage() {
   return (
-    <main className="dark-minimal-home">
+    <main id="main-content" className="dark-minimal-home">
       <PlasmaVoid />
       <header className="dm-header">
         <Link href="/" className="dm-brand">RAGHAV SHARMA</Link>
